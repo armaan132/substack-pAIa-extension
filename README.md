@@ -23,6 +23,7 @@ project_root/
 │       └── newsletter_scraper.py   # download and store newsletters
 │   └── search/                     # (not used currently)
 │   └── weg/                        # (not used currently)
+```
 
 ## Features
 
@@ -35,21 +36,22 @@ project_root/
 
 1. Install dependencies:
 
-```bash
-pip install substack-api
-```
+    ```bash
+    pip install substack-api
+    ```
 
 2. Download some newsletters:
-```bash
-python scripts/test_substack_api.py
-```
+    ```bash
+    python scripts/test_substack_api.py
+    ```
 
-3. Start the local server:
-```bash
-python scripts/serve.py
-```
+1. Read a newsletter:
 
-4. Open http://localhost:8000/index.html in your browser
+    open `data/index.html` in your browser 
+
+    or 
+
+    start the local server with `python scripts/serve.py` and open  http://localhost:8000/index.html in your browser
 
 ## Current Limitations
 
