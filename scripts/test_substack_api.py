@@ -20,7 +20,7 @@ def get_post_content(url, limit=3):
             
             # Try to get full content
             try:
-                content = post.get_body_html()
+                content = post.get_content()
                 print("\nContent Preview (first 200 chars):")
                 print(content[:200] + "...\n")
             except Exception as e:
