@@ -1,22 +1,28 @@
-# Science Newsletter Archive
+# Substack pAIa
 
-A tool to archive and browse science newsletters from Substack.
+A personal AI assistant to help retrieve, manage and discover science blogs on Substack.
 
 ## Project Structure 
 
 ```
 project_root/
-├── src/               # Main source code
-│   └── database/     # Data storage handling
-├── scripts/          # Utility scripts
-├── docs/             # Documentation
-│   ├── user-stories.md
-│   └── product-backlog.md
-└── data/             # Downloaded newsletters
-    ├── content/      # HTML content
-    ├── metadata/     # JSON metadata
-    └── index.html    # Auto-generated index
-```
+└── data/                           # Downloaded newsletters
+    ├── content/                    # HTML content of posts
+    ├── metadata/                   # JSON metadata of posts
+    └── index.html                  # Auto-generated index
+├── docs/                       
+│   ├── user-stories.md             # User stories
+│   └── product-backlog.md          # Product backlog
+├── scripts/                    
+│   ├── serve.py                    # start server to read newsletters
+│   └── test_substack_api.py        # download and store recent newsletters
+├── src/                
+│   └── api/                        # (not used currently)
+│   └── database/                   # (not used currently)
+│   └── scraper/                    # (not used currently)
+│       └── newsletter_scraper.py   # download and store newsletters
+│   └── search/                     # (not used currently)
+│   └── weg/                        # (not used currently)
 
 ## Features
 
@@ -53,7 +59,7 @@ python scripts/serve.py
 
 ## Development Status
 
-This is a student project in development. Current focus:
+Current focus:
 - Basic newsletter archiving functionality
 - Simple browsing interface
 - Local storage system
