@@ -18,17 +18,21 @@ project_root/
     └── index.html                  # Auto-generated index
 ├── docs/                       
 │   ├── user-stories.md             # User stories
-│   └── product-backlog.md          # Product backlog
+│   └── product-backlog.md          # Todo list
+│   └── learning-backlog.md         # Learning outcomes
 ├── scripts/                    
 │   ├── serve.py                    # start server to read newsletters
-│   └── test_substack_api.py        # download and store recent newsletters
+│   └── test_substack_api.py        # main script (for now)
 ├── src/                
 │   └── api/                        # (not used currently)
 │   └── database/                   # (not used currently)
-│   └── scraper/                    # (not used currently)
+│   └── scraper/                    # 
 │       └── newsletter_scraper.py   # download and store newsletters
 │   └── search/                     # (not used currently)
-│   └── weg/                        # (not used currently)
+│   └── web/                        # Web interfaces (not used currently)
+        ├── dashboard/              # Monitoring dashboard UI
+        ├── reader/                 # Newsletter reading interface
+        └── static/                 # CSS, JS, and other assets
 ```
 
 ## Features
