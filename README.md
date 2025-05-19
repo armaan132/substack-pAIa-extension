@@ -21,7 +21,7 @@ project_root/
 │   └── product-backlog.md          # Todo list
 │   └── learning-backlog.md         # Learning outcomes
 ├── scripts/                    
-│   ├── serve.py                    # start server to read newsletters
+│   ├── serve.py                    # server to read newsletters
 │   └── test_substack_api.py        # main script (for now)
 ├── src/                
 │   └── api/                        # (not used currently)
@@ -30,9 +30,9 @@ project_root/
 │       └── newsletter_scraper.py   # download and store newsletters
 │   └── search/                     # (not used currently)
 │   └── web/                        # Web interfaces (not used currently)
-        ├── dashboard/              # Monitoring dashboard UI
-        ├── reader/                 # Newsletter reading interface
-        └── static/                 # CSS, JS, and other assets
+|       ├── dashboard/              # Monitoring dashboard UI
+|       ├── reader/                 # Newsletter reading interface
+|       └── static/                 # CSS, JS, and other assets
 ```
 
 ## Features
