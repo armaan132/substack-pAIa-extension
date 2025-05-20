@@ -37,10 +37,20 @@ project_root/
 
 ## Features
 
+### Implemented
+
 - Download and store Substack newsletters locally
 - Separate storage of content (HTML) and metadata (JSON)
 - Auto-generated index page for browsing
-- Built-in local server for easy reading
+- Built-in local server for reading indexed posts
+
+### Currently Working On
+
+- Improving the layout of locally stored newsletters.
+
+### Next Steps
+
+- Content Organization and Discovery
 
 ## Getting Started
 
