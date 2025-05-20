@@ -63,20 +63,9 @@ project_root/
 
     start the local server with `python scripts/serve.py` and open  http://localhost:8000/index.html in your browser
 
-## Current Limitations
-
-- Can only download from known Substack URLs
-- Cannot access subscriber-only content
-- Basic browsing interface
-
 ## Development Status
 
-Current focus:
-- Basic newsletter archiving functionality
-- Simple browsing interface
-- Local storage system
-
-See [`docs/product-backlog.md`](docs/product-backlog.md) for planned features.
+See [`docs/product-backlog.md`](docs/product-backlog.md) for completed and planned features.
 
 ## Contributing
 
