@@ -23,7 +23,7 @@
 
 ---
 
-(the following items need prioratizing and details)
+(the following items have been sketched out with AI and need careful discussion)
 
 ## Newsletter Monitoring System 
 - [ ] Set up periodic refresh mechanism
@@ -146,11 +146,9 @@
     - [ ] Handle content updates
     - [ ] Version tracking for posts
   
-## User Engagement 
-- Add author contact information display
-- Create simple author profile pages
-- Implement basic engagement metrics
-- Build notification system for new content
+---
+
+(list of potential further ideas)
 
 ## Future Considerations
 - Advanced search with NLP
