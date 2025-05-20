@@ -38,6 +38,74 @@
     - [ ] Post collection statistics
     - [ ] Error logs/alerts section
   - [ ] Set up automatic dashboard refresh
+- [ ] Implement AI post summaries
+  - [ ] Generate concise summaries
+    - [ ] Key points extraction
+    - [ ] Main findings/arguments
+    - [ ] Methodology highlights
+  - [ ] Summary management
+    - [ ] Store summaries with post metadata
+    - [ ] Version control for summaries
+    - [ ] User feedback/corrections
+  - [ ] Display integration
+    - [ ] Show summaries in dashboard
+    - [ ] Quick-view summary cards
+    - [ ] Expandable detailed summaries
+
+## Content Organization & Discovery
+- [ ] Basic Content Collection
+  - [ ] Implement web scraper for science Substacks
+    - [ ] Scrape Substack's science category pages
+    - [ ] Extract newsletter information
+    - [ ] Build discovery queue for manual verification
+  - [ ] Admin interface for initial processing
+    - [ ] Review discovered newsletters
+    - [ ] Add to monitored list
+    - [ ] Basic categorization
+
+- [ ] Tagging System
+  - [ ] Publication-level themes
+    - [ ] Broad topic areas (e.g., "Economics", "Climate Science")
+    - [ ] Author expertise domains
+    - [ ] Publication focus/scope tags
+  - [ ] Post-level tags
+    - [ ] Specific topics/concepts
+    - [ ] Research findings
+    - [ ] Type of content (analysis, news, review)
+  - [ ] Tag relationships and management
+    - [ ] Link publication themes to post tags
+    - [ ] Track theme-tag correlations
+    - [ ] Theme evolution tracking
+
+- [ ] Content Organization Tools
+  - [ ] Create curated collections interface
+  - [ ] Implement manual highlight system for breakthrough research
+  - [ ] Add "big picture" discussion section
+  - [ ] Build content organization admin tools
+
+- [ ] Smart Discovery & Recommendations
+  - [ ] Theme-based discovery
+    - [ ] Find similar publications using themes
+    - [ ] Discover cross-referenced content
+    - [ ] Suggest new sources based on themes
+  - [ ] Automated tag suggestions
+    - [ ] Content analysis (key terms, embeddings)
+    - [ ] Tag matching and suggestions
+    - [ ] Confidence scoring and feedback
+
+- [ ] Integrated User Interface
+  - [ ] Theme browse/explore interface
+    - [ ] Multi-tag filtering
+    - [ ] Tag intersection views
+    - [ ] Related tag suggestions
+  - [ ] Personal feed and following
+    - [ ] Follow multiple themes
+    - [ ] Adjustable theme weights
+    - [ ] Multi-theme blended view
+    - [ ] Discovery queue with tag suggestions
+    - [ ] New content recommendations
+    - [ ] Theme gap detection
+    - [ ] Cross-theme discoveries
 
 ## Annotation System
 - [ ] Chrome extension that can annotate / highlight text
@@ -77,35 +145,7 @@
     - [ ] Store text position markers
     - [ ] Handle content updates
     - [ ] Version tracking for posts
-
-## Newsletter Discovery System 
-- Implement web scraper for finding new science Substacks
-  - Scrape Substack's science category pages
-  - Extract newsletter information from cross-references
-  - Build discovery queue for manual verification
-- Create admin interface for:
-  - Reviewing discovered newsletters
-  - Adding to monitored list
-  - Categorizing newsletters
-
-## Theme Following 
-- Design and implement tagging system for scientific themes
-- Create theme browse/explore interface
-- Add ability to follow themes
-- Build theme feed view
-
-## Content Organization 
-- Create curated collections interface
-- Implement manual highlight system for breakthrough research
-- Add "big picture" discussion section
-- Build content organization admin tools
-
-## Basic Recommendations 
-- Implement tag-based recommendation algorithm
-- Create personalized feed based on followed themes
-- Add "similar content" suggestions
-- Build recommendation management interface
-
+  
 ## User Engagement 
 - Add author contact information display
 - Create simple author profile pages
