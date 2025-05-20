@@ -76,7 +76,7 @@ Current focus:
 - Simple browsing interface
 - Local storage system
 
-See `docs/product-backlog.md` for planned features.
+See [`docs/product-backlog.md`](docs/product-backlog.md) for planned features.
 
 ## Contributing
 
