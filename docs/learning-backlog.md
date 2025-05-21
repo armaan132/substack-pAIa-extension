@@ -1,8 +1,41 @@
 # Learning Backlog
 
-Headlines refer to the product backlog
+PB referst to the product backlog. 
 
-## Basic Features
+## Git
+
+- [ ] Basic Git Concepts
+  - [ ] What is version control?
+  - [ ] Local vs remote repositories
+  - [ ] Understanding the staging area
+  - [ ] What are commits?
+
+- [ ] Essential Git Commands
+  - [ ] `git init` - Starting a repository
+  - [ ] `git clone` - Getting code from GitHub
+  - [ ] `git status` - Checking file status
+  - [ ] `git add` - Staging changes
+  - [ ] `git commit` - Saving changes
+  - [ ] `git push` - Uploading to GitHub
+  - [ ] `git pull` - Getting updates
+
+- [ ] Working with Branches
+  - [ ] What is a branch?
+  - [ ] `git branch` - Creating branches
+  - [ ] `git checkout` - Switching branches
+  - [ ] `git merge` - Combining changes
+
+- [ ] Handling Problems
+  - [ ] Reading error messages
+  - [ ] What to do when things go wrong
+  - [ ] Where to find help
+
+### Recommended Git Resources
+1. GitHub's Git Basics Guide
+2. Interactive tutorials (like Git-it or Learn Git Branching)
+3. Visual Git cheat sheets
+
+## PB: Basic Features
 
 `newsletter_scraper.py`:
 - [ ] Python Class Design
