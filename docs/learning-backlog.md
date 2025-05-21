@@ -6,9 +6,7 @@ PB referst to the product backlog.
 
 - [ ] Basic Git Concepts
   - [ ] What is version control?
-  - [ ] Local vs remote repositories
-  - [ ] Understanding the staging area
-  - [ ] What are commits?
+  - [ ] Local filesystem vs Git vs remote
 
 - [ ] Essential Git Commands
   - [ ] `git init` - Starting a repository
@@ -18,17 +16,16 @@ PB referst to the product backlog.
   - [ ] `git commit` - Saving changes
   - [ ] `git push` - Uploading to GitHub
   - [ ] `git pull` - Getting updates
+  - [ ] The GUI in Vscode / Cursor
 
 - [ ] Working with Branches
   - [ ] What is a branch?
   - [ ] `git branch` - Creating branches
   - [ ] `git checkout` - Switching branches
   - [ ] `git merge` - Combining changes
+  - [ ] Pull requests
 
-- [ ] Handling Problems
-  - [ ] Reading error messages
-  - [ ] What to do when things go wrong
-  - [ ] Where to find help
+- [ ] How Git interacts with LLMs and AI agents
 
 ### Recommended Git Resources
 1. GitHub's Git Basics Guide
