@@ -46,7 +46,7 @@ project_root/
 
 **Currently Working On**:
 
-- Improving the layout of locally stored newsletters.
+- Improving the layout of locally stored newsletters
 
 **Next Steps**:
 
