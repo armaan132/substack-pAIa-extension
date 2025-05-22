@@ -11,13 +11,10 @@
   - [x] `serve.py` serving downloaded files on local host
 - [ ] Improve newsletter content display
   - [ ] Extract Substack's CSS using browser dev tools
-    - [ ] Save main post content styles
-    - [ ] Save typography styles
-    - [ ] Save responsive layout styles
   - [ ] Create simplified version of Substack CSS
   - [ ] Test with different post formats (text, images, etc.)
   - [ ] Style typography (fonts, sizes, line heights)
-  - [ ] Add proper spacing and margins
+  - [ ] Adjust spacing and margins
   - [ ] Style images and media content
   - [ ] Implement dark/light mode support
 
