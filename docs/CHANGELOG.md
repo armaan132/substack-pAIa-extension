@@ -12,7 +12,7 @@
 - Moved CSS files to `src/web/static/css/`
 - Added a constant `CSS_PATH` to `filesystem_store.py`. Change this constant to experiment with different CSS.
 - Created an HTML template in [`src/database/filesystem_store.py`](../src/database/filesystem_store.py) which links to `CSS_PATH`
-- Modified server to serve static files from project root
+- Modified [the server](../scripts/serve.py) to serve static files from project root
 
 ### Fixed
 - CSS loading issues. Layout works now with the minimal and the cleaned CSS.
