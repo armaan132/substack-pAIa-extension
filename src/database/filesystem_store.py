@@ -4,40 +4,36 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+# Constants
+CSS_PATH = 'src/web/static/css/substack-cleaned.css'
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+METADATA_DIR = DATA_DIR / "metadata"
+CONTENT_DIR = DATA_DIR / "content"
+
+# HTML Template
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{css_path}">
+    <title>{title}</title>
+</head>
+<body class="post typography">
+    {content}
+</body>
+</html>
+"""
+
 class NewsletterStore:
-    # Add template as a class variable
-    HTML_TEMPLATE = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>{title}</title>
-        <link rel="stylesheet" type="text/css" href="{css_path}">
-        <style>
-            /* Test style that will be overridden by Substack CSS if it loads */
-            body {{
-                background-color: pink !important; /* Very obvious color */
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 20px;
-                font-family: Arial, sans-serif;
-            }}
-        </style>
-    </head>
-    <body>
-        <div style="border: 2px solid red; margin: 10px; padding: 10px;">
-            If Substack CSS is loading, this box should have different styling
-        </div>
-        {content}
-    </body>
-    </html>
-    """
+    # Make HTML_TEMPLATE accessible in the class
+    HTML_TEMPLATE = HTML_TEMPLATE
 
     def __init__(self, base_dir=None):
         if base_dir is None:
-            # Get the project root (2 levels up from this file)
-            project_root = Path(__file__).parent.parent.parent
-            base_dir = project_root / "data"
-        self.base_dir = Path(base_dir)
+            self.base_dir = DATA_DIR
+        else:
+            self.base_dir = Path(base_dir)
         self.metadata_dir = self.base_dir / "metadata"
         self.content_dir = self.base_dir / "content"
         
@@ -51,7 +47,7 @@ class NewsletterStore:
 
     def _get_css_path(self, depth: int) -> str:
         """Get the relative path to CSS based on file depth in directory structure."""
-        return '../' * depth + 'src/web/static/css/substack.css'
+        return '../' * depth + CSS_PATH
 
     def save_post(self, newsletter_url: str, post) -> None:
         """Save a post's content and metadata."""
