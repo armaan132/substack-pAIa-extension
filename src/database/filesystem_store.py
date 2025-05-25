@@ -5,6 +5,20 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 class NewsletterStore:
+    # Add template as a class variable
+    HTML_TEMPLATE = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{title}</title>
+        <link rel="stylesheet" type="text/css" href="{css_path}">
+    </head>
+    <body>
+        {content}
+    </body>
+    </html>
+    """
+
     def __init__(self, base_dir=None):
         if base_dir is None:
             # Get the project root (2 levels up from this file)
@@ -21,6 +35,10 @@ class NewsletterStore:
     def _get_safe_name(self, url: str) -> str:
         """Convert URL to safe directory name."""
         return url.split("//")[1].split(".")[0]
+
+    def _get_css_path(self, depth: int) -> str:
+        """Get the relative path to CSS based on file depth in directory structure."""
+        return '../' * depth + 'src/web/static/css/substack.css'
 
     def save_post(self, newsletter_url: str, post) -> None:
         """Save a post's content and metadata."""
@@ -51,6 +69,13 @@ class NewsletterStore:
         metadata_path = self.metadata_dir / newsletter_name / f"{post_id}.json"
         metadata_path.parent.mkdir(exist_ok=True)
         metadata_path.write_text(json.dumps(metadata_obj, indent=2), encoding='utf-8')
+
+        html = self.HTML_TEMPLATE.format(
+            title=metadata['title'],
+            css_path=self._get_css_path(3),  # posts are three levels deep
+            content=content
+        )
+        content_path.write_text(html, encoding='utf-8')
 
     def get_post(self, newsletter_url: str, post_id: str) -> Optional[Dict]:
         """Get a specific post by newsletter URL and post ID."""
@@ -98,27 +123,13 @@ class NewsletterStore:
         return posts
 
     def create_index_html(self) -> None:
-        """Create an index.html file that links to all stored posts."""
-        index_content = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Science Newsletter Archive</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 40px; }
-                .newsletter { margin-bottom: 30px; }
-                .date { color: #666; font-size: 0.9em; }
-            </style>
-        </head>
-        <body>
-            <h1>Science Newsletter Archive</h1>
-        """
+        """Create an index.html file listing all stored posts."""
+        content = "<h1>Stored Newsletter Posts</h1><ul>"
         
         # Group posts by newsletter
         newsletters = self.list_newsletters()
         for newsletter in sorted(newsletters):
-            index_content += f"\n<div class='newsletter'>\n"
-            index_content += f"<h2>{newsletter}</h2>\n"
+            content += f"\n<li><strong>{newsletter}</strong></li>\n"
             posts = self.list_posts(f"https://{newsletter}.substack.com")
             
             for post in posts:
@@ -126,16 +137,20 @@ class NewsletterStore:
                 date = post.get('published_at', 'No date')
                 # Convert content path to relative path
                 content_path = Path(post['content_path']).relative_to(self.base_dir)
-                index_content += f"""
-                <p>
+                content += f"""
+                <li>
                     <a href="{content_path}">{title}</a>
                     <span class="date">{date}</span>
-                </p>
+                </li>
                 """
             
-            index_content += "</div>\n"
+            content += "</ul>\n"
         
-        index_content += "</body></html>"
+        html = self.HTML_TEMPLATE.format(
+            title="Stored Newsletter Posts",
+            css_path=self._get_css_path(1),  # index.html is one level deep
+            content=content
+        )
         
         index_path = self.base_dir / "index.html"
-        index_path.write_text(index_content, encoding='utf-8') 
+        index_path.write_text(html, encoding='utf-8') 
