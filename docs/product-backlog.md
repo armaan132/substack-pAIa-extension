@@ -10,9 +10,23 @@
   - [x] `index.html` linking downloaded newsletters
   - [x] `serve.py` serving downloaded files on local host
 - [ ] Improve newsletter content display
-  - [ ] Extract Substack's CSS using browser dev tools
-  - [ ] Create simplified version of Substack CSS
-  - [ ] Test with different post formats (text, images, etc.)
+  - [ ] Extract and store Substack's CSS
+    - [ ] Use browser dev tools to save Substack's CSS
+    - [ ] Store in `src/web/static/css/substack.css`
+    - [ ] Update `serve.py` to serve from web/static directory
+  - [ ] Link CSS to newsletter content
+    - [ ] Add CSS link using relative paths
+      - [ ] Work with direct file:// access
+      - [ ] Work with serve.py http:// access
+    - [ ] Update HTML generation to use correct paths
+    - [ ] Test path resolution in both scenarios
+  - [ ] Test and refine
+    - [ ] Test with direct file opening
+    - [ ] Test with local server
+    - [ ] Adjust paths if needed
+    - [ ] Test with different post formats
+    - [ ] Adjust CSS as needed
+    - [ ] Add dark mode support
   - [ ] Style typography (fonts, sizes, line heights)
   - [ ] Adjust spacing and margins
   - [ ] Style images and media content
