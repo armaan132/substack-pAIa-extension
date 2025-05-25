@@ -1,0 +1,113 @@
+:root {
+    /* Colors */
+    --color-fg-primary: #222;
+    --color-fg-secondary: #666;
+    --color-bg-primary: white;
+    --color-bg-secondary: #f9f9f9;
+    --color-accent: #3d5bf5;
+    
+    /* Typography */
+    --font-family-title: 'Georgia', serif;
+    --font-family-text: 'Spectral', serif;
+    --font-size-base: 18px;
+    --line-height-base: 1.6;
+}
+
+/* Base styles */
+body.post.typography {
+    background-color: var(--color-bg-primary);
+    color: var(--color-fg-primary);
+    font-family: var(--font-family-text);
+    line-height: var(--line-height-base);
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+.typography h1,
+.typography h2,
+.typography h3,
+.typography h4,
+.typography h5,
+.typography h6 {
+    font-family: var(--font-family-title);
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 1.5em 0 0.5em;
+    color: var(--color-fg-primary);
+}
+
+.typography h1 { font-size: 2.5em; }
+.typography h2 { font-size: 2em; }
+.typography h3 { font-size: 1.5em; }
+.typography h4 { font-size: 1.25em; }
+
+.typography p {
+    margin: 0 0 1.5em;
+    font-size: var(--font-size-base);
+}
+
+/* Links */
+.typography a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.typography a:hover {
+    text-decoration: underline;
+}
+
+/* Images */
+.typography img {
+    max-width: 100%;
+    height: auto;
+    margin: 2em 0;
+}
+
+/* Blockquotes */
+.typography blockquote {
+    margin: 2em 0;
+    padding-left: 1.5em;
+    border-left: 3px solid var(--color-fg-secondary);
+    font-style: italic;
+    color: var(--color-fg-secondary);
+}
+
+/* Lists */
+.typography ul,
+.typography ol {
+    margin: 1.5em 0;
+    padding-left: 1.5em;
+}
+
+/* Code blocks */
+.typography pre,
+.typography code {
+    font-family: monospace;
+    background: var(--color-bg-secondary);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+/* Tables */
+.typography table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2em 0;
+}
+
+.typography th,
+.typography td {
+    border: 1px solid var(--color-fg-secondary);
+    padding: 0.5em;
+    text-align: left;
+}
+
+/* Footnotes */
+.typography .footnotes {
+    margin-top: 3em;
+    font-size: 0.9em;
+    color: var(--color-fg-secondary);
+} 

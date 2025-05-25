@@ -1,0 +1,64 @@
+/* Reset and base styles */
+html, body {
+    background-color: white !important;
+    color: #222 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+    line-height: 1.6 !important;
+    max-width: 700px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
+/* Post content container */
+.post-content {
+    font-size: 18px;
+}
+
+/* Headings */
+h1 {
+    font-size: 32px;
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 24px;
+    margin: 32px 0 16px;
+}
+
+/* Paragraphs and spacing */
+p {
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    color: #3d5bf5;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    margin: 24px 0;
+}
+
+/* Image captions */
+.image-caption {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: -16px;
+}
+
+/* Blockquotes */
+blockquote {
+    margin: 24px 0;
+    padding-left: 16px;
+    border-left: 3px solid #333;
+    font-style: italic;
+} 
