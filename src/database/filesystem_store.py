@@ -12,8 +12,21 @@ class NewsletterStore:
     <head>
         <title>{title}</title>
         <link rel="stylesheet" type="text/css" href="{css_path}">
+        <style>
+            /* Test style that will be overridden by Substack CSS if it loads */
+            body {{
+                background-color: pink !important; /* Very obvious color */
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+            }}
+        </style>
     </head>
     <body>
+        <div style="border: 2px solid red; margin: 10px; padding: 10px;">
+            If Substack CSS is loading, this box should have different styling
+        </div>
         {content}
     </body>
     </html>
@@ -49,10 +62,17 @@ class NewsletterStore:
         metadata = post.get_metadata()
         content = post.get_content()
         
-        # Save HTML content
+        # Save HTML content using our template
         content_path = self.content_dir / newsletter_name / f"{post_id}.html"
         content_path.parent.mkdir(exist_ok=True)
-        content_path.write_text(content, encoding='utf-8')
+        
+        # Generate HTML using template
+        html = self.HTML_TEMPLATE.format(
+            title=metadata['title'],
+            css_path=self._get_css_path(3),  # posts are three levels deep
+            content=content
+        )
+        content_path.write_text(html, encoding='utf-8')
         
         # Save metadata
         metadata_obj = {
@@ -69,13 +89,6 @@ class NewsletterStore:
         metadata_path = self.metadata_dir / newsletter_name / f"{post_id}.json"
         metadata_path.parent.mkdir(exist_ok=True)
         metadata_path.write_text(json.dumps(metadata_obj, indent=2), encoding='utf-8')
-
-        html = self.HTML_TEMPLATE.format(
-            title=metadata['title'],
-            css_path=self._get_css_path(3),  # posts are three levels deep
-            content=content
-        )
-        content_path.write_text(html, encoding='utf-8')
 
     def get_post(self, newsletter_url: str, post_id: str) -> Optional[Dict]:
         """Get a specific post by newsletter URL and post ID."""

@@ -6,9 +6,10 @@
   --line-height-20: 20px;
 }
 
-
-
-
+/* Add this at the very top of the file */
+body {
+    background-color: lightblue !important;
+}
 
 @layer legacy, tailwind, pencraft;
 
