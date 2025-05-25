@@ -8,6 +8,12 @@ substack-pAIa is part of pAIa, an initiative to return control of the internet t
 
 In the future, pAIa will expand into a data science project on federated learning applied to the monitoring of centralized social media platforms. By decentralizing both the data collection and analysis processes, we aim to shift power away from platforms controlled by private financial interests that currently monopolize user data and control information flow. This federated approach will enable users to collectively understand platform dynamics while maintaining individual data sovereignty - a crucial step towards a more democratic and user-controlled internet ecosystem.
 
+## Documentation
+- [Changelog](docs/CHANGELOG.md)
+- [User Stories](docs/user-stories.md)
+- [Product Backlog](docs/product-backlog.md)
+- [Learning Backlog](docs/learning-backlog.md)
+
 ## Project Structure 
 
 ```
