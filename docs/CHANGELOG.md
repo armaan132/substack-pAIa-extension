@@ -15,7 +15,7 @@
 - Modified server to serve static files from project root
 
 ### Fixed
-- CSS loading issues, works with the minimal and the cleaned CSS.
+- CSS loading issues. Layout works now with the minimal and the cleaned CSS.
 
 ### Known Issues
 - Original Substack CSS (`substack-original.css`) doesn't work and browser console shows errors
