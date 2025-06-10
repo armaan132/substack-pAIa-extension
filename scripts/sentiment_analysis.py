@@ -30,7 +30,7 @@ def parse_html(html):
     links = []
     for link in content.find_all("a", href=True):
         href = link['href']
-        if href.startswith("http"):
+        if "substack.com" in href:
             links.append({
                 "url": href,
                 "text": link.get_text(strip=True),
@@ -42,22 +42,46 @@ def parse_html(html):
     return {"title": title, "content": content, "text": full_text, "links": links}
 
 def extract_context(content, links, window=200):
-    full_html = str(content)
     enriched = []
+    seen_urls = set()
+
     for link in links:
-        pos = full_html.find(link["html_element"])
-        if pos != -1:
-            start = max(0, pos - window)
-            end = min(len(full_html), pos + len(link["html_element"]) + window)
-            context_html = full_html[start:end]
-            context_text = BeautifulSoup(context_html, "html.parser").get_text(" ", strip=True)
-            context_text = re.sub(r"\s+", " ", context_text)
+        if link["url"] in seen_urls:
+            continue
+        seen_urls.add(link["url"])
+
+        anchor_text = link.get("text", "").strip()
+        if not anchor_text:
+            continue  # skip links with no visible text
+
+        anchor = content.find("a", href=link["url"])
+        if anchor:
+            parent = anchor.find_parent()
+            while parent and len(parent.get_text(strip=True)) < 100:
+                parent = parent.find_parent()
+
+            if not parent:
+                continue
+
+            parent_text = parent.get_text(" ", strip=True)
+            anchor_pos = parent_text.find(anchor_text)
+
+            if anchor_pos != -1:
+                start = max(0, anchor_pos - window)
+                end = min(len(parent_text), anchor_pos + len(anchor_text) + window)
+                context = parent_text[start:end]
+            else:
+                context = parent_text[:window * 2]
+
+            context = re.sub(r"\s+", " ", context)
             enriched.append({
                 "url": link["url"],
-                "text": link["text"],
-                "context": context_text
+                "text": anchor_text,
+                "context": context
             })
+
     return enriched
+
 
 def sentiment_analysis(text):
     score = TextBlob(text).sentiment.polarity
@@ -71,9 +95,8 @@ def sentiment_analysis(text):
 
 def extract_name(url):
     parsed = urlparse(url)
-    if "substack.com" in parsed.netloc:
-        return parsed.netloc.split(".")[0]
-    return parsed.netloc.split(".")[0] or "unknown"
+    return parsed.netloc.split(".")[0] if parsed.netloc else "unknown"
+
 
 def generate_graph(url, html):
     parsed = parse_html(html)
