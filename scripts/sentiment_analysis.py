@@ -41,7 +41,7 @@ def parse_html(html):
 
     return {"title": title, "content": content, "text": full_text, "links": links}
 
-def extract_context(content, links, window=200):
+def extract_context(content, links, window=600):
     enriched = []
     seen_urls = set()
 

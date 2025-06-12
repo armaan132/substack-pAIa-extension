@@ -1,0 +1,39 @@
+newsletters:
+- id: https://www.astralcodexten.com/p/book-review-selfish-reasons-to-have
+  metadata:
+    name: www
+    title: Astral Codex Ten
+  citations:
+  - target: https://substack.com/home/post/p-160403083?utm_campaign=post&utm_medium=web
+    metadata:
+      sentiment: neutral
+      score: 0.08333333333333333
+      confidence: 0.08333333333333333
+      context: 'Share this post Astral Codex Ten Book Review: Selfish Reasons To Have
+        More Kids Copy link Facebook Email Notes More...'
+  - target: https://hilariusbookbinder.substack.com/p/the-average-college-student-today
+    metadata:
+      sentiment: neutral
+      score: 0.12363636363636363
+      confidence: 0.12363636363636363
+      context: "I am more convinced by the widespread negative reports from teachers.\
+        \ People dismiss these by claiming there is some generic bias to think \u201C\
+        the youth\u201D used to be better in \u201Cthe good old days\u201D. But I\
+        \ h..."
+  - target: https://hilariusbookbinder.substack.com/p/the-average-college-student-today#footnote-1-159700143
+    metadata:
+      sentiment: neutral
+      score: 0.12653061224489798
+      confidence: 0.12653061224489798
+      context: "I\u2019m Gen X. I was pretty young when I earned my PhD, so I\u2019\
+        ve been a professor for a long time\u2014over 30 years. If you\u2019re not\
+        \ in academia, or it\u2019s been awhile since you were in college, you might\
+        \ not know..."
+  - target: https://magdalene.substack.com/p/its-obviously-the-phones
+    metadata:
+      sentiment: unfavorable
+      score: -0.30317460317460315
+      confidence: 0.30317460317460315
+      context: "It\u2019s the phones, stupid . They are absolutely addicted to their\
+        \ phones. When I go work out at the Campus Rec Center, easily half of the\
+        \ students there are just sitting on the machines scrolling on the..."

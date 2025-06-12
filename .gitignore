@@ -34,4 +34,6 @@ ENV/
 .idea/
 .vscode/
 *.swp
-.DS_Storedownloaded_post.html
+.DS_Store
+
+downloaded_post.html
