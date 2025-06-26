@@ -6,23 +6,22 @@
 # To run script on dowloaded newsletter: 
 # python scripts/sentiment_analysis.py https://www.astralcodexten.com/p/book-review-selfish-reasons-to-have downloaded_post.html
 
-import os
-import sys
-import yaml
-import requests
-import nltk
+
 from bs4 import BeautifulSoup
+from textblob import TextBlob
+import re
+import yaml
+import sys
+import nltk
+import requests
 from nltk.tokenize import sent_tokenize
 from urllib.parse import urlparse
 
-nltk.download("punkt")
-
-# === CONFIG ===
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent"
+nltk.download('punkt')
 
 def parse_html(html):
     soup = BeautifulSoup(html, "html.parser")
+
     title_tag = soup.find("h1")
     title = title_tag.get_text(strip=True) if title_tag else "Unknown Title"
     print(f"{'✅' if title_tag else '❌'} Found title: {title}")
@@ -30,7 +29,7 @@ def parse_html(html):
     content = soup.find("div", attrs={"data-testid": "post-content"}) or soup.find("article") or soup.body
     if not content:
         print("❌ Could not find post content.")
-        return {"title": title, "content": None, "links": []}
+        return {"title": title, "content": None, "text": "", "links": []}
 
     links = []
     for link in content.find_all("a", href=True):
@@ -45,7 +44,8 @@ def parse_html(html):
     print(f"🔗 Found {len(links)} substack links")
     return {"title": title, "content": content, "links": links}
 
-def extract_context(content, links, before=2, after=2):
+
+def extract_context(content, links, num_sentences=2):
     enriched = []
     seen_urls = set()
 
@@ -73,65 +73,49 @@ def extract_context(content, links, before=2, after=2):
             if anchor_idx == -1:
                 context = full_text.strip()
             else:
-                start = max(0, anchor_idx - before)
-                end = min(len(sentences), anchor_idx + after + 1)
+                start = max(0, anchor_idx - num_sentences)
+                end = min(len(sentences), anchor_idx + num_sentences + 1)
                 context = " ".join(sentences[start:end])
 
+            # 🧼 Remove sentences that look like blockquotes or inline quotes
             raw_sentences = sent_tokenize(context)
             filtered_sentences = [
-                s for s in raw_sentences if not s.strip().startswith((">", "\"", "“")) and not s.strip().endswith("\"")
+                s for s in raw_sentences
+                if not s.strip().startswith((">", "“", '"')) and not s.strip().endswith('"')
             ]
             filtered_context = " ".join(filtered_sentences).strip()
-            if not filtered_context:
-                continue
+            context = filtered_context  # replace with filtered version
+
+            # 🧪 Optional debug output
+            # print(f"\n🔍 Original context:\n{context}")
+            # print(f"🧽 Filtered context:\n{filtered_context}")
 
             enriched.append({
                 "url": link["url"],
                 "text": anchor_text,
-                "context": filtered_context
+                "context": context
             })
 
     print(f"🧠 Context-extracted links: {len(enriched)}")
     return enriched
 
-def analyze_sentiment_gemini(context: str) -> dict:
-    prompt = f"""You are an assistant that evaluates how favorably or unfavorably a writer refers to another newsletter in an article.
-Here is the surrounding context:
----
-{context}
----
-Give your analysis in this YAML format:
-sentiment: <favorable|neutral|unfavorable>
-score: <a float between -1 and 1 indicating sentiment polarity>
-confidence: <a float between 0 and 1 indicating confidence in your judgment>
-"""
-    response = requests.post(
-        GEMINI_API_URL,
-        headers={"Content-Type": "application/json"},
-        params={"key": GEMINI_API_KEY},
-        json={"contents": [{"parts": [{"text": prompt}]}]}
-    )
-    try:
-        json_data = response.json()
-        if "candidates" not in json_data or not json_data["candidates"]:
-            raise ValueError("No candidates in response")
-        candidate = json_data["candidates"][0]
-        parts = candidate.get("content", {}).get("parts")
-        if parts and isinstance(parts, list) and "text" in parts[0]:
-            text = parts[0]["text"]
-        else:
-            raise ValueError("Missing or invalid parts in content")
 
-        print("🔍 Gemini response:", text)
-        return yaml.safe_load(text)
-    except Exception as e:
-        print("⚠️ Failed to parse Gemini output:", e)
-        print("❗ Response content:", response.text)
-        return None
+
+def sentiment_analysis(text):
+    score = TextBlob(text).sentiment.polarity
+    if score > 0.2:
+        category = "favorable"
+    elif score < -0.1:
+        category = "unfavorable"
+    else:
+        category = "neutral"
+    return {"category": category, "score": score, "confidence": abs(score)}
+
 
 def extract_name(url):
     parsed = urlparse(url)
     return parsed.netloc.split(".")[0] if parsed.netloc else "unknown"
+
 
 def fetch_title_from_url(url):
     try:
@@ -141,21 +125,32 @@ def fetch_title_from_url(url):
         soup = BeautifulSoup(response.text, "html.parser")
         title_tag = soup.find("h1")
         return title_tag.get_text(strip=True) if title_tag else "Unknown Title"
-    except:
+    except Exception as e:
+        print(f"⚠️ Failed to fetch title from {url}: {e}")
         return "Unknown Title"
+
 
 def generate_graph(url, html):
     parsed = parse_html(html)
+    print(f"🔍 Total parsed links: {len(parsed['links'])}")
     context_links = extract_context(parsed["content"], parsed["links"])
+    
     analyzed = []
-
     for link in context_links:
-        sentiment = analyze_sentiment_gemini(link['context'])
-        if not sentiment:
+        analysis_text = link['context']
+        sentiment = sentiment_analysis(analysis_text)
+        
+        # 🪓 Lowered threshold from 0.2 → 0.05 for debugging
+        if sentiment["confidence"] < 0.05:
+            print(f"⚠️ Skipping low-confidence sentiment: {sentiment} for {link['url']}")
             continue
-        analyzed.append({"url": link["url"], "context": link["context"], "sentiment": sentiment})
+
+        print(f"📌 Sentiment for: {link['url']} | score: {sentiment['score']} | context len: {len(analysis_text)}")
+        link['sentiment'] = sentiment
+        analyzed.append(link)
 
     title_cache = {}
+
     graph = {
         "newsletters": [
             {
@@ -170,13 +165,17 @@ def generate_graph(url, html):
     }
 
     for link in analyzed:
-        target_title = title_cache.get(link["url"]) or fetch_title_from_url(link["url"])
-        title_cache[link["url"]] = target_title
+        if link["url"] in title_cache:
+            target_title = title_cache[link["url"]]
+        else:
+            target_title = fetch_title_from_url(link["url"])
+            title_cache[link["url"]] = target_title
+
         citation = {
             "target": link["url"],
             "metadata": {
                 "target_title": target_title,
-                "sentiment": link["sentiment"]["sentiment"],
+                "sentiment": link["sentiment"]["category"],
                 "score": link["sentiment"]["score"],
                 "confidence": link["sentiment"]["confidence"],
                 "context": link["context"][:200] + "..."
@@ -185,6 +184,7 @@ def generate_graph(url, html):
         graph["newsletters"][0]["citations"].append(citation)
 
     return yaml.dump(graph, sort_keys=False)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
