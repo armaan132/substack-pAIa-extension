@@ -1,0 +1,10 @@
+beautifulsoup4==4.13.4
+click==8.2.1
+joblib==1.5.1
+nltk==3.9.1
+PyYAML==6.0.2
+regex==2024.11.6
+soupsieve==2.7
+textblob==0.19.0
+tqdm==4.67.1
+typing_extensions==4.14.0

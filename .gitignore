@@ -35,3 +35,5 @@ ENV/
 .vscode/
 *.swp
 .DS_Store
+
+downloaded_post.html

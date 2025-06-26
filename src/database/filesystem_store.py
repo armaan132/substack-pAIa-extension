@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 # Constants
-CSS_PATH = 'src/web/static/css/substack-cleaned.css'
+CSS_PATH = 'src/web/static/css/substack-original.css'
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 METADATA_DIR = DATA_DIR / "metadata"
