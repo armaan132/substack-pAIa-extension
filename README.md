@@ -73,7 +73,7 @@ project_root/
 
     or 
 
-    start the local server with `python scripts/serve.py` and open  http://localhost:8000/index.html in your browser
+    start the local server with `python scripts/serve.py` and open  http://localhost:8000/data/index.html in your browser
 
 ## Development Status
 
