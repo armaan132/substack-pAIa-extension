@@ -1,0 +1,141 @@
+# Configuration file for newsletters to download
+# All fields except 'url' are optional and have sensible defaults
+
+# Global settings (applied to all newsletters unless overridden)
+settings:
+  default_limit: 3
+  download_metadata: true
+  create_index: true
+  retry_failed: true
+
+# Newsletter configurations
+newsletters:
+  # Academic economist
+  - name: "EconJared"
+    url: "https://econjared.substack.com"
+    author: "Jared Bernstein"
+    wikipedia: "https://en.wikipedia.org/wiki/Jared_Bernstein"
+    description: "Economics and policy analysis"
+    role: "academic-economist"
+    credibility: "academic-level"
+    categories: ["economics", "politics"]
+    tags: ["economics", "policy", "analysis"]
+    limit: 3  # number of posts to download
+    enabled: true  # can disable without removing from config
+  
+  # High-quality independent publication
+  - name: "Astral Codex Ten"
+    url: "https://astralcodexten.substack.com"
+    description: "Science, medicine, philosophy, and politics"
+    role: "independent-researcher"
+    credibility: "academic-level"
+    categories: ["science", "medicine", "philosophy", "politics"]
+    tags: ["science", "medicine", "philosophy"]
+    limit: 5
+    enabled: true
+  
+  # Academic economist
+  - name: "The Conscience of a Liberal"
+    url: "https://krugman.substack.com"
+    author: "Paul Krugman"
+    wikipedia: "https://en.wikipedia.org/wiki/Paul_Krugman"
+    description: "Economics, politics, and policy analysis"
+    role: "academic-economist"
+    credibility: "academic-level"
+    categories: ["economics", "politics"]
+    tags: ["economics", "policy", "politics", "nobel"]
+    limit: 3
+    enabled: true
+  
+  # Academic philosopher
+  - name: "Michael Huemer's Substack"
+    url: "https://michaelhuemer.substack.com"
+    author: "Michael Huemer"
+    wikipedia: "https://en.wikipedia.org/wiki/Michael_Huemer"
+    description: "Philosophy, political theory, and libertarian thought"
+    role: "academic-philosopher"
+    credibility: "academic-level"
+    categories: ["philosophy", "politics"]
+    tags: ["philosophy", "political-theory", "libertarianism", "ethics"]
+    limit: 3
+    enabled: true
+  
+  # Academic philosopher
+  - name: "Richard Chappell's Substack"
+    url: "https://richardchappell.substack.com"
+    author: "Richard Chappell"
+    wikipedia: "https://en.wikipedia.org/wiki/Richard_Chappell_(philosopher)"
+    description: "Philosophy, effective altruism, and moral reasoning"
+    role: "academic-philosopher"
+    credibility: "academic-level"
+    categories: ["philosophy", "ethics"]
+    tags: ["philosophy", "effective-altruism", "ethics", "moral-reasoning"]
+    limit: 3
+    enabled: true
+  
+  # Academic economist
+  - name: "Robin Hanson's Substack"
+    url: "https://robinhanson.substack.com"
+    author: "Robin Hanson"
+    wikipedia: "https://en.wikipedia.org/wiki/Robin_Hanson"
+    description: "Economics, futurism, and prediction markets"
+    role: "academic-economist"
+    credibility: "academic-level"
+    categories: ["economics", "futurism"]
+    tags: ["economics", "futurism", "prediction-markets", "forecasting"]
+    limit: 3
+    enabled: true
+  
+  # Academic physician
+  - name: "Eric Topol's Substack"
+    url: "https://erictopol.substack.com"
+    author: "Eric Topol"
+    wikipedia: "https://en.wikipedia.org/wiki/Eric_Topol"
+    description: "Medicine, healthcare, and digital health innovation"
+    role: "academic-physician"
+    credibility: "academic-level"
+    categories: ["medicine", "science"]
+    tags: ["medicine", "healthcare", "digital-health", "innovation"]
+    limit: 3
+    enabled: true
+  
+  # Academic philosopher
+  - name: "Slavoj Žižek's Substack"
+    url: "https://zizek.substack.com"
+    author: "Slavoj Žižek"
+    wikipedia: "https://en.wikipedia.org/wiki/Slavoj_%C5%BDi%C5%BEek"
+    description: "Philosophy, psychoanalysis, and critical theory"
+    role: "academic-philosopher"
+    credibility: "academic-level"
+    categories: ["philosophy", "politics"]
+    tags: ["philosophy", "psychoanalysis", "critical-theory", "marxism"]
+    limit: 3
+    enabled: true
+  
+  # Political commentator (economic background)
+  - name: "Slow Boring"
+    url: "https://mattyglesias.substack.com"
+    author: "Matt Yglesias"
+    wikipedia: "https://en.wikipedia.org/wiki/Matt_Yglesias"
+    description: "Politics, policy, and economic commentary"
+    role: "political-commentator"
+    credibility: "high-quality"
+    categories: ["politics", "economics"]
+    tags: ["politics", "policy", "economics", "commentary"]
+    limit: 3
+    enabled: true
+  
+  # Political commentator (economic background)
+  - name: "Noahpinion"
+    url: "https://noahpinion.substack.com"
+    author: "Noah Smith"
+    wikipedia: "https://en.wikipedia.org/wiki/Noah_Smith_(economist)"
+    description: "Economics, politics, and policy analysis"
+    role: "political-commentator"
+    credibility: "high-quality"
+    categories: ["economics", "politics"]
+    tags: ["economics", "politics", "policy", "commentary"]
+    limit: 3
+    enabled: true
+
+ 

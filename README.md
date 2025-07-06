@@ -18,24 +18,49 @@ In the future, pAIa will expand into a data science project on federated learnin
 
 ```
 project_root/
-└── data/                           # Downloaded newsletters
-    ├── content/                    # HTML content of posts
-    ├── metadata/                   # JSON metadata of posts
-    └── index.html                  # Auto-generated index
+├── config/
+│   └── newsletters.yaml            # Newsletter configuration
+├── data/                           # Downloaded newsletters
+│   ├── content/                    # HTML content of posts
+│   ├── metadata/                   # JSON metadata of posts
+│   └── index.html                  # Auto-generated index
 ├── docs/                       
 │   ├── user-stories.md             # User stories
-│   └── product-backlog.md          # Todo list
+│   ├── product-backlog.md          # Todo list
 │   └── learning-backlog.md         # Learning outcomes
 ├── scripts/                    
-│   ├── serve.py                    # serve read newsletters
-│   └── test_substack_api.py        # main script (for now)
+│   ├── serve.py                    # Local server for reading newsletters
+│   ├── test_substack_api.py        # Download and store newsletters
+│   └── sentiment_analysis.py       # Analyze sentiment of newsletter citations
 ├── src/                
 │   └── database/       
-│       └── filesystem_store.py     # download and store newsletters
+│       └── filesystem_store.py     # Core storage functionality
 │   └── web/                        
 |       └── static/                 
 |           └── css/                # CSS files    
 ```
+
+## Scripts
+
+**`test_substack_api.py`** - Download and store newsletters ([source](scripts/test_substack_api.py))
+- Main script for fetching Substack newsletters
+- Downloads HTML content and metadata
+- Stores files in organized directory structure
+- Usage: `python scripts/test_substack_api.py`
+- Downloads posts from newsletters configured in `config/newsletters.yaml`
+- Supports per-newsletter limits and metadata
+
+**`serve.py`** - Local web server for reading newsletters ([source](scripts/serve.py))
+- Starts a simple HTTP server on port 8000
+- Serves files from the project root directory
+- Usage: `python scripts/serve.py`
+- Access your newsletters at `http://localhost:8000/data/index.html`
+
+**`sentiment_analysis.py`** - Analyze newsletter citations and references ([source](scripts/sentiment_analysis.py))
+- Performs sentiment analysis on newsletter links and citations
+- Extracts context around references to other Substack posts
+- Outputs YAML format with sentiment scores and confidence levels
+- Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
 
 ## Features
 
@@ -45,6 +70,7 @@ project_root/
 - Separate storage of content (HTML) and metadata (JSON)
 - Auto-generated index page for browsing
 - Built-in local server for reading indexed posts
+- Sentiment analysis of newsletter citations and references
 
 **Currently Working On**:
 
@@ -62,7 +88,10 @@ project_root/
     pip install substack-api
     ```
 
-2. Download some newsletters:
+2. Configure newsletters to download (optional):
+    Edit `config/newsletters.yaml` to add your preferred newsletters
+
+3. Download some newsletters:
     ```bash
     python scripts/test_substack_api.py
     ```
@@ -73,7 +102,7 @@ project_root/
 
     or 
 
-    start the local server with `python scripts/serve.py` and open  http://localhost:8000/index.html in your browser
+    start the local server with `python scripts/serve.py` and open  http://localhost:8000/data/index.html in your browser
 
 ## Development Status
 
