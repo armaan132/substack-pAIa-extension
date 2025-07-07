@@ -1,4 +1,4 @@
-Found 1 newsletter(s) to process
+Found 31 newsletter(s) to process
 
 Processing Newsletter: Astral Codex Ten (https://www.astralcodexten.com/)
 Found 3 posts
@@ -8,15 +8,329 @@ Found 3 posts
   Error storing post: list index out of range
 
   Stored posts:
-    - A Fourth of July Question: Can America Recapture Its Populist Soul? (None)
-    - Compliance won't protect you from the UK's witch hunt  (None)
-    - Monopoly Round-Up: Ohio, Kentucky Go FULL COMMUNISM on Pharma Prices (None)
-    - How to communicate science (None)
-    - Resilience is Resistance | Max Wilbert (None)
-    - Can You Be Empowered on a Dying Planet? (None)
-    - BOOM: Meta, Microsoft Lose on AI Regulation Ban in the Big Beautiful Bill (None)
-    - Open Thread 389 (None)
-    - How academics should write (None)
-    - Hidden Open Thread 388.5 (None)
-    - Fourie vs StatsSA (None)
-  Created index.html in data directory
+    - Open Thread 389 (2025-07-07T07:51:03.635Z)
+    - Hidden Open Thread 388.5 (2025-07-04T17:32:44.878Z)
+
+Processing Newsletter: Johan Fourie (https://www.ourlongwalk.com/)
+Found 3 posts
+  Storing: How academics should write
+  Storing: Fourie vs StatsSA
+  Storing: How to communicate science
+
+  Stored posts:
+    - How academics should write (2025-07-07T08:01:37.596Z)
+    - Fourie vs StatsSA (2025-07-04T08:00:37.815Z)
+    - How to communicate science (2025-06-30T08:01:50.237Z)
+
+Processing Newsletter: Eric Topol (https://erictopol.substack.com/)
+Found 3 posts
+  Storing: New Anti-Aging Evidence For Estrogen
+  Storing: Adam Kucharski: The Uncertain Science of Certainty
+  Storing: The Gut-Brain Axis Takes Center Stage
+
+  Stored posts:
+    - New Anti-Aging Evidence For Estrogen (2025-07-05T16:52:02.510Z)
+    - Adam Kucharski: The Uncertain Science of Certainty (2025-06-29T15:15:52.051Z)
+    - The Gut-Brain Axis Takes Center Stage (2025-06-22T17:00:21.094Z)
+
+Processing Newsletter: Dan Williams (https://www.conspicuouscognition.com/)
+Found 3 posts
+  Storing: The Standpoint of the Oppressed Doesn't Lead to Truth
+  Storing: The Decline of Legacy Media, Rise of Vodcasters, and X's Staying Power
+  Storing: Stupidity, gullibility, and other adaptive strategies
+
+  Stored posts:
+    - The Standpoint of the Oppressed Doesn't Lead to Truth (2025-07-07T09:34:59.435Z)
+    - The Decline of Legacy Media, Rise of Vodcasters, and X's Staying Power (2025-06-25T17:18:00.281Z)
+    - Stupidity, gullibility, and other adaptive strategies (2025-06-13T12:02:37.482Z)
+
+Processing Newsletter: Jared Bernstein (https://econjared.substack.com/)
+Found 3 posts
+  Storing: There Are But Two Roads Out Of Tariff Hell
+  Storing: Data_Note: Did you know that real consumer spending this year is up only...[see below]?
+  Storing: Repairing the Damage
+
+  Stored posts:
+    - There Are But Two Roads Out Of Tariff Hell (2025-07-07T12:40:19.324Z)
+    - Data_Note: Did you know that real consumer spending this year is up only...[see below]? (2025-07-06T15:27:51.445Z)
+    - Repairing the Damage (2025-07-05T15:08:35.105Z)
+
+Processing Newsletter: Scott Cunningham (https://causalinf.substack.com/)
+Found 3 posts
+  Storing: Continuous diff in diff, regressions and the 2x2
+  Storing: On Leaving Switzerland; Getting Robbed on a Train; Getting to Nerja, Spain
+  Storing: [Rerun] Jon Roth, Econometrician, Brown University
+
+  Stored posts:
+    - Continuous diff in diff, regressions and the 2x2 (2025-07-07T11:41:17.747Z)
+    - On Leaving Switzerland; Getting Robbed on a Train; Getting to Nerja, Spain (2025-07-06T09:17:57.035Z)
+    - [Rerun] Jon Roth, Econometrician, Brown University (2025-07-01T07:17:01.625Z)
+
+Processing Newsletter: Brad DeLong (https://braddelong.substack.com/)
+Found 3 posts
+  Storing: Trumpxit & the Likely Undoing of American Exceptionalism
+  Storing: The Few Who Move the Many: Standout & Straggler Firms in Leading-Country Industrial Productivity
+  Storing: LIVE AT DEMOCRACY JOURNAL: Reviewing John Cassidy's "Capitalism & Its Critics"
+
+  Stored posts:
+    - Trumpxit & the Likely Undoing of American Exceptionalism (2025-07-05T11:05:04.620Z)
+    - The Few Who Move the Many: Standout & Straggler Firms in Leading-Country Industrial Productivity (2025-07-03T13:42:21.778Z)
+    - LIVE AT DEMOCRACY JOURNAL: Reviewing John Cassidy's "Capitalism & Its Critics" (2025-07-02T16:42:34.005Z)
+
+Processing Newsletter: Robin Hanson (https://www.overcomingbias.com/)
+Found 3 posts
+  Storing: 3 Levels of Culture Fixes
+  Storing: Reason’s Overreach
+  Storing: Why Modernist Value Changes?
+
+  Stored posts:
+    - 3 Levels of Culture Fixes (2025-07-05T19:32:07.231Z)
+    - Reason’s Overreach (2025-07-01T21:17:30.040Z)
+    - Why Modernist Value Changes? (2025-06-30T02:44:09.111Z)
+
+Processing Newsletter: Arnold Kling (https://arnoldkling.substack.com)
+Found 3 posts
+  Storing: From the comments on Friedman vs. Huemer
+  Storing: Envy and Suspicion
+  Storing: David Friedman vs. Michael Huemer
+
+  Stored posts:
+    - From the comments on Friedman vs. Huemer (2025-07-07T11:03:18.647Z)
+    - Envy and Suspicion (2025-07-06T11:02:35.062Z)
+    - David Friedman vs. Michael Huemer (2025-07-05T11:02:38.345Z)
+
+Processing Newsletter: Paul Krugman (https://paulkrugman.substack.com/)
+Found 3 posts
+  Storing: Real Men Burn Stuff
+  Storing: Inequality, Part VI: Wealth and Power
+  Storing: Health Care: Jonathan Gruber
+
+  Stored posts:
+    - Real Men Burn Stuff (2025-07-07T10:08:46.098Z)
+    - Inequality, Part VI: Wealth and Power (2025-07-06T10:30:32.402Z)
+    - Health Care: Jonathan Gruber (2025-07-05T10:30:30.315Z)
+
+Processing Newsletter: Adam Tooze (https://adamtooze.substack.com/)
+Found 3 posts
+  Storing: Top Links 792 Ripping up books. Turkey's economy stumbling. How heritage is outrunning net zero in industrial Germany and cod evolved to avoid the nets. 
+  Storing: Top Links 791 How war displaced tariffs from the news agenda. Gold in China. Roman sewerage & hapax legomenon.
+  Storing: Top Links 790 Broker-dealers under pressure. Mayotte's demographic surge & the Antonine plague. 
+
+  Stored posts:
+    - Top Links 792 Ripping up books. Turkey's economy stumbling. How heritage is outrunning net zero in industrial Germany and cod evolved to avoid the nets.  (2025-07-07T10:56:15.353Z)
+    - Top Links 791 How war displaced tariffs from the news agenda. Gold in China. Roman sewerage & hapax legomenon. (2025-07-06T10:55:14.848Z)
+    - Top Links 790 Broker-dealers under pressure. Mayotte's demographic surge & the Antonine plague.  (2025-07-05T10:59:16.978Z)
+
+Processing Newsletter: Richard Y Chappell (https://www.goodthoughts.blog/)
+Found 3 posts
+  Storing: Ethics Discussion with Daniel Muñoz
+  Storing: The Costs of Permission
+  Storing: Death by Metaphysics
+
+  Stored posts:
+    - Ethics Discussion with Daniel Muñoz (2025-07-05T21:44:56.129Z)
+    - The Costs of Permission (2025-07-05T15:20:05.789Z)
+    - Death by Metaphysics (2025-07-04T14:24:31.954Z)
+
+Processing Newsletter: Michael Huemer (https://fakenous.substack.com/)
+Found 3 posts
+  Storing: The Right Anarchy
+  Storing: The Psychopathic Perspective
+  Storing: Greatness or Virtue
+
+  Stored posts:
+    - The Right Anarchy (2025-07-05T15:01:48.775Z)
+    - The Psychopathic Perspective (2025-06-28T15:02:11.999Z)
+    - Greatness or Virtue (2025-06-21T15:00:37.883Z)
+
+Processing Newsletter: Amy Olberding (https://digressionsimpressions.substack.com)
+Found 3 posts
+  Storing: Amy's Folly: Once the Roof Goes
+  Storing: It's Not exactly a linear Digression, but it starts like a fine academic satire.
+  Storing: The Benthamite-Liberal critique of John Locke
+
+  Stored posts:
+    - Amy's Folly: Once the Roof Goes (2025-07-07T11:03:03.048Z)
+    - It's Not exactly a linear Digression, but it starts like a fine academic satire. (2025-07-04T20:23:02.849Z)
+    - The Benthamite-Liberal critique of John Locke (2025-07-03T09:44:53.957Z)
+
+Processing Newsletter: ... (https://newworkinphilosophy.substack.com/)
+Found 3 posts
+  Storing: Bram Vaassen (Umeå University), "Mental Causation for Standard Dualists"
+  Storing: Sean T. Murphy (Southern Utah University), "Why Delight in Screamed Vocals? Emotional Hardcore and the Case Against Beautifying Pain"
+  Storing: Kengo Miyazono (Hokkaido University) & Uku Tooming (University of Tartu), "Imagination as a Generative Source of Justification"
+
+  Stored posts:
+    - Bram Vaassen (Umeå University), "Mental Causation for Standard Dualists" (2025-07-07T12:07:21.440Z)
+    - Sean T. Murphy (Southern Utah University), "Why Delight in Screamed Vocals? Emotional Hardcore and the Case Against Beautifying Pain" (2025-06-30T12:22:19.420Z)
+    - Kengo Miyazono (Hokkaido University) & Uku Tooming (University of Tartu), "Imagination as a Generative Source of Justification" (2025-06-23T12:05:20.797Z)
+
+Processing Newsletter: nescio13 (https://digressionsimpressions.substack.com)
+Found 3 posts
+  Storing: Amy's Folly: Once the Roof Goes
+  Storing: It's Not exactly a linear Digression, but it starts like a fine academic satire.
+  Storing: The Benthamite-Liberal critique of John Locke
+
+  Stored posts:
+    - Amy's Folly: Once the Roof Goes (2025-07-07T11:03:03.048Z)
+    - It's Not exactly a linear Digression, but it starts like a fine academic satire. (2025-07-04T20:23:02.849Z)
+    - The Benthamite-Liberal critique of John Locke (2025-07-03T09:44:53.957Z)
+
+Processing Newsletter: Massimo Pigliucci (https://massimopigliucci.org/)
+Found 0 posts
+
+  Stored posts:
+
+Processing Newsletter: Slavoj Žižek (https://slavoj.substack.com/)
+Found 3 posts
+  Storing: TRUMP AS DADDY COOL
+  Storing: PARANOIAC POWER
+  Storing: ALTONA, LOS ANGELES: FROM THE NEARBY TO THE NEIGHBOR
+
+  Stored posts:
+    - TRUMP AS DADDY COOL (2025-07-05T14:02:32.137Z)
+    - PARANOIAC POWER (2025-06-28T14:02:36.600Z)
+    - ALTONA, LOS ANGELES: FROM THE NEARBY TO THE NEIGHBOR (2025-06-21T14:02:57.230Z)
+
+Processing Newsletter: Jonathan Haidt (https://www.afterbabel.com/)
+Found 3 posts
+  Storing: It's Never Too Late to Turn Things Around
+  Storing: The All-New Big Tech American School
+  Storing: How to Legislate in a Half-Known World
+
+  Stored posts:
+    - It's Never Too Late to Turn Things Around (2025-07-02T10:22:58.333Z)
+    - The All-New Big Tech American School (2025-06-25T13:02:54.323Z)
+    - How to Legislate in a Half-Known World (2025-06-18T15:03:21.320Z)
+
+Processing Newsletter: Jean M Twenge (https://www.generationtechblog.com/)
+Found 3 posts
+  Storing: The many consequences of allowing phones at school
+  Storing: Is social media use beneficial for marginalized groups?
+  Storing: Teens aren’t getting their driver’s licenses – and the experts are completely wrong about why
+
+  Stored posts:
+    - The many consequences of allowing phones at school (2025-06-12T12:12:34.133Z)
+    - Is social media use beneficial for marginalized groups? (2025-05-27T12:15:39.119Z)
+    - Teens aren’t getting their driver’s licenses – and the experts are completely wrong about why (2025-05-01T12:18:06.807Z)
+
+Processing Newsletter: William Hogeland (https://williamhogeland.substack.com/)
+Found 3 posts
+  Storing: In My Room with Brian Wilson and Henry James
+  Storing: BAD HISTORY: THE GEORGE WASHINGTON COLLECTION
+  Storing: Mount Vernon Jumps on the Phoniest of Militaristic Bandwagons
+
+  Stored posts:
+    - In My Room with Brian Wilson and Henry James (2025-07-06T20:30:19.316Z)
+    - BAD HISTORY: THE GEORGE WASHINGTON COLLECTION (2025-06-24T21:38:33.778Z)
+    - Mount Vernon Jumps on the Phoniest of Militaristic Bandwagons (2025-06-16T13:21:35.743Z)
+
+Processing Newsletter: Claire Berlinski (https://claireberlinski.substack.com/)
+Found 3 posts
+  Error storing post: 404 Client Error: Not Found for url: https://www.thebulwark.com/api/v1/posts/167737258
+  Error storing post: 404 Client Error: Not Found for url: https://vladislavdavidzon.substack.com/api/v1/posts/167660867
+  Storing: The Eternal Promise of Fusion
+
+  Stored posts:
+    - The Eternal Promise of Fusion (2021-05-15T20:14:08.967Z)
+
+Processing Newsletter: Heather Cox Richardson (https://heathercoxrichardson.substack.com/)
+Found 3 posts
+  Storing: July 6, 2025
+  Storing: July 6, 2025
+  Storing: July 5, 2025
+
+  Stored posts:
+    - July 6, 2025 (2025-07-07T18:01:39.287Z)
+    - July 6, 2025 (2025-07-07T07:19:19.406Z)
+    - July 5, 2025 (2025-07-06T20:22:17.053Z)
+
+Processing Newsletter: Matt Stoller (https://www.thebignewsletter.com/)
+Found 3 posts
+  Storing: Monopoly Round-Up: Ohio, Kentucky Go FULL COMMUNISM on Pharma Prices
+  Storing: A Fourth of July Question: Can America Recapture Its Populist Soul?
+  Storing: BOOM: Meta, Microsoft Lose on AI Regulation Ban in the Big Beautiful Bill
+
+  Stored posts:
+    - Monopoly Round-Up: Ohio, Kentucky Go FULL COMMUNISM on Pharma Prices (2025-07-07T03:52:16.658Z)
+    - A Fourth of July Question: Can America Recapture Its Populist Soul? (2025-07-04T20:06:12.528Z)
+    - BOOM: Meta, Microsoft Lose on AI Regulation Ban in the Big Beautiful Bill (2025-07-01T20:48:28.887Z)
+
+Processing Newsletter: Jennifer Rubin (https://contrarian.substack.com/)
+Found 3 posts
+  Storing: What the Sean Combs verdict told us about understanding abuse
+  Error storing post: list index out of range
+  Storing: Trump’s attack on Iran and restoring constitutional war powers
+  Error storing post: list index out of range
+  Storing: The Contrarian covers the Democracy Movement
+
+  Stored posts:
+    - The Contrarian covers the Democracy Movement (2025-07-07T17:54:00.000Z)
+
+Processing Newsletter: Matthew Yglesias (https://www.slowboring.com/)
+Found 3 posts
+  Storing: The scary surrender to Trump’s attacks on free speech
+  Storing: Sunday thread + Mailbag 
+  Storing: Saturday thread 
+
+  Stored posts:
+    - The scary surrender to Trump’s attacks on free speech (2025-07-07T10:02:32.925Z)
+    - Sunday thread + Mailbag  (2025-07-06T17:17:53.404Z)
+    - Saturday thread  (2025-07-05T17:50:54.002Z)
+
+Processing Newsletter: Rob Henderson (https://www.robkhenderson.com/)
+Found 3 posts
+  Storing: How To Stay Poor and Join the Underclass
+  Storing: When Vanity Meets Addiction
+  Storing: Social Control, Cigarette Packs, Momentary Pleasure
+
+  Stored posts:
+    - How To Stay Poor and Join the Underclass (2025-07-06T16:31:42.923Z)
+    - When Vanity Meets Addiction (2025-07-03T15:24:15.739Z)
+    - Social Control, Cigarette Packs, Momentary Pleasure (2025-07-01T16:10:53.889Z)
+
+Processing Newsletter: Rachel Donald (https://www.planetcritical.com/)
+Found 3 posts
+  Storing: Compliance won't protect you from the UK's witch hunt 
+  Storing: Resilience is Resistance | Max Wilbert
+  Storing: Can You Be Empowered on a Dying Planet?
+
+  Stored posts:
+    - Compliance won't protect you from the UK's witch hunt  (2025-07-07T07:31:07.210Z)
+    - Resilience is Resistance | Max Wilbert (2025-07-03T05:30:31.298Z)
+    - Can You Be Empowered on a Dying Planet? (2025-06-30T08:13:16.668Z)
+
+Processing Newsletter: Joyce Vance (https://joycevance.substack.com/)
+Found 3 posts
+  Storing: The Week Ahead
+  Storing: Coffee ☕️ with Katie and Joyce
+  Storing: Coffee with Katie & Joyce
+
+  Stored posts:
+    - The Week Ahead (2025-07-07T01:58:00.526Z)
+    - Coffee ☕️ with Katie and Joyce (2025-07-06T15:16:04.418Z)
+    - Coffee with Katie & Joyce (2025-07-06T00:51:00.236Z)
+
+Processing Newsletter: Steve Vladeck (https://www.stevevladeck.com)
+Found 3 posts
+  Storing: 165. TikTok and the Dispensing Power
+  Storing: 164. Justice Kagan's D.V.D. Concurrence
+  Storing: Bonus 163: How (Not) To Count Supreme Court Rulings
+
+  Stored posts:
+    - 165. TikTok and the Dispensing Power (2025-07-07T11:34:17.323Z)
+    - 164. Justice Kagan's D.V.D. Concurrence (2025-07-04T17:49:12.721Z)
+    - Bonus 163: How (Not) To Count Supreme Court Rulings (2025-07-03T11:29:18.780Z)
+
+Processing Newsletter: Henrik Karlsson (https://www.henrikkarlsson.xyz)
+Found 3 posts
+  Storing: On agency
+  Storing: The hare
+  Storing: Caring for others
+
+  Stored posts:
+    - On agency (2025-07-07T12:00:31.940Z)
+    - The hare (2025-06-25T10:38:35.544Z)
+    - Caring for others (2025-06-09T12:31:21.615Z)
+Created index.html at /Users/akurz/alexhkurz-at-git/substack-pAIa/data/index.html
+Created index.json at /Users/akurz/alexhkurz-at-git/substack-pAIa/data/index.json

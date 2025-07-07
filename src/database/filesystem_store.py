@@ -43,7 +43,18 @@ class NewsletterStore:
 
     def _get_safe_name(self, url: str) -> str:
         """Convert URL to safe directory name."""
-        return url.split("//")[1].split(".")[0]
+        # Handle URLs like https://www.astralcodexten.com -> astralcodexten
+        # and https://astralcodexten.substack.com -> astralcodexten
+        domain = url.split("//")[1]
+        if domain.startswith("www."):
+            domain = domain[4:]  # Remove www.
+        
+        # Extract the main part before .substack.com or other TLD
+        if ".substack.com" in domain:
+            return domain.split(".substack.com")[0]
+        else:
+            # For custom domains, use the first part
+            return domain.split(".")[0]
 
     def _get_css_path(self, depth: int) -> str:
         """Get the relative path to CSS based on file depth in directory structure."""
@@ -78,7 +89,7 @@ class NewsletterStore:
             'newsletter_url': newsletter_url,
             'title': metadata['title'],
             'author': metadata['publishedBylines'][0]['name'],
-            'published_at': metadata.get('publishedAt'),
+            'published_at': metadata.get('post_date'),  # Fix: use 'post_date' instead of 'publishedAt'
             'word_count': metadata.get('wordcount'),
             'content_path': str(content_path),
             'saved_at': datetime.now().isoformat()
@@ -133,37 +144,4 @@ class NewsletterStore:
         )
         return posts
 
-    def create_index_html(self) -> None:
-        """Create an index.html file listing all stored posts."""
-        content = "<h1>Stored Newsletter Posts</h1><ul>"
-        
-        # Group posts by newsletter
-        newsletters = self.list_newsletters()
-        for newsletter in sorted(newsletters):
-            content += f"\n<li><strong>{newsletter}</strong></li>\n"
-            posts = self.list_posts(f"https://{newsletter}.substack.com")
-            
-            for post in posts:
-                title = post['title']
-                date = post.get('published_at')
-                if date is None:
-                    date = 'No date'
-                # Convert content path to relative path
-                content_path = Path(post['content_path']).relative_to(self.base_dir)
-                content += f"""
-                <li>
-                    <a href="{content_path}">{title}</a>
-                    <span class="date">{date}</span>
-                </li>
-                """
-            
-            content += "</ul>\n"
-        
-        html = self.HTML_TEMPLATE.format(
-            title="Stored Newsletter Posts",
-            css_path=self._get_css_path(1),  # index.html is one level deep
-            content=content
-        )
-        
-        index_path = self.base_dir / "index.html"
-        index_path.write_text(html, encoding='utf-8') 
+ 

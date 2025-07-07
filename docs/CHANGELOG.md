@@ -1,5 +1,34 @@
 # Changelog
 
+## [2025-07-07] Newsletter Download and Index System Overhaul
+
+### Added
+- **Newsletter Download System**: Script to download posts from Substack newsletters using `substack_api`
+- **Markdown Configuration**: `config/newsletters.md` for managing newsletter URLs and metadata
+- **Index Generator**: Separate `src/web/index_generator.py` for creating HTML and JSON indexes
+- **Date Formatting**: Human-readable dates (e.g., "Jul 7, 2025") instead of ISO strings
+- **Chronological Index**: All posts displayed in single timeline, sorted by date (latest first)
+- **Dual Links**: Each post shows both local copy (📄) and original Substack link (🔗)
+
+### Changed
+- **Architecture Refactor**: Separated data storage (`filesystem_store.py`) from presentation (`index_generator.py`)
+- **URL Handling**: Fixed `_get_safe_name()` to properly handle custom domains (e.g., `www.astralcodexten.com` → `astralcodexten`)
+- **Metadata Storage**: Fixed date extraction using `post_date` field instead of `publishedAt`
+- **Index Layout**: Changed from newsletter-grouped view to chronological timeline
+- **Post Display**: One line per post showing: Newsletter Name | Title | Links | Date
+
+### Fixed
+- **Date Display**: Posts now show proper publication dates instead of "No date"
+- **Newsletter Names**: Correct display names from markdown config instead of directory names
+- **URL Mapping**: Proper newsletter URLs in index instead of generic substack.com links
+- **Verbose Logging**: Removed excessive metadata debugging output
+
+### Technical Improvements
+- **Single Responsibility**: Clear separation between data storage and presentation logic
+- **Generic Design**: Index generator reads from markdown config, no hardcoded newsletter names
+- **Future-Ready**: Easy to switch from markdown to YAML configuration later
+- **Error Handling**: Better error handling for missing metadata and failed downloads
+
 ## [2025-05-25] CSS and Display Improvements
 
 ### Added

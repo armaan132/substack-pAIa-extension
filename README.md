@@ -19,15 +19,15 @@ In the future, pAIa will expand into a data science project on federated learnin
 ```
 project_root/
 ├── config/
+│   └── newsletters.md                  # Newsletter URLs and metadata (primary config)
 │   └── newsletters.yaml                # Newsletter configuration (experimental)
-│   └── newsletters.md                  # Newsletter URLs (curated)
-│   └── newsletters.txt                 # Newsletter Names
 ├── data/                               
 │   ├── content/                        # HTML content of posts
 │   ├── metadata/                       # JSON metadata of posts
-│   └── index.html                      # Auto-generated index
-│   └── newsletters.url.generated.md    # URLs generated from newsletter names
+│   ├── index.html                      # Auto-generated HTML index
+│   └── index.json                      # Auto-generated JSON index
 ├── docs/                       
+│   ├── CHANGELOG.md                # Project changelog
 │   ├── user-stories.md             # User stories
 │   ├── product-backlog.md          # Todo list
 │   └── learning-backlog.md         # Learning outcomes
@@ -35,14 +35,16 @@ project_root/
 │   ├── serve.py                    # Local server for reading newsletters
 │   ├── test_substack_api.py        # Download and store newsletters
 │   └── sentiment_analysis.py       # Analyze sentiment of newsletter citations
-├── nlp-scripts/                    
-│   ├── newsletters.nlp.md          # NLP script generating newsletter.yaml from newsletters.md (experimental)
 ├── src/                
-│   └── database/       
-│       └── filesystem_store.py     # Core storage functionality
-│   └── web/                        
-|       └── static/                 
-|           └── css/                # CSS files    
+│   ├── database/       
+│   │   └── filesystem_store.py     # Data storage and retrieval
+│   ├── web/                        
+│   │   ├── index_generator.py      # HTML/JSON index generation
+│   │   └── static/                 
+│   │       └── css/                # CSS styling files
+│   ├── api/                        # API integration (future)
+│   ├── scraper/                    # Web scraping (future)
+│   └── search/                     # Search functionality (future)
 ```
 
 ## Scripts
@@ -52,7 +54,8 @@ project_root/
 - Downloads HTML content and metadata
 - Stores files in organized directory structure
 - Usage: `python scripts/test_substack_api.py`
-- Downloads posts from newsletters configured in `config/newsletters.yaml`
+- Downloads posts from newsletters configured in `config/newsletters.md`
+- Automatically generates HTML and JSON indexes
 - Supports per-newsletter limits and metadata
 
 **`serve.py`** - Local web server for reading newsletters ([source](scripts/serve.py))
@@ -67,17 +70,20 @@ project_root/
 - Outputs YAML format with sentiment scores and confidence levels
 - Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
 
-### URL Discovery Scripts (Experimental)
+### Architecture
 
-**`find_substack_urls_improved.py`** - Pattern-based URL generation ([source](scripts/find_substack_urls_improved.py))
-- Generates likely Substack URLs from author names
-- Uses pattern matching and special case handling
-- Fast and reliable, but requires manual verification
-- Usage: `python scripts/find_substack_urls_improved.py`
-- Input: `config/newsletters.txt` (list of author names)
-- Output: `data/newsletters.url.generated.md`
+**Data Storage** (`src/database/filesystem_store.py`)
+- Handles saving and retrieving newsletter posts
+- Stores HTML content and JSON metadata separately
+- Creates organized directory structure by newsletter
 
-**Note:** Web scraping approaches were attempted but blocked by search engines. See [URL Discovery Technical Notes](docs/url-discovery-technical-notes.md) for details and next steps.
+**Index Generation** (`src/web/index_generator.py`)
+- Generates HTML and JSON indexes of stored posts
+- Creates chronological timeline view (latest posts first)
+- Reads newsletter configuration from markdown
+- Formats dates in human-readable format
+
+**Note:** URL discovery scripts were experimental and have been removed. The system now uses manual configuration via `config/newsletters.md`.
 
 ## Features
 
@@ -106,7 +112,7 @@ project_root/
     ```
 
 2. Configure newsletters to download (optional):
-    Edit `config/newsletters.yaml` to add your preferred newsletters
+    Edit `config/newsletters.md` to add your preferred newsletters
 
 3. Download some newsletters:
     ```bash

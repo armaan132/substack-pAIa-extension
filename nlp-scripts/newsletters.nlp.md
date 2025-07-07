@@ -1,15 +1,16 @@
 # Newsletter Configuration NLP Instructions
 
 ## Overview
-This document contains rules and instructions for an AI agent to reconstruct `newsletters.yaml` from `newsletters.txt`. The agent should use these patterns to identify authors, assign appropriate metadata, and generate a complete YAML configuration.
+This document contains rules and instructions for an AI agent to construct `data/newsletters.yaml` from `config/newsletters.md`. The AI-agent should use these patterns to identify authors, assign appropriate metadata, and generate a complete YAML configuration.
 
 ## General Instructions
 
 ### Input Format
-The input file `newsletters.txt` contains one name per line, representing either:
+The input file `config/newsletters.md` contains one newsletter per line with some but not necessarily all of the following information:
 - Author names (e.g., "Jared Bernstein")
 - Publication names (e.g., "Astral Codex Ten")
-- Combined formats (e.g., "Scott Alexander (Astral Codex Ten)")
+- URL
+- Topics and tags
 
 ### Output Format
 Generate a YAML file with the following structure:

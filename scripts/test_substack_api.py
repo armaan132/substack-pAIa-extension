@@ -11,6 +11,7 @@ sys.path.append(str(project_root))
 
 from src.database.filesystem_store import NewsletterStore
 from substack_api import Newsletter
+from src.web.index_generator import IndexGenerator
 
 def load_newsletter_md(md_path: str = "config/newsletters.md"):
     """Parse newsletters.md to extract newsletter names and URLs."""
@@ -63,13 +64,6 @@ def store_newsletter_posts(newsletter_config: dict):
         except Exception as e:
             print(f"  Error listing posts: {e}")
             
-        # Create index.html after storing posts
-        try:
-            store.create_index_html()
-            print("  Created index.html in data directory")
-        except Exception as e:
-            print(f"  Error creating index: {e}")
-            
     except Exception as e:
         print(f"Error processing {url}: {e}")
 
@@ -82,6 +76,14 @@ def main():
     print(f"Found {len(newsletters)} newsletter(s) to process")
     for newsletter_config in newsletters:
         store_newsletter_posts(newsletter_config)
+    
+    # Create index files after processing all newsletters
+    try:
+        index_gen = IndexGenerator()
+        index_gen.create_index_html()
+        index_gen.create_json_index()
+    except Exception as e:
+        print(f"Error creating index files: {e}")
 
 if __name__ == "__main__":
     main()
