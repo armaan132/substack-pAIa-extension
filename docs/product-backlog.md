@@ -1,7 +1,7 @@
 # Product Backlog
 
 
-## Basic Featurs 
+## Basic Features 
 - [x] Implement newsletter data collection using Substack API (using a manually created list of substacks)
   - [x] Fetch recent posts 
   - [x] Extract metadata (title, author, word count) 
@@ -9,6 +9,40 @@
 - [x] Simple interface for reading stored newsletters
   - [x] `index.html` linking downloaded newsletters
   - [x] `serve.py` serving downloaded files on local host
+- [ ] Automated Substack URL Discovery (In Progress)
+  - [x] **Pattern-based URL generation** (Completed)
+    - [x] `scripts/find_substack_urls.py` - Basic pattern matching
+  - [x] **Web scraping approach** (Attempted - Blocked by search engines)
+    - [x] `scripts/find_substack_urls_scraper.py` - DuckDuckGo search with requests
+    - [x] `scripts/find_substack_urls_web_automation.py` - Selenium browser automation (deleted due to issues)
+    - [x] **Issues encountered:** 403 Forbidden errors, connection timeouts, ChromeDriver compatibility
+    - [x] **Lessons learned:** Search engines actively block automated requests
+  - [ ] **Robust URL discovery solution** (Student Task)
+    - [ ] **Option A: Enhanced pattern-based system**
+      - [ ] Build comprehensive database of known Substack URL patterns
+      - [ ] Implement machine learning to predict URL patterns from author names
+      - [ ] Add URL validation and verification system
+      - [ ] Create feedback loop for improving pattern accuracy
+    - [ ] **Option B: Alternative web scraping approaches**
+      - [ ] Research and implement different search engines (Google, Bing, etc.)
+      - [ ] Use rotating proxies and user agents to avoid detection
+      - [ ] Implement CAPTCHA solving or manual intervention for blocked requests
+      - [ ] Consider paid search APIs (SerpAPI, ScrapingBee, etc.)
+    - [ ] **Option C: Hybrid approach**
+      - [ ] Use pattern-based generation as primary method
+      - [ ] Implement selective web search for unknown authors
+      - [ ] Add manual verification interface for generated URLs
+      - [ ] Build confidence scoring system for URL accuracy
+  - [ ] **Configuration management** (Completed)
+    - [x] `config/newsletters.yaml` - YAML configuration for newsletter metadata
+    - [x] `config/newsletters.txt` - Simple text list for URL generation
+    - [x] `data/newsletters.url.generated.md` - Output file for generated URLs
+    - [x] Support for author metadata (name, role, credibility, topics, etc.)
+  - [ ] **Documentation and setup** (Student Task)
+    - [ ] Update README with clear setup instructions for URL discovery scripts
+    - [ ] Document ChromeDriver installation and troubleshooting
+    - [ ] Create troubleshooting guide for common Selenium/ChromeDriver issues
+    - [ ] Add requirements.txt entry for selenium dependency
 - [ ] Improve newsletter content display
   - [ ] Extract and store Substack's CSS
     - [ ] Use browser dev tools to save Substack's CSS

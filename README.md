@@ -19,11 +19,14 @@ In the future, pAIa will expand into a data science project on federated learnin
 ```
 project_root/
 ├── config/
-│   └── newsletters.yaml            # Newsletter configuration
-├── data/                           # Downloaded newsletters
-│   ├── content/                    # HTML content of posts
-│   ├── metadata/                   # JSON metadata of posts
-│   └── index.html                  # Auto-generated index
+│   └── newsletters.yaml                # Newsletter configuration (experimental)
+│   └── newsletters.md                  # Newsletter URLs (curated)
+│   └── newsletters.txt                 # Newsletter Names
+├── data/                               
+│   ├── content/                        # HTML content of posts
+│   ├── metadata/                       # JSON metadata of posts
+│   └── index.html                      # Auto-generated index
+│   └── newsletters.url.generated.md    # URLs generated from newsletter names
 ├── docs/                       
 │   ├── user-stories.md             # User stories
 │   ├── product-backlog.md          # Todo list
@@ -32,6 +35,8 @@ project_root/
 │   ├── serve.py                    # Local server for reading newsletters
 │   ├── test_substack_api.py        # Download and store newsletters
 │   └── sentiment_analysis.py       # Analyze sentiment of newsletter citations
+├── nlp-scripts/                    
+│   ├── newsletters.nlp.md          # NLP script generating newsletter.yaml from newsletters.md (experimental)
 ├── src/                
 │   └── database/       
 │       └── filesystem_store.py     # Core storage functionality
@@ -61,6 +66,18 @@ project_root/
 - Extracts context around references to other Substack posts
 - Outputs YAML format with sentiment scores and confidence levels
 - Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
+
+### URL Discovery Scripts (Experimental)
+
+**`find_substack_urls_improved.py`** - Pattern-based URL generation ([source](scripts/find_substack_urls_improved.py))
+- Generates likely Substack URLs from author names
+- Uses pattern matching and special case handling
+- Fast and reliable, but requires manual verification
+- Usage: `python scripts/find_substack_urls_improved.py`
+- Input: `config/newsletters.txt` (list of author names)
+- Output: `data/newsletters.url.generated.md`
+
+**Note:** Web scraping approaches were attempted but blocked by search engines. See [URL Discovery Technical Notes](docs/url-discovery-technical-notes.md) for details and next steps.
 
 ## Features
 

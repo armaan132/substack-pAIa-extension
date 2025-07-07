@@ -58,6 +58,12 @@ class NewsletterStore:
         metadata = post.get_metadata()
         content = post.get_content()
         
+        # Debug: Print all available metadata fields
+        print(f"Available metadata fields for {post.url}:")
+        for key, value in metadata.items():
+            print(f"  {key}: {value}")
+        print()
+        
         # Save HTML content using our template
         content_path = self.content_dir / newsletter_name / f"{post_id}.html"
         content_path.parent.mkdir(exist_ok=True)
@@ -143,7 +149,9 @@ class NewsletterStore:
             
             for post in posts:
                 title = post['title']
-                date = post.get('published_at', 'No date')
+                date = post.get('published_at')
+                if date is None:
+                    date = 'No date'
                 # Convert content path to relative path
                 content_path = Path(post['content_path']).relative_to(self.base_dir)
                 content += f"""
