@@ -51,8 +51,11 @@ def store_newsletter_posts(newsletter_config: dict):
         for post in recent_posts:
             try:
                 metadata = post.get_metadata()
-                print(f"  Storing: {metadata['title']}")
-                store.save_post(url, post)
+                was_saved = store.save_post(url, post)
+                if was_saved:
+                    print(f"  Storing: {metadata['title']}")
+                else:
+                    print(f"  Skipping: {metadata['title']} (already exists)")
             except Exception as e:
                 print(f"  Error storing post: {e}")
             

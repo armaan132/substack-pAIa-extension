@@ -60,10 +60,15 @@ class NewsletterStore:
         """Get the relative path to CSS based on file depth in directory structure."""
         return '../' * depth + CSS_PATH
 
-    def save_post(self, newsletter_url: str, post) -> None:
-        """Save a post's content and metadata."""
+    def save_post(self, newsletter_url: str, post) -> bool:
+        """Save a post's content and metadata. Returns True if saved, False if already exists."""
         newsletter_name = self._get_safe_name(newsletter_url)
         post_id = post.url.split('/')[-1]
+        
+        # Check if post already exists
+        metadata_path = self.metadata_dir / newsletter_name / f"{post_id}.json"
+        if metadata_path.exists():
+            return False  # Post already exists, skip it
         
         # Get metadata and content
         metadata = post.get_metadata()
@@ -95,9 +100,9 @@ class NewsletterStore:
             'saved_at': datetime.now().isoformat()
         }
         
-        metadata_path = self.metadata_dir / newsletter_name / f"{post_id}.json"
         metadata_path.parent.mkdir(exist_ok=True)
         metadata_path.write_text(json.dumps(metadata_obj, indent=2), encoding='utf-8')
+        return True  # Post was saved successfully
 
     def get_post(self, newsletter_url: str, post_id: str) -> Optional[Dict]:
         """Get a specific post by newsletter URL and post ID."""

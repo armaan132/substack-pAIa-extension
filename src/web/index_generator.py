@@ -167,7 +167,7 @@ class IndexGenerator:
             content += f"""
             <div class="post-line">
                 <span class="newsletter-name">{newsletter_name}</span>
-                <a href="{content_path}" class="local">📄 {title}</a>
+                <a href="{content_path}" class="local">{title}</a>
                 <a href="{post['url']}" class="original" target="_blank">🔗 Original</a>
                 <span class="date">{display_date}</span>
             </div>
