@@ -3,12 +3,15 @@
 ## [2025-07-07] Newsletter Download and Index System Overhaul
 
 ### Added
+- **NLP Configuration Generator**: AI-powered YAML generation from markdown using `nlp-scripts/newsletters.nlp.md`
 - **Newsletter Download System**: Script to download posts from Substack newsletters using `substack_api`
 - **Markdown Configuration**: `config/newsletters.md` for managing newsletter URLs and metadata
 - **Index Generator**: Separate `src/web/index_generator.py` for creating HTML and JSON indexes
 - **Date Formatting**: Human-readable dates (e.g., "Jul 7, 2025") instead of ISO strings
 - **Chronological Index**: All posts displayed in single timeline, sorted by date (latest first)
-- **Dual Links**: Each post shows both local copy (📄) and original Substack link (🔗)
+- **Dual Links**: Each post shows both local copy and original Substack link (🔗)
+- **Duplicate Prevention**: Skip existing posts to avoid re-downloading
+- **Rich Metadata**: Author names, Wikipedia links, professional roles, topics, and tags
 
 ### Changed
 - **Architecture Refactor**: Separated data storage (`filesystem_store.py`) from presentation (`index_generator.py`)
@@ -28,6 +31,8 @@
 - **Generic Design**: Index generator reads from markdown config, no hardcoded newsletter names
 - **Future-Ready**: Easy to switch from markdown to YAML configuration later
 - **Error Handling**: Better error handling for missing metadata and failed downloads
+- **AI Integration**: NLP instructions for automated YAML generation from markdown
+- **Efficient Downloads**: Skip existing posts to reduce bandwidth and processing time
 
 ## [2025-05-25] CSS and Display Improvements
 

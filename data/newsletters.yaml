@@ -1,0 +1,375 @@
+# Configuration file for newsletters to download
+# All fields except 'url' are optional and have sensible defaults
+
+# Global settings (applied to all newsletters unless overridden)
+settings:
+  default_limit: 3
+  download_metadata: true
+  create_index: true
+  retry_failed: true
+
+# Newsletter configurations
+newsletters:
+  # Science
+  - name: "Astral Codex Ten"
+    url: "https://www.astralcodexten.com/"
+    author: "Scott Alexander"
+    wikipedia: "https://en.wikipedia.org/wiki/Slate_Star_Codex"
+    description: "Science, medicine, philosophy, and politics with a focus on Bayesian reasoning"
+    content_type: "academic"
+    role: "independent-researcher"
+    topics: ["science", "medicine", "philosophy", "politics"]
+    tags: ["bayesianism", "longtermism", "meta-politics", "political-epistemology", "policy-analysis"]
+    limit: 3
+    enabled: true
+
+  - name: "Our Long Walk"
+    url: "https://www.ourlongwalk.com/"
+    author: "Johan Fourie"
+    description: "Academic writing and research insights"
+    content_type: "academic"
+    role: "academic-economist"
+    topics: ["economics", "academia"]
+    tags: ["academic-writing", "research"]
+    limit: 3
+    enabled: true
+
+  - name: "Eric Topol's Substack"
+    url: "https://erictopol.substack.com/"
+    author: "Eric Topol"
+    wikipedia: "https://en.wikipedia.org/wiki/Eric_Topol"
+    description: "Medicine, healthcare, and digital health innovation"
+    content_type: "academic"
+    role: "academic-physician"
+    topics: ["medicine", "health"]
+    tags: ["medicine", "health", "digital-health", "innovation"]
+    limit: 3
+    enabled: true
+
+  - name: "Conspicuous Cognition"
+    url: "https://www.conspicuouscognition.com/"
+    author: "Dan Williams"
+    description: "Anthropology and evolutionary psychology research"
+    content_type: "academic"
+    role: "academic-anthropologist"
+    topics: ["anthropology", "psychology"]
+    tags: ["anthropology", "evolutionary-psychology"]
+    limit: 3
+    enabled: true
+
+  # Economics
+  - name: "EconJared"
+    url: "https://econjared.substack.com/"
+    author: "Jared Bernstein"
+    wikipedia: "https://en.wikipedia.org/wiki/Jared_Bernstein"
+    description: "Economics and policy analysis"
+    content_type: "commentary"
+    role: "academic-economist"
+    topics: ["economics"]
+    tags: ["economics"]
+    limit: 3
+    enabled: true
+
+  - name: "Causal Inference"
+    url: "https://causalinf.substack.com/"
+    author: "Scott Cunningham"
+    description: "Economics and causal inference research"
+    content_type: "academic"
+    role: "academic-economist"
+    topics: ["economics", "statistics"]
+    tags: ["economics", "causal-inference", "statistics"]
+    limit: 3
+    enabled: true
+
+  - name: "Grasping Reality"
+    url: "https://braddelong.substack.com/"
+    author: "Brad DeLong"
+    wikipedia: "https://en.wikipedia.org/wiki/J._Bradford_DeLong"
+    description: "Economics, economic history, and policy"
+    content_type: "commentary"
+    role: "academic-economist"
+    topics: ["economics", "history"]
+    tags: ["economics", "economic-history", "policy"]
+    limit: 3
+    enabled: true
+
+  - name: "Overcoming Bias"
+    url: "https://www.overcomingbias.com/"
+    author: "Robin Hanson"
+    wikipedia: "https://en.wikipedia.org/wiki/Robin_Hanson"
+    description: "Economics, futurism, and prediction markets"
+    content_type: "academic"
+    role: "academic-economist"
+    topics: ["economics", "futurism"]
+    tags: ["economics", "futurism", "prediction-markets"]
+    limit: 3
+    enabled: true
+
+  - name: "Arnold Kling's Substack"
+    url: "https://arnoldkling.substack.com/"
+    author: "Arnold Kling"
+    description: "Economics and political economy"
+    content_type: "commentary"
+    role: "academic-economist"
+    topics: ["economics"]
+    tags: ["economics"]
+    limit: 3
+    enabled: true
+
+  - name: "The Conscience of a Liberal"
+    url: "https://paulkrugman.substack.com/"
+    author: "Paul Krugman"
+    wikipedia: "https://en.wikipedia.org/wiki/Paul_Krugman"
+    description: "Economics, politics, and policy analysis"
+    content_type: "commentary"
+    role: "academic-economist"
+    topics: ["economics", "politics"]
+    tags: ["economics"]
+    limit: 3
+    enabled: true
+
+  - name: "Adam Tooze's Substack"
+    url: "https://adamtooze.substack.com/"
+    author: "Adam Tooze"
+    wikipedia: "https://en.wikipedia.org/wiki/Adam_Tooze"
+    description: "Economic history and contemporary analysis"
+    content_type: "academic"
+    role: "academic-historian"
+    topics: ["economics", "history"]
+    tags: ["economics"]
+    limit: 3
+    enabled: true
+
+  # Philosophy
+  - name: "Good Thoughts"
+    url: "https://www.goodthoughts.blog/"
+    author: "Richard Y Chappell"
+    description: "Philosophy, effective altruism, and moral reasoning"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy", "ethics"]
+    tags: ["philosophy", "effective-altruism", "ethics"]
+    limit: 3
+    enabled: true
+
+  - name: "Fake Nous"
+    url: "https://fakenous.substack.com/"
+    author: "Michael Huemer"
+    wikipedia: "https://en.wikipedia.org/wiki/Michael_Huemer"
+    description: "Philosophy, political theory, and libertarian thought"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy", "politics"]
+    tags: ["philosophy", "political-theory", "libertarianism"]
+    limit: 3
+    enabled: true
+
+  - name: "Digressions & Impressions"
+    url: "https://digressionsimpressions.substack.com/"
+    author: "Amy Olberding"
+    description: "Philosophy and academic commentary"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy"]
+    tags: ["philosophy"]
+    limit: 3
+    enabled: true
+
+  - name: "New Work in Philosophy"
+    url: "https://newworkinphilosophy.substack.com/"
+    description: "Latest research and developments in philosophy"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy"]
+    tags: ["philosophy"]
+    limit: 3
+    enabled: true
+
+  - name: "Massimo Pigliucci's Blog"
+    url: "https://massimopigliucci.org/"
+    author: "Massimo Pigliucci"
+    wikipedia: "https://en.wikipedia.org/wiki/Massimo_Pigliucci"
+    description: "Philosophy of science and critical thinking"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy", "science"]
+    tags: ["philosophy", "science", "critical-thinking"]
+    limit: 3
+    enabled: true
+
+  - name: "Slavoj Žižek's Substack"
+    url: "https://slavoj.substack.com/"
+    author: "Slavoj Žižek"
+    wikipedia: "https://en.wikipedia.org/wiki/Slavoj_%C5%BDi%C5%BEek"
+    description: "Philosophy, psychoanalysis, and critical theory"
+    content_type: "academic"
+    role: "academic-philosopher"
+    topics: ["philosophy", "politics"]
+    tags: ["philosophy", "psychoanalysis", "critical-theory"]
+    limit: 3
+    enabled: true
+
+  # Political Science
+  - name: "Richard Hanania's Substack"
+    url: "https://richardhanania.substack.com/"
+    author: "Richard Hanania"
+    description: "Political commentary and analysis"
+    content_type: "commentary"
+    role: "political-commentator"
+    topics: ["politics", "current-affairs"]
+    tags: ["politics", "commentary"]
+    limit: 3
+    enabled: true
+
+  # Psychology
+  - name: "After Babel"
+    url: "https://www.afterbabel.com/"
+    author: "Jonathan Haidt"
+    wikipedia: "https://en.wikipedia.org/wiki/Jonathan_Haidt"
+    description: "Psychology, politics, and social science"
+    content_type: "academic"
+    role: "academic-psychologist"
+    topics: ["psychology", "politics"]
+    tags: ["psychology", "teenager", "screen-addiction"]
+    limit: 3
+    enabled: true
+
+  - name: "Generation Tech"
+    url: "https://www.generationtechblog.com/"
+    author: "Jean M Twenge"
+    wikipedia: "https://en.wikipedia.org/wiki/Jean_Twenge"
+    description: "Psychology research on generational differences"
+    content_type: "academic"
+    role: "academic-psychologist"
+    topics: ["psychology"]
+    tags: ["psychology", "generations"]
+    limit: 3
+    enabled: true
+
+  # History
+  - name: "William Hogeland's Substack"
+    url: "https://williamhogeland.substack.com/"
+    author: "William Hogeland"
+    description: "American history and historical analysis"
+    content_type: "academic"
+    role: "academic-historian"
+    topics: ["history"]
+    tags: ["history"]
+    limit: 3
+    enabled: true
+
+  # Current Affairs
+  - name: "Claire Berlinski's Substack"
+    url: "https://claireberlinski.substack.com/"
+    author: "Claire Berlinski"
+    description: "International affairs and political commentary"
+    content_type: "commentary"
+    role: "political-commentator"
+    topics: ["politics", "international-affairs"]
+    tags: ["foreign-affairs"]
+    limit: 3
+    enabled: true
+
+  - name: "Letters from an American"
+    url: "https://heathercoxrichardson.substack.com/"
+    author: "Heather Cox Richardson"
+    description: "American history and current political analysis"
+    content_type: "commentary"
+    role: "academic-historian"
+    topics: ["history", "politics"]
+    tags: ["US-current-affairs"]
+    limit: 3
+    enabled: true
+
+  - name: "The Big Newsletter"
+    url: "https://www.thebignewsletter.com/"
+    author: "Matt Stoller"
+    description: "Anti-trust and economic policy analysis"
+    content_type: "commentary"
+    role: "political-commentator"
+    topics: ["economics", "politics"]
+    tags: ["anti-trust"]
+    limit: 3
+    enabled: true
+
+  - name: "The Contrarian"
+    url: "https://contrarian.substack.com/"
+    author: "Jennifer Rubin"
+    description: "Political commentary and current affairs"
+    content_type: "commentary"
+    role: "political-commentator"
+    topics: ["politics", "current-affairs"]
+    tags: ["current-affairs"]
+    limit: 3
+    enabled: true
+
+  - name: "Slow Boring"
+    url: "https://www.slowboring.com/"
+    author: "Matthew Yglesias"
+    wikipedia: "https://en.wikipedia.org/wiki/Matt_Yglesias"
+    description: "Politics, policy, and economic commentary"
+    content_type: "commentary"
+    role: "political-commentator"
+    topics: ["politics", "economics"]
+    tags: ["current-affairs"]
+    limit: 3
+    enabled: true
+
+  # Political Commentator
+  - name: "Rob Henderson's Substack"
+    url: "https://www.robkhenderson.com/"
+    author: "Rob Henderson"
+    description: "Psychology, social science, and commentary"
+    content_type: "commentary"
+    role: "independent-researcher"
+    topics: ["psychology", "social-science"]
+    tags: ["commentary"]
+    limit: 3
+    enabled: true
+
+  # Science Communication
+  - name: "Planet Critical"
+    url: "https://www.planetcritical.com/"
+    author: "Rachel Donald"
+    description: "Environment and climate change communication"
+    content_type: "commentary"
+    role: "science-communicator"
+    topics: ["environment", "climate"]
+    tags: ["environment", "climate-change"]
+    limit: 3
+    enabled: true
+
+  # Law
+  - name: "Civil Discourse"
+    url: "https://joycevance.substack.com/"
+    author: "Joyce Vance"
+    description: "Legal analysis and political commentary"
+    content_type: "commentary"
+    role: "legal-commentator"
+    topics: ["law", "politics"]
+    tags: ["law"]
+    limit: 3
+    enabled: true
+
+  - name: "Steve Vladeck's Blog"
+    url: "https://www.stevevladeck.com/"
+    author: "Steve Vladeck"
+    description: "Legal analysis and constitutional law"
+    content_type: "academic"
+    role: "legal-scholar"
+    topics: ["law"]
+    tags: ["law"]
+    limit: 3
+    enabled: true
+
+  # Literature
+  - name: "Henrik Karlsson's Blog"
+    url: "https://www.henrikkarlsson.xyz/"
+    author: "Henrik Karlsson"
+    description: "Literature, philosophy, and cultural commentary"
+    content_type: "commentary"
+    role: "independent-writer"
+    topics: ["literature", "philosophy"]
+    tags: ["literature", "philosophy"]
+    limit: 3
+    enabled: true 

@@ -20,17 +20,19 @@ In the future, pAIa will expand into a data science project on federated learnin
 project_root/
 ├── config/
 │   └── newsletters.md                  # Newsletter URLs and metadata (primary config)
-│   └── newsletters.yaml                # Newsletter configuration (experimental)
 ├── data/                               
 │   ├── content/                        # HTML content of posts
 │   ├── metadata/                       # JSON metadata of posts
 │   ├── index.html                      # Auto-generated HTML index
 │   └── index.json                      # Auto-generated JSON index
+│   └── newsletters.yaml                # Newsletter configuration (generated via NLP)
 ├── docs/                       
 │   ├── CHANGELOG.md                # Project changelog
 │   ├── user-stories.md             # User stories
 │   ├── product-backlog.md          # Todo list
 │   └── learning-backlog.md         # Learning outcomes
+├── nlp-scripts/
+│   └── newsletters.nlp.md          # Generate `newsletters.yaml` from `newsletters.md`
 ├── scripts/                    
 │   ├── serve.py                    # Local server for reading newsletters
 │   ├── test_substack_api.py        # Download and store newsletters
@@ -49,26 +51,25 @@ project_root/
 
 ## Scripts
 
-**`test_substack_api.py`** - Download and store newsletters ([source](scripts/test_substack_api.py))
-- Main script for fetching Substack newsletters
-- Downloads HTML content and metadata
-- Stores files in organized directory structure
-- Usage: `python scripts/test_substack_api.py`
-- Downloads posts from newsletters configured in `config/newsletters.md`
-- Automatically generates HTML and JSON indexes
-- Supports per-newsletter limits and metadata
+[`newsletters.nlp.md`](nlp-scripts/newsletters.nlp.md) (not needed for basic functionality)
+- Usage: Prompt AI-agent to execute the script.
+- Transforms [`newsletters.md`](config/newsletters.md) to [`data/newsletters.yaml`](data/newsletters.yaml)
 
-**`serve.py`** - Local web server for reading newsletters ([source](scripts/serve.py))
-- Starts a simple HTTP server on port 8000
-- Serves files from the project root directory
+[`test_substack_api.py`](scripts/test_substack_api.py) (currently the main script)
+- Usage: `python scripts/test_substack_api.py` 
+- Downloads posts from newsletters configured in `config/newsletters.md`
+- Generates HTML and JSON indexes; open [`index.html`](data/index.html) with your browser
+
+[`serve.py`](scripts/serve.py) (not needed for basic functionality)
 - Usage: `python scripts/serve.py`
+- Starts a simple HTTP server on port 8000
 - Access your newsletters at `http://localhost:8000/data/index.html`
 
-**`sentiment_analysis.py`** - Analyze newsletter citations and references ([source](scripts/sentiment_analysis.py))
+[`sentiment_analysis.py`](scripts/sentiment_analysis.py) (not needed for basic functionality)
+- Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
 - Performs sentiment analysis on newsletter links and citations
 - Extracts context around references to other Substack posts
 - Outputs YAML format with sentiment scores and confidence levels
-- Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
 
 ### Architecture
 
@@ -76,6 +77,7 @@ project_root/
 - Handles saving and retrieving newsletter posts
 - Stores HTML content and JSON metadata separately
 - Creates organized directory structure by newsletter
+- Prevents duplicate downloads by checking existing posts
 
 **Index Generation** (`src/web/index_generator.py`)
 - Generates HTML and JSON indexes of stored posts
@@ -83,7 +85,13 @@ project_root/
 - Reads newsletter configuration from markdown
 - Formats dates in human-readable format
 
-**Note:** URL discovery scripts were experimental and have been removed. The system now uses manual configuration via `config/newsletters.md`.
+**NLP Configuration** (`nlp-scripts/newsletters.nlp.md`)
+- AI instructions for generating rich YAML configuration
+- Extracts author names, Wikipedia links, professional roles
+- Assigns topics, tags, and content classifications
+- Converts simple markdown to structured metadata
+
+**Note:** The system uses manual configuration via `config/newsletters.md` with optional AI-powered YAML generation for enhanced metadata.
 
 ## Features
 
@@ -94,10 +102,14 @@ project_root/
 - Auto-generated index page for browsing
 - Built-in local server for reading indexed posts
 - Sentiment analysis of newsletter citations and references
+- AI-powered YAML configuration generation from markdown
+- Duplicate prevention to avoid re-downloading existing posts
+- Rich metadata extraction (authors, roles, topics, tags)
 
 **Currently Working On**:
 
 - Improving the layout of locally stored newsletters
+- Crawling the substack link graph
 
 **Next Steps**:
 
