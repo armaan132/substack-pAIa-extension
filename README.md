@@ -108,12 +108,13 @@ project_root/
 
 **Currently Working On**:
 
-- Improving the layout of locally stored newsletters
-- Crawling the substack link graph
+- Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing). 
+- Finding Substack URLs from author names.
+- Crawling the substack link graph.
 
 **Next Steps**:
 
-- Content Organization and Discovery
+- Content Organization and Discovery.
 
 ## Getting Started
 
