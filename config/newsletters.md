@@ -3,7 +3,6 @@
 ## Science
 
 Astral Codex Ten https://www.astralcodexten.com/ bayesianism, longtermism, meta-politics, political epistemology, policy analysis
-Johan Fourie https://www.ourlongwalk.com/ 
 Eric Topol https://erictopol.substack.com/ medicine, health
 Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary psychology
 
@@ -11,12 +10,16 @@ Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary ps
 
 Jared Bernstein https://econjared.substack.com/ economics
 Scott Cunningham https://causalinf.substack.com/ economics
-Brad DeLong https://braddelong.substack.com/ 
 Robin Hanson https://www.overcomingbias.com/ 
 Steve Keen https://profstevekeen.substack.com/ 
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
 Adam Tooze https://adamtooze.substack.com/ economics
+
+## Economic History
+
+Brad DeLong https://braddelong.substack.com/ 
+Johan Fourie https://www.ourlongwalk.com/ south africa
 
 ## Philosophy 
 
@@ -28,9 +31,13 @@ nescio13 https://digressionsimpressions.substack.com philosophy
 Massimo Pigliucci https://massimopigliucci.org/ 
 Slavoj Žižek https://slavoj.substack.com/ 
 
+## Accounting, Auditing
+
+Francine McKenna https://thedig.substack.com/ accounting, auditing
+
 ## Political Science
 
-Richard Hanania 
+Richard Hanania https://www.richardhanania.com/ political science
 
 ## Psychology
 
@@ -48,6 +55,7 @@ Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current aff
 Matt Stoller https://www.thebignewsletter.com/ anti-trust
 Jennifer Rubin https://contrarian.substack.com/ current affairs
 Matthew Yglesias https://www.slowboring.com/ current affairs
+Robert Reich https://robertreich.substack.com/ public policy, current affairs, economics, inequality
 
 ## Political Commentator
 
@@ -56,6 +64,7 @@ Rob Henderson https://www.robkhenderson.com/
 ## Science Communication
 
 Rachel Donald https://www.planetcritical.com/ environment, climate change
+Richard Crim https://richardcrim.substack.com climate change
 
 ## Law
 

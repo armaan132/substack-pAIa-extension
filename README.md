@@ -98,23 +98,28 @@ project_root/
 **Implemented**:
 
 - Download and store Substack newsletters locally
-- Separate storage of content (HTML) and metadata (JSON)
 - Auto-generated index page for browsing
 - Built-in local server for reading indexed posts
 - Sentiment analysis of newsletter citations and references
 - AI-powered YAML configuration generation from markdown
-- Duplicate prevention to avoid re-downloading existing posts
 - Rich metadata extraction (authors, roles, topics, tags)
 
 **Currently Working On**:
 
-- Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing). 
-- Finding Substack URLs from author names.
+- Content Organization:
+  - Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing, liking, etc). 
+  - Finding Substack URLs from author names.
 - Crawling the substack link graph.
 
 **Next Steps**:
 
-- Content Organization and Discovery.
+- Local AI that learns user's personal preferences. 
+- Content Discovery, Recommender System.
+
+**Future Work**:
+
+- From Local to Global: Federating pAIas.
+
 
 ## Getting Started
 
