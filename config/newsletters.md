@@ -13,6 +13,7 @@ Jared Bernstein https://econjared.substack.com/ economics
 Scott Cunningham https://causalinf.substack.com/ economics
 Brad DeLong https://braddelong.substack.com/ 
 Robin Hanson https://www.overcomingbias.com/ 
+Steve Keen https://profstevekeen.substack.com/ 
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
 Adam Tooze https://adamtooze.substack.com/ economics
