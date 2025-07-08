@@ -37,5 +37,5 @@ ENV/
 .DS_Store
 
 newsletter_graph_www.yaml
-
 logfile
+data/index.json
