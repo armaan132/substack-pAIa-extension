@@ -10,10 +10,11 @@ Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary ps
 
 Jared Bernstein https://econjared.substack.com/ economics
 Scott Cunningham https://causalinf.substack.com/ economics
-Robin Hanson https://www.overcomingbias.com/ 
-Steve Keen https://profstevekeen.substack.com/ 
+Robin Hanson https://www.overcomingbias.com/ economics
+Steve Keen https://profstevekeen.substack.com/ economics
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
+Scott Sumner https://scottsumner.substack.com/ economics
 Adam Tooze https://adamtooze.substack.com/ economics
 
 ## Economic History
@@ -25,6 +26,7 @@ Johan Fourie https://www.ourlongwalk.com/ south africa
 
 Richard Y Chappell https://www.goodthoughts.blog/
 Michael Huemer https://fakenous.substack.com/
+W D James https://wdjames.substack.com 
 Amy Olberding https://digressionsimpressions.substack.com philosophy
 New Work in Philosophy https://newworkinphilosophy.substack.com/ philosophy
 nescio13 https://digressionsimpressions.substack.com philosophy
@@ -37,11 +39,15 @@ Francine McKenna https://thedig.substack.com/ accounting, auditing
 
 ## Political Science
 
+Henry Farrell https://www.programmablemutter.com/ political science, international affairs
 Richard Hanania https://www.richardhanania.com/ political science
+Damon Linker https://damonlinker.substack.com/ political science, philosophy
+Yascha Mounk https://yaschamounk.substack.com/ political science, international affairs
 
 ## Psychology
 
 Jonathan Haidt https://www.afterbabel.com/ psychology, teenager, screen addiction
+Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosophy, anthropology, anthropogeny
 Jean M Twenge https://www.generationtechblog.com/ psychology, generations
 
 ## History
@@ -61,10 +67,11 @@ Robert Reich https://robertreich.substack.com/ public policy, current affairs, e
 
 Rob Henderson https://www.robkhenderson.com/ 
 
-## Science Communication
+## Science Communication, Aggregators
 
 Rachel Donald https://www.planetcritical.com/ environment, climate change
 Richard Crim https://richardcrim.substack.com climate change
+https://www.anthropology.net/ anthropology
 
 ## Law
 

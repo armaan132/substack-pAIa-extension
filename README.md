@@ -19,13 +19,13 @@ In the future, pAIa will expand into a data science project on federated learnin
 ```
 project_root/
 ├── config/
-│   └── newsletters.md                  # Newsletter URLs and metadata (primary config)
-├── data/                               
-│   ├── content/                        # HTML content of posts
-│   ├── metadata/                       # JSON metadata of posts
-│   ├── index.html                      # Auto-generated HTML index
-│   └── index.json                      # Auto-generated JSON index
-│   └── newsletters.yaml                # Newsletter configuration (generated via NLP)
+│   └── newsletters.md              # Newsletter URLs and metadata (user maintained)
+├── data/                           
+│   ├── content/                    # HTML content of posts
+│   ├── metadata/                   # JSON metadata of posts
+│   ├── index.html                  # Auto-generated HTML index
+│   └── index.json                  # Auto-generated JSON index
+│   └── newsletters.yaml            # Newsletter configuration (generated via NLP)
 ├── docs/                       
 │   ├── CHANGELOG.md                # Project changelog
 │   ├── user-stories.md             # User stories
@@ -102,18 +102,20 @@ project_root/
 - Built-in local server for reading indexed posts
 - Sentiment analysis of newsletter citations and references
 - AI-powered YAML configuration generation from markdown
-- Rich metadata extraction (authors, roles, topics, tags)
+- Metadata extraction (authors, roles, topics, tags)
 
 **Currently Working On**:
 
 - Content Organization:
-  - Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing, liking, etc). 
+  - Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing, liking, featured newsletters, etc). 
   - Finding Substack URLs from author names.
 - Crawling the substack link graph.
 
 **Next Steps**:
 
 - Local AI that learns user's personal preferences. 
+- Automated computation of a science score: A higher score means that the newsletter brings cutting edge research to the attention of the non-expert reader (in-depth citations add to the score, frivolous citations subtract).
+- Automated computation of a strongman-vs-strawman score. High if the article argues against a strongman, low if it argues against a strawman. 
 - Content Discovery, Recommender System.
 
 **Future Work**:
