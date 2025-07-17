@@ -39,6 +39,7 @@ ENV/
 newsletter_graph_www.yaml
 logfile
 data/index.json
+*.graphml
 
 journalism.md
 magazines.md

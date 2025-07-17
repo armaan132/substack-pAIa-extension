@@ -14,6 +14,7 @@ Robin Hanson https://www.overcomingbias.com/ economics
 Steve Keen https://profstevekeen.substack.com/ economics
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
+Ann Pettifor https://annpettifor.substack.com/ economics, global finance, debt cancellation, 
 Scott Sumner https://scottsumner.substack.com/ economics
 Adam Tooze https://adamtooze.substack.com/ economics
 
@@ -51,7 +52,7 @@ Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosop
 Jean M Twenge https://www.generationtechblog.com/ psychology, generations
 
 ## History
-
+Ruth Ben-Ghiat https://lucid.substack.com/ 
 William Hogeland https://williamhogeland.substack.com/ history
 
 ## Current Affairs

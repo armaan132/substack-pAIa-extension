@@ -23,8 +23,11 @@ kit klarenberg
 
 (what is the definition of journalist? A former employee of a journal? but that doesnt scale ...)
 
+Jonathan Alter https://oldgoats.substack.com 
+Claire Berlinski https://claireberlinski.substack.com/ 
 Margaret Sullivan https://margaretsullivan.substack.com https://en.wikipedia.org/wiki/Margaret_Sullivan_(journalist)
 Ann Telnaes
+Robert Wright https://www.nonzero.org/ evolutionary psychology
 Peter Beinart
 
 ## Magazines 
