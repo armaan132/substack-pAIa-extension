@@ -77,7 +77,7 @@ project_root/
 - Handles saving and retrieving newsletter posts
 - Stores HTML content and JSON metadata separately
 - Creates organized directory structure by newsletter
-- Prevents duplicate downloads by checking existing posts
+- Prevents duplicate downloads by checking existing posts 
 
 **Index Generation** (`src/web/index_generator.py`)
 - Generates HTML and JSON indexes of stored posts
