@@ -66,6 +66,13 @@
   - [ ] Style images and media content
   - [ ] Implement dark/light mode support
 
+## Building the Substack Graph
+
+- [ ] Scraper that builds Substack graph
+  - [ ] Define the relevant meta data that is going to be collected
+- [ ] Pagerank algorithm for Substack graph
+- [ ] Visualization of the Substack graph
+
 ---
 
 (the following items have been sketched out with AI and need careful discussion)

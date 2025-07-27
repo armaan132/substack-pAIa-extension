@@ -10,13 +10,15 @@ Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary ps
 
 Jared Bernstein https://econjared.substack.com/ economics
 Scott Cunningham https://causalinf.substack.com/ economics
-Robin Hanson https://www.overcomingbias.com/ economics
+Robin Hanson https://www.overcomingbias.com/ economics, libertarian
 Steve Keen https://profstevekeen.substack.com/ economics
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
+Branko Milanovic https://branko2f7.substack.com/ economics, inequality
 Ann Pettifor https://annpettifor.substack.com/ economics, global finance, debt cancellation, 
-Scott Sumner https://scottsumner.substack.com/ economics
-Adam Tooze https://adamtooze.substack.com/ economics
+Scott Sumner https://scottsumner.substack.com/ economics, monetary theory, finance
+Adam Tooze https://adamtooze.substack.com/ economics, globalization
+Tanju Yurukoglu https://tanjuyurukoglu.substack.com/ economics, Turkey
 
 ## Economic History
 
@@ -50,6 +52,11 @@ Yascha Mounk https://yaschamounk.substack.com/ political science, international 
 Jonathan Haidt https://www.afterbabel.com/ psychology, teenager, screen addiction
 Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosophy, anthropology, anthropogeny
 Jean M Twenge https://www.generationtechblog.com/ psychology, generations
+
+## Psychiatry
+
+Awais Aftab www.psychiatrymargins.com/about
+Michel Nivard https://nivard.substack.com
 
 ## History
 Ruth Ben-Ghiat https://lucid.substack.com/ 

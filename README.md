@@ -44,9 +44,9 @@ project_root/
 │   │   ├── index_generator.py      # HTML/JSON index generation
 │   │   └── static/                 
 │   │       └── css/                # CSS styling files
-│   ├── api/                        # API integration (future)
-│   ├── scraper/                    # Web scraping (future)
-│   └── search/                     # Search functionality (future)
+│   ├── scraper/                    # Web scraping 
+├── tmp/      
+│   ├── scraper_output.jsonl/       
 ```
 
 ## Scripts
