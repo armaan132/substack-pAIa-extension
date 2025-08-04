@@ -25,6 +25,7 @@ kit klarenberg
 
 Jonathan Alter https://oldgoats.substack.com 
 Claire Berlinski https://claireberlinski.substack.com/ 
+Brian Beutler https://www.offmessage.net/
 Margaret Sullivan https://margaretsullivan.substack.com https://en.wikipedia.org/wiki/Margaret_Sullivan_(journalist)
 Ann Telnaes
 Robert Wright https://www.nonzero.org/ evolutionary psychology
@@ -43,3 +44,9 @@ Peter Beinart
 (what is the definition of a culture warrior?)
 
 ... see also the note at [[culture-wars]]
+
+## Public Intellectuals
+
+Many of the public intellectuals today are entrepreneurs ... 
+
+Balaji Srinavasan

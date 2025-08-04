@@ -46,6 +46,7 @@ Henry Farrell https://www.programmablemutter.com/ political science, internation
 Richard Hanania https://www.richardhanania.com/ political science
 Damon Linker https://damonlinker.substack.com/ political science, philosophy
 Yascha Mounk https://yaschamounk.substack.com/ political science, international affairs
+Don Moynihan https://donmoynihan.substack.com political science, public policy, 
 
 ## Psychology
 
@@ -61,6 +62,7 @@ Michel Nivard https://nivard.substack.com
 ## History
 Ruth Ben-Ghiat https://lucid.substack.com/ 
 William Hogeland https://williamhogeland.substack.com/ history
+Timothy Snyder https://snyder.substack.com history, current affairs, russia, ukraine
 
 ## Current Affairs
 
@@ -89,3 +91,11 @@ Steve Vladeck https://www.stevevladeck.com law
 ## Literature
 
 Henrik Karlsson https://www.henrikkarlsson.xyz literature, philosophy
+
+## Religious Studies
+
+Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism
+
+## Journalism
+
+Peter Beinart https://peterbeinart.substack.com journalism, political science, judaism

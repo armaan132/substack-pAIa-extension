@@ -10,6 +10,8 @@ Thinking about how to achieve a reasonable classification overlaps with the [[id
 
 Should one distinguish journalists from culture warriors?
 
+[this newsletter](https://www.richardhanania.com/p/the-colbert-cancellation-and-why) indirectly suggests an interesting idea. One could classify the distinction between right and left by what people find funny ... also relevant should be the work by Lakoff and other political scientists ... 
+
 
 ## Preliminary Examples
 
@@ -24,7 +26,7 @@ Donald Jeffries https://donaldjeffries.substack.com/ https://donaldjeffries.subs
 
 ### Right
 
-Rufo ...
+Christopher Rufo https://christopherrufo.com/
 
 ### Left
 
