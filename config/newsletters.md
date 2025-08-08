@@ -12,6 +12,7 @@ Jared Bernstein https://econjared.substack.com/ economics
 Scott Cunningham https://causalinf.substack.com/ economics
 Robin Hanson https://www.overcomingbias.com/ economics, libertarian
 Steve Keen https://profstevekeen.substack.com/ economics
+Stephanie Kelton https://stephaniekelton.substack.com economics, MMT
 Arnold Kling https://arnoldkling.substack.com economics
 Paul Krugman https://paulkrugman.substack.com/ economics
 Branko Milanovic https://branko2f7.substack.com/ economics, inequality

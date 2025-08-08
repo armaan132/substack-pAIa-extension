@@ -1,0 +1,87 @@
+{
+  "newsletters": [
+    {
+      "url": "https://newsletter1.substack.com",
+      "title": "Newsletter 1",
+      "author": "Author One",
+      "description": "A sample newsletter for testing.",
+      "topics": ["topicA", "topicB"],
+      "last_updated": "2024-06-01",
+      "language": "en"
+    },
+    {
+      "url": "https://newsletter2.substack.com",
+      "title": "Newsletter 2", 
+      "author": "Author Two",
+      "description": "Another sample newsletter for testing.",
+      "topics": ["topicB", "topicC"],
+      "last_updated": "2024-06-02",
+      "language": "en"
+    },
+    {
+      "url": "https://newsletter3.substack.com",
+      "title": "Newsletter 3",
+      "author": "Author Three", 
+      "description": "A third sample newsletter for testing.",
+      "topics": ["topicC", "topicD"],
+      "last_updated": "2024-06-03",
+      "language": "en"
+    }
+  ],
+  "posts": [
+    {
+      "url": "https://newsletter1.substack.com/p/post1",
+      "newsletter": "https://newsletter1.substack.com",
+      "author": "Author One",
+      "published_date": "2024-06-01",
+      "topics": ["topicA"],
+      "links_to_substack_posts": [
+        "https://newsletter2.substack.com/p/post2",
+        "https://newsletter2.substack.com/p/post3"
+      ],
+      "links_to_external_resources": []
+    },
+    {
+      "url": "https://newsletter1.substack.com/p/post2",
+      "newsletter": "https://newsletter1.substack.com",
+      "author": "Author One", 
+      "published_date": "2024-05-20",
+      "topics": ["topicB"],
+      "links_to_substack_posts": [
+        "https://newsletter2.substack.com/p/post2"
+      ],
+      "links_to_external_resources": []
+    },
+    {
+      "url": "https://newsletter2.substack.com/p/post2",
+      "newsletter": "https://newsletter2.substack.com",
+      "author": "Author Two",
+      "published_date": "2024-06-02", 
+      "topics": ["topicB"],
+      "links_to_substack_posts": [
+        "https://newsletter3.substack.com/p/post4"
+      ],
+      "links_to_external_resources": []
+    },
+    {
+      "url": "https://newsletter2.substack.com/p/post3",
+      "newsletter": "https://newsletter2.substack.com",
+      "author": "Author Two",
+      "published_date": "2024-05-30",
+      "topics": ["topicC"],
+      "links_to_substack_posts": [],
+      "links_to_external_resources": []
+    },
+    {
+      "url": "https://newsletter3.substack.com/p/post4",
+      "newsletter": "https://newsletter3.substack.com", 
+      "author": "Author Three",
+      "published_date": "2024-06-03",
+      "topics": ["topicC"],
+      "links_to_substack_posts": [
+        "https://newsletter1.substack.com/p/post1"
+      ],
+      "links_to_external_resources": []
+    }
+  ]
+}
