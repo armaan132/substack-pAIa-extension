@@ -100,3 +100,4 @@ Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism
 ## Journalism
 
 Peter Beinart https://peterbeinart.substack.com journalism, political science, judaism
+Steven Beschloss https://www.americaamerica.news journalism
