@@ -2,102 +2,110 @@
 
 ## Science
 
-Astral Codex Ten https://www.astralcodexten.com/ bayesianism, longtermism, meta-politics, political epistemology, policy analysis
-Eric Topol https://erictopol.substack.com/ medicine, health
-Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary psychology
+### General Science, Science Communication
 
-## Economics
+Astral Codex Ten https://www.astralcodexten.com/  bayesianism, longtermism, meta-politics, political epistemology, policy analysis https://en.wikipedia.org/wiki/Slate_Star_Codex
+Rachel Donald https://www.planetcritical.com/ environment, climate change https://en.wikipedia.org/wiki/Rachel_Donald
+Richard Crim https://richardcrim.substack.com climate change https://en.wikipedia.org/wiki/Richard_Crim
+https://www.anthropology.net/ anthropology https://en.wikipedia.org/wiki/Anthropology.net
 
-Jared Bernstein https://econjared.substack.com/ economics
-Scott Cunningham https://causalinf.substack.com/ economics
-Robin Hanson https://www.overcomingbias.com/ economics, libertarian
-Steve Keen https://profstevekeen.substack.com/ economics
-Stephanie Kelton https://stephaniekelton.substack.com economics, MMT
-Arnold Kling https://arnoldkling.substack.com economics
-Paul Krugman https://paulkrugman.substack.com/ economics
-Branko Milanovic https://branko2f7.substack.com/ economics, inequality
-Ann Pettifor https://annpettifor.substack.com/ economics, global finance, debt cancellation, 
-Scott Sumner https://scottsumner.substack.com/ economics, monetary theory, finance
-Adam Tooze https://adamtooze.substack.com/ economics, globalization
-Tanju Yurukoglu https://tanjuyurukoglu.substack.com/ economics, Turkey
+### Accounting, Auditing
 
-## Economic History
+Francine McKenna https://thedig.substack.com/ accounting, auditing https://en.wikipedia.org/wiki/Francine_McKenna
 
-Brad DeLong https://braddelong.substack.com/ 
-Johan Fourie https://www.ourlongwalk.com/ south africa
+### Anthropology
 
-## Philosophy 
+Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary psychology 
 
-Richard Y Chappell https://www.goodthoughts.blog/
-Michael Huemer https://fakenous.substack.com/
-W D James https://wdjames.substack.com 
-Amy Olberding https://digressionsimpressions.substack.com philosophy
-New Work in Philosophy https://newworkinphilosophy.substack.com/ philosophy
-nescio13 https://digressionsimpressions.substack.com philosophy
-Massimo Pigliucci https://massimopigliucci.org/ 
-Slavoj Žižek https://slavoj.substack.com/ 
+### Economics
 
-## Accounting, Auditing
+Jared Bernstein https://econjared.substack.com/ economics https://en.wikipedia.org/wiki/Jared_Bernstein
+Scott Cunningham https://causalinf.substack.com/ economics https://en.wikipedia.org/wiki/Scott_Cunningham_(economist)
+Robin Hanson https://www.overcomingbias.com/ economics, libertarian https://en.wikipedia.org/wiki/Robin_Hanson
+Steve Keen https://profstevekeen.substack.com/ economics https://en.wikipedia.org/wiki/Steve_Keen
+Stephanie Kelton https://stephaniekelton.substack.com economics, MMT https://en.wikipedia.org/wiki/Stephanie_Kelton
+Arnold Kling https://arnoldkling.substack.com economics https://en.wikipedia.org/wiki/Arnold_Kling
+Paul Krugman https://paulkrugman.substack.com/ economics https://en.wikipedia.org/wiki/Paul_Krugman
+Branko Milanovic https://branko2f7.substack.com/ economics, inequality https://en.wikipedia.org/wiki/Branko_Milanovi%C4%87
+Ann Pettifor https://annpettifor.substack.com/ economics, global finance, debt cancellation, https://en.wikipedia.org/wiki/Ann_Pettifor
+Scott Sumner https://scottsumner.substack.com/ economics, monetary theory, finance https://en.wikipedia.org/wiki/Scott_Sumner
+Tanju Yurukoglu https://tanjuyurukoglu.substack.com/ economics, Turkey 
 
-Francine McKenna https://thedig.substack.com/ accounting, auditing
+### Economic History
 
-## Political Science
+Brad DeLong https://braddelong.substack.com/ https://en.wikipedia.org/wiki/J._Bradford_DeLong
+Johan Fourie https://www.ourlongwalk.com/ south africa https://en.wikipedia.org/wiki/Johan_Fourie
+Adam Tooze https://adamtooze.substack.com/ economics, globalization https://en.wikipedia.org/wiki/Adam_Tooze
 
-Henry Farrell https://www.programmablemutter.com/ political science, international affairs
-Richard Hanania https://www.richardhanania.com/ political science
-Damon Linker https://damonlinker.substack.com/ political science, philosophy
-Yascha Mounk https://yaschamounk.substack.com/ political science, international affairs
-Don Moynihan https://donmoynihan.substack.com political science, public policy, 
+### Health
 
-## Psychology
-
-Jonathan Haidt https://www.afterbabel.com/ psychology, teenager, screen addiction
-Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosophy, anthropology, anthropogeny
-Jean M Twenge https://www.generationtechblog.com/ psychology, generations
-
-## Psychiatry
-
-Awais Aftab www.psychiatrymargins.com/about
-Michel Nivard https://nivard.substack.com
+Katelyn Jetelina https://yourlocalepidemiologist.substack.com/ epideimiology 
+Eric Topol https://erictopol.substack.com/ medicine, health https://en.wikipedia.org/wiki/Eric_Topol
 
 ## History
-Ruth Ben-Ghiat https://lucid.substack.com/ 
-William Hogeland https://williamhogeland.substack.com/ history
-Timothy Snyder https://snyder.substack.com history, current affairs, russia, ukraine
 
-## Current Affairs
-
-Claire Berlinski https://claireberlinski.substack.com/ foreign affairs
-Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current affairs
-Matt Stoller https://www.thebignewsletter.com/ anti-trust
-Jennifer Rubin https://contrarian.substack.com/ current affairs
-Matthew Yglesias https://www.slowboring.com/ current affairs
-Robert Reich https://robertreich.substack.com/ public policy, current affairs, economics, inequality
-
-## Political Commentator
-
-Rob Henderson https://www.robkhenderson.com/ 
-
-## Science Communication, Aggregators
-
-Rachel Donald https://www.planetcritical.com/ environment, climate change
-Richard Crim https://richardcrim.substack.com climate change
-https://www.anthropology.net/ anthropology
-
-## Law
-
-Joyce Vance https://joycevance.substack.com/ law
-Steve Vladeck https://www.stevevladeck.com law
-
-## Literature
-
-Henrik Karlsson https://www.henrikkarlsson.xyz literature, philosophy
-
-## Religious Studies
-
-Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism
+Ruth Ben-Ghiat https://lucid.substack.com/ history https://en.wikipedia.org/wiki/Ruth_Ben-Ghiat
+William Hogeland https://williamhogeland.substack.com/ history https://en.wikipedia.org/wiki/William_Hogeland
+Timothy Snyder https://snyder.substack.com history, current affairs, russia, ukraine https://en.wikipedia.org/wiki/Timothy_Snyder
 
 ## Journalism
 
-Peter Beinart https://peterbeinart.substack.com journalism, political science, judaism
-Steven Beschloss https://www.americaamerica.news journalism
+Peter Beinart https://peterbeinart.substack.com journalism, political science, judaism https://en.wikipedia.org/wiki/Peter_Beinart
+Steven Beschloss https://www.americaamerica.news journalism https://en.wikipedia.org/wiki/Steven_Beschloss
+
+### Law
+
+Asha Rangappa https://asharangappa.substack.com law, global affairs, intelligence, FBI https://en.wikipedia.org/wiki/Asha_Rangappa
+Joyce Vance https://joycevance.substack.com/ law https://en.wikipedia.org/wiki/Joyce_Vance
+Steve Vladeck https://www.stevevladeck.com law https://en.wikipedia.org/wiki/Steve_Vladeck
+
+## Literature
+
+Henrik Karlsson https://www.henrikkarlsson.xyz literature, philosophy 
+
+### Philosophy 
+
+Richard Y Chappell https://www.goodthoughts.blog/ philosophy
+Michael Huemer https://fakenous.substack.com/ philosophy https://en.wikipedia.org/wiki/Michael_Huemer
+W D James https://wdjames.substack.com philosophy 
+Amy Olberding https://digressionsimpressions.substack.com philosophy 
+New Work in Philosophy https://newworkinphilosophy.substack.com/ philosophy 
+nescio13 https://digressionsimpressions.substack.com philosophy 
+Massimo Pigliucci https://massimopigliucci.org/ philosophy https://en.wikipedia.org/wiki/Massimo_Pigliucci
+Slavoj Žižek https://slavoj.substack.com/ philosophy https://en.wikipedia.org/wiki/Slavoj_%C5%BDi%C5%BEek
+
+### Political Science
+
+Henry Farrell https://www.programmablemutter.com/ political science, international affairs https://en.wikipedia.org/wiki/Henry_Farrell_(political_scientist)
+Richard Hanania https://www.richardhanania.com/ political science https://en.wikipedia.org/wiki/Richard_Hanania
+Damon Linker https://damonlinker.substack.com/ political science, philosophy https://en.wikipedia.org/wiki/Damon_Linker
+Yascha Mounk https://yaschamounk.substack.com/ political science, international affairs https://en.wikipedia.org/wiki/Yascha_Mounk
+Don Moynihan https://donmoynihan.substack.com political science, public policy, https://en.wikipedia.org/wiki/Donald_Moynihan
+
+### Psychology
+
+Jonathan Haidt https://www.afterbabel.com/ psychology, teenager, screen addiction https://en.wikipedia.org/wiki/Jonathan_Haidt
+Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosophy, anthropology, anthropogeny 
+Jean M Twenge https://www.generationtechblog.com/ psychology, generations https://en.wikipedia.org/wiki/Jean_Twenge
+
+### Psychiatry
+
+Awais Aftab https://www.psychiatrymargins.com/about 
+Michel Nivard https://nivard.substack.com 
+
+### Religious Studies
+
+Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism 
+
+## News and Opinion
+
+Claire Berlinski https://claireberlinski.substack.com/ foreign affairs https://en.wikipedia.org/wiki/Claire_Berlinski
+Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current affairs, history https://en.wikipedia.org/wiki/Heather_Cox_Richardson
+Rob Henderson https://www.robkhenderson.com/ https://en.wikipedia.org/wiki/Rob_Henderson
+Richard Hanania https://en.wikipedia.org/wiki/Richard_Hanania 
+Stefan Korshak https://stefankorshak.substack.com Ukraine
+Jennifer Rubin https://contrarian.substack.com/ current affairs https://en.wikipedia.org/wiki/Jennifer_Rubin_(columnist)
+Matt Stoller https://www.thebignewsletter.com/ anti-trust https://en.wikipedia.org/wiki/Matt_Stoller
+Andrew Tanner https://roguesystemsrecon.substack.com Ukraine
+Matthew Yglesias https://www.slowboring.com/ current affairs https://en.wikipedia.org/wiki/Matthew_Yglesias
+Robert Reich https://robertreich.substack.com/ public policy, current affairs, economics, inequality https://en.wikipedia.org/wiki/Robert_Reich
