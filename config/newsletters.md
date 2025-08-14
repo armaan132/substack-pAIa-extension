@@ -84,6 +84,7 @@ Don Moynihan https://donmoynihan.substack.com political science, public policy, 
 
 ### Psychology
 
+Paul Bloom https://smallpotatoes.paulbloom.net psychology https://en.wikipedia.org/wiki/Paul_Bloom_(psychologist) 
 Jonathan Haidt https://www.afterbabel.com/ psychology, teenager, screen addiction https://en.wikipedia.org/wiki/Jonathan_Haidt
 Steve Stewart-Williams https://www.stevestewartwilliams.com psychology, philosophy, anthropology, anthropogeny 
 Jean M Twenge https://www.generationtechblog.com/ psychology, generations https://en.wikipedia.org/wiki/Jean_Twenge
