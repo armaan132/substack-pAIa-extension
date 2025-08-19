@@ -47,6 +47,7 @@ Eric Topol https://erictopol.substack.com/ medicine, health https://en.wikipedia
 Ruth Ben-Ghiat https://lucid.substack.com/ history https://en.wikipedia.org/wiki/Ruth_Ben-Ghiat
 William Hogeland https://williamhogeland.substack.com/ history https://en.wikipedia.org/wiki/William_Hogeland
 Timothy Snyder https://snyder.substack.com history, current affairs, russia, ukraine https://en.wikipedia.org/wiki/Timothy_Snyder
+Julian E. Zelizer https://julianzelizer.substack.com history, political history, https://en.wikipedia.org/wiki/Julian_E._Zelizer 
 
 ## Journalism
 
