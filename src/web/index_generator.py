@@ -125,9 +125,20 @@ class IndexGenerator:
             return date_str
 
     def create_index_html(self) -> None:
-        """Create an index.html file listing all stored posts, grouped by category."""
+        """Create an index.html file listing all stored posts, grouped by category or sorted by date."""
         content = """
         <h1>Recent Newsletter Posts</h1>
+        
+        <!-- Simple toggle controls -->
+        <div style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+            <label style="margin-right: 20px; cursor: pointer;">
+                <input type="radio" name="view" value="category" checked onclick="showView('category')"> By Category
+            </label>
+            <label style="margin-right: 20px; cursor: pointer;">
+                <input type="radio" name="view" value="date" onclick="showView('date')"> By Date
+            </label>
+        </div>
+        
         <style>
             .post-line { margin: 8px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
             .post-line a { margin-right: 15px; text-decoration: none; }
@@ -135,14 +146,20 @@ class IndexGenerator:
             .post-line a.original { color: #666; font-size: 0.9em; }
             .newsletter-name { color: #333; font-weight: bold; margin-right: 10px; }
             .date { color: #888; font-size: 0.8em; margin-left: 10px; }
+            .category { color: #666; font-size: 0.8em; margin-left: 10px; }
+            
+            /* View control */
+            .view-section { display: none; }
+            .view-section.show { display: block; }
         </style>
         """
 
-        # NEW: load full metadata with categories
+        # Load full metadata with categories
         newsletter_configs = self.load_newsletters_with_categories()
 
         # Collect all posts with category metadata
         posts_by_category = {}
+        all_posts = []
 
         newsletters = self.list_newsletters()
         for newsletter in sorted(newsletters):
@@ -161,10 +178,18 @@ class IndexGenerator:
                 post['newsletter_url'] = newsletter_url
                 post['category'] = category
                 posts_by_category.setdefault(category, []).append(post)
+                all_posts.append(post)
 
-        # Sort categories alphabetically and posts by date
+        # Sort all posts by date for date view
+        all_posts.sort(
+            key=lambda x: x.get('published_at', '') or '',
+            reverse=True
+        )
+
+        # Generate category view
+        category_content = ""
         for category in sorted(posts_by_category.keys()):
-            content += f"<h2>{category}</h2>\n"
+            category_content += f"<h2>{category}</h2>\n"
             category_posts = sorted(
                 posts_by_category[category],
                 key=lambda x: x.get('published_at', '') or '',
@@ -178,7 +203,7 @@ class IndexGenerator:
                 newsletter_name = post['newsletter_name']
                 content_path = Path(post['content_path']).relative_to(self.base_dir)
 
-                content += f"""
+                category_content += f"""
                 <div class="post-line">
                     <span class="newsletter-name">{newsletter_name}</span>
                     <a href="{content_path}" class="local">{title}</a>
@@ -187,6 +212,55 @@ class IndexGenerator:
                 </div>
                 """
 
+        # Generate date view
+        date_content = ""
+        for post in all_posts:
+            title = post['title']
+            date = post.get('published_at') or 'No date'
+            display_date = self._format_date(date)
+            newsletter_name = post['newsletter_name']
+            category = post['category']
+            content_path = Path(post['content_path']).relative_to(self.base_dir)
+
+            date_content += f"""
+            <div class="post-line">
+                <span class="newsletter-name">{newsletter_name}</span>
+                <a href="{content_path}" class="local">{title}</a>
+                <a href="{post['url']}" class="original" target="_blank">🔗 Original</a>
+                <span class="date">{display_date}</span>
+                <span class="category">({category})</span>
+            </div>
+            """
+
+        # Add both views to content
+        content += f"""
+        <div id="category-view" class="view-section show">
+            {category_content}
+        </div>
+        
+        <div id="date-view" class="view-section">
+            {date_content}
+        </div>
+        """
+
+        # Add simple JavaScript for view switching
+        content += """
+        <script>
+            function showView(viewName) {
+                // Hide all views
+                document.getElementById('category-view').classList.remove('show');
+                document.getElementById('date-view').classList.remove('show');
+                
+                // Show selected view
+                if (viewName === 'category') {
+                    document.getElementById('category-view').classList.add('show');
+                } else {
+                    document.getElementById('date-view').classList.add('show');
+                }
+            }
+        </script>
+        """
+
         html = HTML_TEMPLATE.format(
             title="Stored Newsletter Posts",
             css_path=self._get_css_path(1),
@@ -194,7 +268,7 @@ class IndexGenerator:
         )
         index_path = self.base_dir / "index.html"
         index_path.write_text(html, encoding='utf-8')
-        print(f"✅ Created index.html with categories at {index_path}")
+        print(f"✅ Created index.html with date sorting at {index_path}")
 
 
 
