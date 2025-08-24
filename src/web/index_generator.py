@@ -353,7 +353,7 @@ class IndexGenerator:
         <div class="main-category-section" style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;">
             <!--h3 style="margin-top: 0;">Select Main Category:</h3-->
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="radio" name="main-category" value="All" checked onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
+                <input type="radio" name="main-category" value="All" onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
                 <input type="radio" name="main-category" value="Science" onclick="console.log('🟢 Radio button clicked: Science'); filterByMainCategory('Science')"> Science
@@ -362,10 +362,10 @@ class IndexGenerator:
                 <input type="radio" name="main-category" value="News and Opinion" onclick="console.log('🟢 Radio button clicked: News and Opinion'); filterByMainCategory('News and Opinion')"> News and Opinion
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-hidden" onclick="console.log('🟢 Hidden posts checkbox clicked'); toggleHiddenPosts()"> Hidden Posts
+                <input type="checkbox" id="show-hidden" onclick="console.log('🟢 Hidden posts checkbox clicked'); toggleHiddenPosts()"> <span title="Include Hidden Posts">Hidden Posts</span>
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> Liked Posts
+                <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> <span title="Only Liked Posts">Liked Posts</span>
             </label>
         </div>
         
@@ -373,7 +373,8 @@ class IndexGenerator:
         <div class="search-bar" style="margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 5px;">
             <input type="text" id="search-input" placeholder="Search posts by title, newsletter, or content..." 
                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
-                   oninput="searchPosts(this.value)">
+                   oninput="searchPosts(this.value)"
+                   onkeydown="if(event.key === 'Enter') { console.log('🟢 Enter key detected'); searchPosts(this.value); }">
         </div>
         
 
@@ -381,13 +382,15 @@ class IndexGenerator:
         <style>
             .post-line { margin: 8px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
             .post-line a { margin-right: 15px; text-decoration: none; }
-            .post-line a.local { color: #0066cc; }
-            .post-line a.original { color: #666; font-size: 0.9em; }
+            .post-line a.local { color: #0066cc; text-decoration: none; }
+            .post-line a.local:hover { text-decoration: underline; }
+            .post-line a.original { color: #666; font-size: 0.9em; text-decoration: none; }
+            .post-line a.original:hover { text-decoration: underline; }
             .newsletter-name { color: #333; font-weight: bold; margin-right: 10px; }
             .date { color: #888; font-size: 0.8em; margin-left: 10px; }
             .category { color: #666; font-size: 0.8em; margin-left: 10px; }
             .action-btn { 
-                background: #f5f5f5; 
+                background: #fef7e0; 
                 color: #666; 
                 border: 1px solid #ddd; 
                 padding: 6px 8px; 
@@ -405,16 +408,16 @@ class IndexGenerator:
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             .action-btn.marked { 
-                background: #4caf50; 
+                background: #2196f3; 
                 color: white; 
-                border-color: #4caf50;
+                border-color: #2196f3;
             }
             
-            /* Individual button colors when marked */
+            /* All marked buttons use the same blue color */
             .action-btn.read-btn.marked { background: #2196f3; border-color: #2196f3; }
-            .action-btn.not-interesting-btn.marked { background: #ff6b6b; border-color: #ff6b6b; }
-            .action-btn.like-btn.marked { background: #4caf50; border-color: #4caf50; color: white; }
-            .action-btn.hide-btn.marked { background: #9c27b0; border-color: #9c27b0; }
+            .action-btn.not-interesting-btn.marked { background: #2196f3; border-color: #2196f3; }
+            .action-btn.like-btn.marked { background: #2196f3; border-color: #2196f3; }
+            .action-btn.hide-btn.marked { background: #2196f3; border-color: #2196f3; }
             
             /* Tooltip styles */
             .action-btn::after {
@@ -464,98 +467,23 @@ class IndexGenerator:
         </style>
         """
 
-        # Collect all posts from the JSON data and organize by subcategory
-        posts_by_subcategory = {}
+        # Collect all posts from the JSON data
         all_posts = []
 
         for newsletter_name, newsletter_data in index_data["newsletters"].items():
             for post in newsletter_data["posts"]:
                 # Add newsletter info to each post
                 post['newsletter_name'] = newsletter_data['name']
-                
-                # Group by subcategory (which is more specific than category)
-                subcategory = post.get('subcategory', 'Uncategorized')
-                posts_by_subcategory.setdefault(subcategory, []).append(post)
                 all_posts.append(post)
 
-        # Sort all posts by date for date view
+        # Sort all posts chronologically (newest first)
         all_posts.sort(
             key=lambda x: x.get('published_at', '') or '',
             reverse=True
         )
 
-        # Generate subcategory view
-        category_content = ""
-        for subcategory in sorted(posts_by_subcategory.keys()):
-            # Get the main category from the first post in this subcategory
-            main_category = posts_by_subcategory[subcategory][0].get('main_category', 'Uncategorized') if posts_by_subcategory[subcategory] else 'Uncategorized'
-            category_content += f'<h2 class="subcategory-header" data-main-category="{main_category}">{subcategory}</h2>\n'
-            category_posts = sorted(
-                posts_by_subcategory[subcategory],
-                key=lambda x: x.get('published_at', '') or '',
-                reverse=True
-            )
-
-            for post in category_posts:
-                title = post['title']
-                date = post.get('published_at') or 'No date'
-                display_date = self._format_date(date)
-                newsletter_name = post['newsletter_name']
-                
-                # Handle content path calculation more robustly
-                try:
-                    if Path(post['content_path']).is_absolute():
-                        content_path = Path(post['content_path']).relative_to(self.base_dir)
-                    else:
-                        content_path = post['content_path']
-                except ValueError:
-                    # Fallback: use the filename only
-                    content_path = Path(post['content_path']).name
-                
-                not_interesting = post.get('not_interesting', False)
-                read = post.get('read', False)
-                like = post.get('like', False)
-                hide = post.get('hide', False)
-                post_id = post.get('url', '').split('/')[-1]
-
-                # Apply liked-post class if post is both read AND liked
-                liked_post_class = 'liked-post' if read and like else ''
-                
-                category_content += f"""
-                <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}" 
-                     data-post-id="{post_id}" 
-                     data-main-category="{post.get('main_category', 'Uncategorized')}"
-                     data-subcategory="{post.get('subcategory', 'Uncategorized')}">
-                    <span class="newsletter-name">{newsletter_name}</span>
-                    <a href="{content_path}" class="local">{title}</a>
-                    <a href="{post['url']}" class="original" target="_blank">🔗 Original</a>
-                    <span class="date">{display_date}</span>
-                    {f'<span class="subcategory" style="color: #666; font-size: 0.8em; margin-left: 10px;">({post.get("subcategory", "Uncategorized")})</span>' if post.get('subcategory') != post.get('main_category') else ''}
-                    <button class="action-btn read-btn {'' if not read else 'marked'}" 
-                            onclick="toggleRead('{post_id}', this)"
-                            data-tooltip="Mark as Read">
-                        {'' if not read else '✓ '}👁️
-                    </button>
-                    <button class="action-btn not-interesting-btn {'' if not not_interesting else 'marked'}" 
-                            onclick="toggleNotInteresting('{post_id}', this)"
-                            data-tooltip="Mark as Not Interesting">
-                        👎
-                    </button>
-                    <button class="action-btn like-btn {'' if not like else 'marked'}" 
-                            onclick="toggleLike('{post_id}', this)"
-                            data-tooltip="Like">
-                        👍
-                    </button>
-                    <button class="action-btn hide-btn {'' if not hide else 'marked'}" 
-                            onclick="toggleHide('{post_id}', this)"
-                            data-tooltip="Hide">
-                        {'' if not hide else '✓ '}🚫
-                    </button>
-                </div>
-                """
-
-        # Generate date view
-        date_content = ""
+        # Generate posts HTML (chronological order)
+        posts_html = ""
         for post in all_posts:
             title = post['title']
             date = post.get('published_at') or 'No date'
@@ -582,20 +510,20 @@ class IndexGenerator:
             # Apply liked-post class if post is both read AND liked
             liked_post_class = 'liked-post' if read and like else ''
             
-            date_content += f"""
+            posts_html += f"""
             <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}" 
                  data-post-id="{post_id}"
                  data-main-category="{post.get('main_category', 'Uncategorized')}"
                  data-subcategory="{post.get('subcategory', 'Uncategorized')}">
                 <span class="newsletter-name">{newsletter_name}</span>
-                <a href="{content_path}" class="local">{title}</a>
-                <a href="{post['url']}" class="original" target="_blank">🔗 Original</a>
+                <a href="{post['url']}" class="local" target="_blank">{title}</a>
+                <a href="{content_path}" class="original" title="">📄</a>
                 <span class="date">{display_date}</span>
                 <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') != post.get('main_category') else ''})</span>
                 <button class="action-btn read-btn {'' if not read else 'marked'}" 
                         onclick="toggleRead('{post_id}', this)"
                         data-tooltip="Mark as Read">
-                    {'' if not read else '✓ '}👁️
+                    👁️
                 </button>
                 <button class="action-btn not-interesting-btn {'' if not not_interesting else 'marked'}" 
                         onclick="toggleNotInteresting('{post_id}', this)"
@@ -610,19 +538,15 @@ class IndexGenerator:
                 <button class="action-btn hide-btn {'' if not hide else 'marked'}" 
                         onclick="toggleHide('{post_id}', this)"
                         data-tooltip="Hide">
-                    {'' if not hide else '✓ '}🚫
+                    🚫
                 </button>
             </div>
             """
 
-        # Add both views to content
+        # Add posts to the page
         content += f"""
-        <div id="category-view" class="view-section">
-            {category_content}
-        </div>
-        
-        <div id="date-view" class="view-section show">
-            {date_content}
+        <div id="posts-container">
+            {posts_html}
         </div>
         """
 
@@ -643,14 +567,19 @@ class IndexGenerator:
                 hideReadPosts();
                 hideHidePosts();
                 
-                // Initialize subcategory links based on current category selection
-                showSubcategoryLinks();
+                // Restore saved category selection from localStorage
+                const savedCategory = localStorage.getItem('selectedMainCategory') || 'All';
+                currentMainCategory = savedCategory;
                 
-                // Apply category filtering based on the selected radio button
-                const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
-                currentMainCategory = selectedCategory;
+                // Set the radio button to match the saved selection
+                const radioButton = document.querySelector(`input[name="main-category"][value="${savedCategory}"]`);
+                if (radioButton) {
+                    radioButton.checked = true;
+                }
+                
+                // Apply the saved category filtering to show the correct posts
                 updateCategoryView();
-                                
+                
                 // Add event listener for search input
                 const searchInput = document.getElementById('search-input');
                 if (searchInput) {
@@ -658,7 +587,7 @@ class IndexGenerator:
                         console.log(`🟢 Search input detected: "${this.value}"`);
                         searchPosts(this.value);
                     });
-                }                
+                }
             });
             
             function hideNotInterestingPosts() {
@@ -690,232 +619,59 @@ class IndexGenerator:
                 currentMainCategory = mainCategory;
                 currentSubcategory = null; // Clear subcategory filter when switching main categories
                 
-                // Update the display based on current category
-                updateCategoryView();
+                // Save the selection to localStorage for persistence
+                localStorage.setItem('selectedMainCategory', mainCategory);
                 
-                // Always show subcategory links when a specific category is selected
-                showSubcategoryLinks();
+                // Update the display based on current category using unified AND logic
+                updateCategoryView();
             }
             
 
             
-            function showSubcategoryLinks() {
-                console.log('🔵 showSubcategoryLinks() called');
-                // Get the current main category
-                const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
-                
-                // Don't show subcategories when "All" is selected
-                if (selectedCategory === 'All') {
-                    const linksContainer = document.getElementById('subcategory-links');
-                    if (linksContainer) {
-                        linksContainer.style.display = 'none';
-                    }
-                    return;
-                }
-                
-                // Find or create the subcategory links container
-                let linksContainer = document.getElementById('subcategory-links');
-                if (!linksContainer) {
-                    linksContainer = document.createElement('div');
-                    linksContainer.id = 'subcategory-links';
-                    linksContainer.style.cssText = 'margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;';
-                    
-                    // Insert after the main category section (back to original placement)
-                    const mainCategorySection = document.querySelector('.main-category-section');
-                    mainCategorySection.parentNode.insertBefore(linksContainer, mainCategorySection.nextSibling);
-                }
-                
-                // Make sure the container is visible
-                linksContainer.style.display = 'block';
-                
-                // Clear existing links
-                linksContainer.innerHTML = '';
-                
-                // Show only subcategories for the selected main category
-                const subcategories = new Set();
-                document.querySelectorAll('.subcategory-header').forEach(header => {
-                    const headerMainCategory = header.getAttribute('data-main-category');
-                    if (headerMainCategory === selectedCategory) {
-                        const subcategory = header.textContent.trim();
-                        // Only add if subcategory is different from main category
-                        if (subcategory !== selectedCategory) {
-                            subcategories.add(subcategory);
-                        }
-                    }
-                });
-                
-                if (subcategories.size > 0) {
-                    linksContainer.innerHTML = '<h4 style="margin-top: 0; color: #856404;">Subcategories for ' + selectedCategory + ':</h4>';
-                    Array.from(subcategories).sort().forEach(subcategory => {
-                        const link = document.createElement('a');
-                        link.href = '#';
-                        link.textContent = subcategory;
-                        link.style.cssText = 'display: inline-block; margin: 5px 10px 5px 0; padding: 5px 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 3px; text-decoration: none; color: #495057; cursor: pointer;';
-                        link.onclick = function(e) {
-                            e.preventDefault();
-                            scrollToSubcategory(subcategory);
-                        };
-                        linksContainer.appendChild(link);
-                    });
-                    linksContainer.style.display = 'block';
-                } else {
-                    // Hide the container when no subcategories exist
-                    linksContainer.style.display = 'none';
-                }
-            }
-            
-            function scrollToSubcategory(subcategoryName) {
-                console.log(`🔵 scrollToSubcategory('${subcategoryName}') called`);
-                currentSubcategory = subcategoryName;
-                
-                // Filter posts to show only those in the selected subcategory
-                filterPostsBySubcategory(subcategoryName);
-                
-                // Scroll to top of page to show filtered results
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            
-            function filterPostsBySubcategory(subcategoryName) {
-                console.log(`🔵 filterPostsBySubcategory('${subcategoryName}') called`);
-                const allPosts = document.querySelectorAll('.post-line');
-                
-                let visibleCount = 0;
-                let hiddenCount = 0;
-                
-                allPosts.forEach(post => {
-                    const postSubcategory = post.getAttribute('data-subcategory');
-                    const postMainCategory = post.getAttribute('data-main-category');
-                    
-                    // Show post if it matches both main category and subcategory
-                    const mainCategoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
-                    const subcategoryMatches = postSubcategory === subcategoryName;
-                    
-                    if (mainCategoryMatches && subcategoryMatches) {
-                        // Only show if not marked as hidden, read, hide, or liked
-                        if (post.classList.contains('hidden-post') || post.classList.contains('read-post') || 
-                            post.classList.contains('hide-post') || post.classList.contains('liked-post')) {
-                            post.style.display = 'none';
-                            hiddenCount++;
-                        } else {
-                            post.style.display = 'block';
-                            visibleCount++;
-                        }
-                    } else {
-                        post.style.display = 'none';
-                        hiddenCount++;
-                    }
-                });
-                                
-                // Hide all subcategory headers when filtering by subcategory
-                const subcategoryHeaders = document.querySelectorAll('.subcategory-header');
-                subcategoryHeaders.forEach(header => {
-                    header.style.display = 'none';
-                });
-                
-                // Highlight the active subcategory button
-                const subcategoryLinks = document.querySelectorAll('#subcategory-links a');
-                subcategoryLinks.forEach(link => {
-                    if (link.textContent.trim() === subcategoryName) {
-                        link.style.background = '#007bff';
-                        link.style.color = 'white';
-                        link.style.borderColor = '#007bff';
-                    } else {
-                        link.style.background = '#f8f9fa';
-                        link.style.color = '#495057';
-                        link.style.borderColor = '#dee2e6';
-                    }
-                });
-            }
+            // showSubcategoryLinks function is removed
             
             function updateCategoryView() {
                 console.log(`🔵 updateCategoryView() called`);
                 // Clear any subcategory filter
                 currentSubcategory = null;
                 
-                // Filter posts by main category and update the display
+                // Get current filter states
+                const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
+                const showHidden = document.getElementById('show-hidden').checked;
+                const showLiked = document.getElementById('show-liked').checked;
+                
+                // Filter posts by applying ALL active filters with AND logic
                 const allPosts = document.querySelectorAll('.post-line');
                 
                 let visibleCount = 0;
                 let hiddenCount = 0;
                 
                 allPosts.forEach(post => {
+                    // Apply Category Filter
                     const postMainCategory = post.getAttribute('data-main-category');
-                    const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
+                    const categoryMatches = selectedCategory === 'All' || postMainCategory === selectedCategory;
                     
-                    if (categoryMatches) {
-                        // Only show if not marked as hidden, read, hide, or liked (liked posts are hidden by default)
-                        if (post.classList.contains('hidden-post') || post.classList.contains('read-post') || 
-                            post.classList.contains('hide-post') || post.classList.contains('liked-post')) {
-                            post.style.display = 'none';
-                            hiddenCount++;
-                        } else {
-                            post.style.display = 'block';
-                            visibleCount++;
-                        }
+                    // Apply Hidden Posts Filter
+                    const isHidden = post.classList.contains('hidden-post') || 
+                                   post.classList.contains('read-post') || 
+                                   post.classList.contains('hide-post') || 
+                                   post.classList.contains('liked-post');
+                    const hiddenFilterPasses = showHidden || !isHidden;
+                    
+                    // Apply Liked Posts Filter
+                    const isLiked = post.classList.contains('liked-post');
+                    const likedFilterPasses = !showLiked || isLiked;
+                    
+                    // Post must pass ALL active filters (AND logic)
+                    const shouldShow = categoryMatches && hiddenFilterPasses && likedFilterPasses;
+                    
+                    if (shouldShow) {
+                        post.style.display = 'block';
+                        visibleCount++;
                     } else {
                         post.style.display = 'none';
                         hiddenCount++;
                     }
-                });
-                                
-                // Always hide subcategory headers for a clean view
-                const subcategoryHeaders = document.querySelectorAll('.subcategory-header');
-                subcategoryHeaders.forEach(header => {
-                    header.style.display = 'none';
-                });
-                
-                // Sort visible posts by date (most recent first) for all views
-                const visiblePosts = Array.from(allPosts).filter(post => {
-                    return post.style.display !== 'none';
-                });
-                
-                // Sort by date (posts have date info in their text content)
-                visiblePosts.sort((a, b) => {
-                    const dateA = a.querySelector('.date')?.textContent || '';
-                    const dateB = b.querySelector('.date')?.textContent || '';
-                    
-                    // Parse dates properly for sorting
-                    const parseDate = (dateStr) => {
-                        // Handle formats like "Sep 4, 2023", "Jul 9, 2025"
-                        const match = dateStr.match(/(\w{3})\s+(\d{1,2}),?\s+(\d{4})/);
-                        if (match) {
-                            const month = match[1];
-                            const day = parseInt(match[2]);
-                            const year = parseInt(match[3]);
-                            
-                            // Convert month abbreviation to number
-                            const monthMap = {
-                                'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-                                'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-                            };
-                            
-                            const monthNum = monthMap[month] || 0;
-                            return new Date(year, monthNum, day);
-                        }
-                        return new Date(0); // Invalid date
-                    };
-                    
-                    const parsedDateA = parseDate(dateA);
-                    const parsedDateB = parseDate(dateB);
-                    
-                                    // Sort by actual date (most recent first)
-                return parsedDateB - parsedDateA;
-            });
-                
-            // Reorder posts in the DOM
-            const container = visiblePosts[0]?.parentNode;
-            if (container) {
-                visiblePosts.forEach(post => {
-                    container.appendChild(post);
-                });
-            }
-                
-                // Reset subcategory button highlighting
-                const subcategoryLinks = document.querySelectorAll('#subcategory-links a');
-                subcategoryLinks.forEach(link => {
-                    link.style.background = '#f8f9fa';
-                    link.style.color = '#495057';
-                    link.style.borderColor = '#dee2e6';
                 });
             }
             
@@ -1230,170 +986,50 @@ class IndexGenerator:
             
             function toggleHiddenPosts() {
                 console.log('🔵 toggleHiddenPosts() called');
-                const showHidden = document.getElementById('show-hidden').checked;
-                const allPosts = document.querySelectorAll('.post-line');
-                
-                let visibleCount = 0;
-                let hiddenCount = 0;
-                
-                allPosts.forEach(post => {
-                    const isHidden = post.classList.contains('hidden-post') || 
-                                   post.classList.contains('read-post') || 
-                                   post.classList.contains('hide-post') || 
-                                   post.classList.contains('liked-post');
-                    
-                    if (showHidden) {
-                        // Show ALL posts (including hidden ones)
-                        post.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        // Hide posts that are marked as hidden, but respect current category filter
-                        const postMainCategory = post.getAttribute('data-main-category');
-                        const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
-                        if (categoryMatches && !isHidden) {
-                            post.style.display = 'block';
-                            visibleCount++;
-                        } else {
-                            post.style.display = 'none';
-                            hiddenCount++;
-                        }
-                    }
-                });
-                
-                // Update subcategory links if in category view
-                if (document.getElementById('category-view').classList.contains('show') && document.getElementById('subcategory-links')) {
-                    showSubcategoryLinks();
-                }
+                // Simply update the category view to apply all filters with AND logic
+                updateCategoryView();
             }
             
             function toggleLikedPosts() {
                 console.log('🔵 toggleLikedPosts() called');
-                const showLiked = document.getElementById('show-liked').checked;
-                const allPosts = document.querySelectorAll('.post-line');
-                
-                let visibleCount = 0;
-                let hiddenCount = 0;
-                
-                allPosts.forEach(post => {
-                    const isLiked = post.classList.contains('liked-post');
-                    
-                    if (showLiked) {
-                        // Show ONLY liked posts (filter to just liked content)
-                        if (isLiked) {
-                            post.style.display = 'block';
-                            visibleCount++;
-                        } else {
-                            post.style.display = 'none';
-                            hiddenCount++;
-                        }
-                    } else {
-                        // Show all posts (respecting other hiding rules and category filter)
-                        const isHidden = post.classList.contains('hidden-post') || 
-                                       post.classList.contains('read-post') || 
-                                       post.classList.contains('hide-post') || 
-                                       post.classList.contains('liked-post');
-                        
-                        const postMainCategory = post.getAttribute('data-main-category');
-                        const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
-                        if (categoryMatches && !isHidden) {
-                            post.style.display = 'block';
-                            visibleCount++;
-                        } else {
-                            post.style.display = 'none';
-                            hiddenCount++;
-                        }
-                    }
-                });
-                
-                // Update subcategory links if in category view
-                if (document.getElementById('category-view').classList.contains('show') && document.getElementById('subcategory-links')) {
-                    showSubcategoryLinks();
-                }
+                // Simply update the category view to apply all filters with AND logic
+                updateCategoryView();
             }
             
             function searchPosts(query) {
                 console.log(`🔵 searchPosts('${query}') called`);
                 const searchTerm = query.toLowerCase().trim();
-                const allPosts = document.querySelectorAll('.post-line');
                 
                 if (searchTerm === '') {
                     // Remove search mode styling from body
                     document.body.classList.remove('search-mode');
                     
-                    // Restore the default "All" selection when search is cleared
-                    const allRadio = document.querySelector('input[name="main-category"][value="All"]');
-                    if (allRadio) allRadio.checked = true;
-                    currentMainCategory = 'All';
-                    
-                    // Show all posts and respect current view settings
-                    let visibleCount = 0;
-                    let hiddenCount = 0;
-                    
-                    allPosts.forEach(post => {
-                        const isHidden = post.classList.contains('hidden-post') || 
-                                       post.classList.contains('read-post') || 
-                                       post.classList.contains('hide-post') || 
-                                       post.classList.contains('liked-post');
-                        
-                        // Check checkbox states
-                        const showHidden = document.getElementById('show-hidden').checked;
-                        const showLiked = document.getElementById('show-liked').checked;
-                        
-                        let shouldShow = false;
-                        
-                        if (showLiked) {
-                            // Show ONLY liked posts
-                            shouldShow = post.classList.contains('liked-post');
-                        } else if (showHidden) {
-                            // Show ALL posts (including hidden ones)
-                            shouldShow = true;
-                        } else {
-                            // Normal mode: respect hiding rules and category filter
-                            const postMainCategory = post.getAttribute('data-main-category');
-                            shouldShow = postMainCategory === currentMainCategory && !isHidden;
-                        }
-                        
-                        post.style.display = shouldShow ? 'block' : 'none';
-                        if (shouldShow) visibleCount++; else hiddenCount++;
-                        
-                        // Remove search result styling
-                        post.classList.remove('search-result-hidden');
-                    });
-                    
-                    // Update subcategory links if in category view
-                    if (document.getElementById('category-view').classList.contains('show') && document.getElementById('subcategory-links')) {
-                        showSubcategoryLinks();
-                    }
+                    // When search is cleared, restore normal category view
+                    updateCategoryView();
                     return;
                 }
-                
-                // Search through posts - show matching posts from the currently selected category
-                // Ensure "By Date" view is selected for chronological search results
-                const dateRadio = document.querySelector('input[name="view"][value="date"]');
-                if (dateRadio) dateRadio.checked = true;
-                showView('date');
                 
                 // Add search mode styling to body
                 document.body.classList.add('search-mode');
                 
+                // Get all currently visible posts (based on filter row settings)
+                const visiblePosts = document.querySelectorAll('.post-line[style*="block"]');
+                
                 let matchCount = 0;
                 let hiddenMatchCount = 0;
                 
-                allPosts.forEach(post => {
+                visiblePosts.forEach(post => {
                     const title = post.querySelector('a.local').textContent.toLowerCase();
                     const newsletter = post.querySelector('.newsletter-name').textContent.toLowerCase();
                     const category = post.querySelector('.category, .subcategory')?.textContent.toLowerCase() || '';
                     
+                    // Check if post matches search term
                     const matches = title.includes(searchTerm) || 
                                   newsletter.includes(searchTerm) || 
                                   category.includes(searchTerm);
                     
-                    // Only show posts that match both search term AND current category selection
-                    const postMainCategory = post.getAttribute('data-main-category');
-                    const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
-                    
-                    if (matches && categoryMatches) {
-                        // Show the post regardless of hiding state when searching
+                    if (matches) {
+                        // Keep the post visible
                         post.style.display = 'block';
                         matchCount++;
                         
@@ -1410,10 +1046,14 @@ class IndexGenerator:
                             post.classList.remove('search-result-hidden');
                         }
                     } else {
+                        // Hide posts that don't match search term
                         post.style.display = 'none';
                         post.classList.remove('search-result-hidden');
                     }
                 });
+                
+                // Update subcategory links if they exist
+                // showSubcategoryLinks(); // This function is removed
             }
         </script>
         """

@@ -9,7 +9,7 @@ The newsletter personalization interface is a web-based application that allows 
 - **Search Bar**: Full-width search input field with placeholder text "Search posts by title, newsletter, or content..."
 - **Search Mode Visual Feedback**: When search is active, controls are dimmed and search bar is highlighted
 
-### Category Selection Controls
+### Filter Row
 - **Main Category Radio Buttons**: Three mutually exclusive options arranged horizontally
   - "All" (default selection) - shows all posts from all categories
   - "Science" - shows only posts from the "Science" category
@@ -19,6 +19,12 @@ The newsletter personalization interface is a web-based application that allows 
 - **Visibility Toggle Checkboxes**: Positioned next to main category selection
   - "Hidden Posts" checkbox - when checked, shows ALL posts including hidden ones
   - "Liked Posts" checkbox - when checked, shows ONLY liked posts (exclusive filter)
+
+- **Filter Row Logic**: All filters work together with simple AND logic - a post must pass ALL active filters to be displayed:
+  - **Category Filter**: Post must be in the selected category (or any category if "All" is selected)
+  - **Hidden Posts Filter**: If checked, hidden posts are included; if unchecked, hidden posts are excluded
+  - **Liked Posts Filter**: If checked, only liked posts are shown; if unchecked, posts are shown regardless of like status
+  - **Result**: Posts must satisfy ALL active filter criteria to be visible
 
 ### Subcategory Navigation
 - **Subcategories** are defined in the file `config/newsletters.md` via `###` headings.
@@ -39,26 +45,36 @@ The newsletter personalization interface is a web-based application that allows 
 
 ## User Interaction Patterns
 
-### Category Filtering
-1. **Main Category Selection**: Click radio button to filter by main category
-2. **Subcategory Navigation**: When "Science" is selected, click subcategory buttons for granular filtering
-3. **View Persistence**: Selected category persists through page refresh
-4. **Default Behavior**: "All" category selected by default on page load
+### Filter Row Usage
+1. **Main Category Selection**: Click radio button to filter by category
+2. **Visibility Controls**: Use checkboxes to show hidden posts or only liked posts
+3. **Subcategory Navigation**: Click subcategory buttons for granular filtering
+4. **View Persistence**: Selected category persists through page refresh
+5. **Default Behavior**: "All" category selected by default on page load
+
+### Search Workflow
+1. **Set Filter Row**: First configure the base set of posts using category selection and visibility toggles
+2. **Search Within Results**: Type search terms to narrow down the currently visible posts
+3. **Clear Search**: Remove search terms to return to the full filtered view
+4. **Filter-Search Independence**: Search only affects what's visible; it doesn't change Filter Row settings
 
 ### Search Functionality
 - **Real-time Search**: Live updates as user types with debounced input to prevent excessive processing
 - **Multi-field Search**: Searches across post title, newsletter name, and post content simultaneously
-- **Contextual Search**: Search results are filtered based on currently selected main category (All, Science, News and Opinion)
+- **Filtered Search**: Search only searches within posts currently visible based on Filter Row settings
+  - If "Science" category is selected, search only searches Science posts
+  - If "Hidden Posts" is checked, search includes hidden posts in the search scope
+  - If "Liked Posts" is checked, search only searches within liked posts
 - **Search Mode Visual Feedback**: 
   - Controls are dimmed when search is active
   - Search bar is highlighted to indicate active search state
 - **Search Result Display**: 
-  - Posts matching search terms are shown with search terms highlighted
+  - Posts matching search terms remain visible
   - Non-matching posts are hidden
-  - Results maintain chronological order (most recent first)
+  - Results maintain the same filtering context from Filter Row
 - **Search Clearing**: 
   - Search results are cleared when user clears search input
-  - Normal category filtering resumes after search is cleared
+  - Normal Filter Row filtering resumes after search is cleared
 - **Search Persistence**: Search terms persist during user interactions until manually cleared
 
 ### Personalization Actions
@@ -111,10 +127,16 @@ The newsletter personalization interface is a web-based application that allows 
 6. **Action Buttons**: User interaction controls
 
 ### Content Filtering Logic
+- **Filter Row Controls**: Main category selection and visibility toggles determine the base set of visible posts
+- **Simple AND Logic**: A post must pass ALL active filters to be displayed:
+  1. **Category Filter**: Post must match the selected category (or any category if "All" is selected)
+  2. **Hidden Posts Filter**: If checked, hidden posts are included; if unchecked, hidden posts are excluded
+  3. **Liked Posts Filter**: If checked, only liked posts are shown; if unchecked, posts are shown regardless of like status
 - **Hidden Posts**: Posts marked as not interesting, read, hide, or liked (when read+liked)
-- **Visible Posts**: Posts not marked with any hiding criteria
-- **Search Results**: Only visible posts within selected category are searchable
+- **Visible Posts**: Posts that pass all active filter criteria
+- **Search Scope**: Search only operates within posts currently visible based on Filter Row settings
 - **Category Switching**: Clears subcategory filters and resets to main category view
+- **Search Integration**: Search narrows down the currently filtered results without changing the base filter
 
 ## Responsive Behavior
 
