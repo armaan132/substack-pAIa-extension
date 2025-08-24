@@ -42,14 +42,14 @@ Adam Tooze https://adamtooze.substack.com/ economics, globalization https://en.w
 Katelyn Jetelina https://yourlocalepidemiologist.substack.com/ epideimiology 
 Eric Topol https://erictopol.substack.com/ medicine, health https://en.wikipedia.org/wiki/Eric_Topol
 
-## History
+### History
 
 Ruth Ben-Ghiat https://lucid.substack.com/ history https://en.wikipedia.org/wiki/Ruth_Ben-Ghiat
 William Hogeland https://williamhogeland.substack.com/ history https://en.wikipedia.org/wiki/William_Hogeland
 Timothy Snyder https://snyder.substack.com history, current affairs, russia, ukraine https://en.wikipedia.org/wiki/Timothy_Snyder
 Julian E. Zelizer https://julianzelizer.substack.com history, political history, https://en.wikipedia.org/wiki/Julian_E._Zelizer 
 
-## Journalism
+### Journalism
 
 Peter Beinart https://peterbeinart.substack.com journalism, political science, judaism https://en.wikipedia.org/wiki/Peter_Beinart
 Steven Beschloss https://www.americaamerica.news journalism https://en.wikipedia.org/wiki/Steven_Beschloss
@@ -60,7 +60,7 @@ Asha Rangappa https://asharangappa.substack.com law, global affairs, intelligenc
 Joyce Vance https://joycevance.substack.com/ law https://en.wikipedia.org/wiki/Joyce_Vance
 Steve Vladeck https://www.stevevladeck.com law https://en.wikipedia.org/wiki/Steve_Vladeck
 
-## Literature
+### Literature
 
 Henrik Karlsson https://www.henrikkarlsson.xyz literature, philosophy 
 

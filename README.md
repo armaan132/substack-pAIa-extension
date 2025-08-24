@@ -23,25 +23,27 @@ project_root/
 ├── data/                           
 │   ├── content/                    # HTML content of posts
 │   ├── metadata/                   # JSON metadata of posts
-│   ├── index.html                  # Auto-generated HTML index
-│   └── index.json                  # Auto-generated JSON index
+│   ├── index.html                  # Auto-generated HTML index with personalization
+│   └── index.json                  # Auto-generated JSON index with user preferences
 │   └── newsletters.yaml            # Newsletter configuration (generated via NLP)
 ├── docs/                       
 │   ├── CHANGELOG.md                # Project changelog
 │   ├── user-stories.md             # User stories
 │   ├── product-backlog.md          # Todo list
-│   └── learning-backlog.md         # Learning outcomes
+│   ├── learning-backlog.md         # Learning outcomes
+│   └── not_interesting_feature.md  # Personalization feature documentation
 ├── nlp-scripts/
 │   └── newsletters.nlp.md          # Generate `newsletters.yaml` from `newsletters.md`
 ├── scripts/                    
-│   ├── serve.py                    # Local server for reading newsletters
+│   ├── run_server.py               # Runner script for the personalization server
 │   ├── test_substack_api.py        # Download and store newsletters
 │   └── sentiment_analysis.py       # Analyze sentiment of newsletter citations
 ├── src/                
 │   ├── database/       
 │   │   └── filesystem_store.py     # Data storage and retrieval
 │   ├── web/                        
-│   │   ├── index_generator.py      # HTML/JSON index generation
+│   │   ├── index_generator.py      # HTML/JSON index generation with personalization
+│   │   ├── server.py               # Main Flask server (core application)
 │   │   └── static/                 
 │   │       └── css/                # CSS styling files
 │   ├── scraper/                    # Web scraping 
@@ -60,10 +62,13 @@ project_root/
 - Downloads posts from newsletters configured in `config/newsletters.md`
 - Generates HTML and JSON indexes; open [`index.html`](data/index.html) with your browser
 
-[`serve.py`](scripts/serve.py) (not needed for basic functionality)
-- Usage: `python scripts/serve.py`
-- Starts a simple HTTP server on port 8000
+[`run_server.py`](scripts/run_server.py) (personalization server)
+- Usage: `python scripts/run_server.py`
+- Starts the main Flask server on port 8000 with full personalization features
+- Provides interactive "Not Interesting" and "Read/Unread" functionality for posts
+- Hierarchical categorization with Science and News & Opinion sections
 - Access your newsletters at `http://localhost:8000/data/index.html`
+- **Features**: Mark posts as not interesting or read, hide them instantly, persist all preferences
 
 [`sentiment_analysis.py`](scripts/sentiment_analysis.py) (not needed for basic functionality)
 - Usage: `python scripts/sentiment_analysis.py <source_url> <html_file>`
@@ -80,10 +85,19 @@ project_root/
 - Prevents duplicate downloads by checking existing posts 
 
 **Index Generation** (`src/web/index_generator.py`)
-- Generates HTML and JSON indexes of stored posts
+- Generates HTML and JSON indexes of stored posts with JSON-first architecture
 - Creates chronological timeline view (latest posts first)
-- Reads newsletter configuration from markdown
-- Formats dates in human-readable format
+- Reads newsletter configuration with hierarchical categorization (## and ### headers)
+- Formats dates in human-readable format  
+- **Features**: Includes personalization fields (not_interesting, read) with persistent storage
+
+**Main Server** (`src/web/server.py`)
+- **Core Flask application** for the newsletter personalization system
+- Single clean server architecture (no duplicate server code)
+- Provides both static file serving and interactive API functionality  
+- Handles user preference updates (not_interesting, read status)
+- Serves the generated HTML interface with hierarchical categorization
+- **Future-ready**: Foundation for AI training, user management, advanced filtering
 
 **NLP Configuration** (`nlp-scripts/newsletters.nlp.md`)
 - AI instructions for generating rich YAML configuration
@@ -91,25 +105,28 @@ project_root/
 - Assigns topics, tags, and content classifications
 - Converts simple markdown to structured metadata
 
-**Note:** The system uses manual configuration via `config/newsletters.md` with optional AI-powered YAML generation for enhanced metadata.
+**Note:** The system uses manual configuration via `config/newsletters.md` with optional AI-powered YAML generation for enhanced metadata. The new personalization features are built on top of this foundation.
 
 ## Features
 
 **Implemented**:
 
 - Download and store Substack newsletters locally
-- Auto-generated index page for browsing
-- Built-in local server for reading indexed posts
+- Auto-generated index page for browsing with hierarchical categorization
+- Built-in Flask server for reading indexed posts with personalization
+- Interactive "Not Interesting" and "Read/Unread" buttons with instant hiding
+- Persistent user preferences (survives server restarts and page refreshes)
+- JSON-first architecture with `index.json` as single source of truth
 - Sentiment analysis of newsletter citations and references
 - AI-powered YAML configuration generation from markdown
 - Metadata extraction (authors, roles, topics, tags)
 
 **Currently Working On**:
 
-- Content Organization:
-  - Improving the layout of locally stored newsletters. Adding functionality (hiding, summarizing, liking, featured newsletters, etc). 
-  - Finding Substack URLs from author names.
-- Crawling the substack link graph.
+- Content Discovery and Organization:
+  - Finding Substack URLs from author names
+  - Crawling the substack link graph
+  - Advanced filtering and search capabilities
 
 **Next Steps**:
 
@@ -145,7 +162,7 @@ project_root/
 
     or 
 
-    start the local server with `python scripts/serve.py` and open  http://localhost:8000/data/index.html in your browser
+    start the personalization server with `python scripts/run_server.py` and open  http://localhost:8000/data/index.html in your browser
 
 ## Development Status
 
