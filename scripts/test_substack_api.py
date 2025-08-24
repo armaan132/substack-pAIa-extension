@@ -83,10 +83,13 @@ def main():
     # Create index files after processing all newsletters
     try:
         index_gen = IndexGenerator()
-        index_gen.create_index_html()
-        index_gen.create_json_index()
+        # Create test files instead of overwriting main files
+        index_gen.create_index_html(output_file="index_test.html")
+        index_gen.create_json_index(output_file="index_test.json")
+        print("✅ Test files created: index_test.html and index_test.json")
+        print("⚠️  Main index.json was NOT overwritten")
     except Exception as e:
-        print(f"Error creating index files: {e}")
+        print(f"Error creating test index files: {e}")
 
 if __name__ == "__main__":
     main()

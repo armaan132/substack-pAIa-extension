@@ -40,6 +40,19 @@ class NewsletterStore:
         # Create directories if they don't exist
         self.metadata_dir.mkdir(parents=True, exist_ok=True)
         self.content_dir.mkdir(parents=True, exist_ok=True)
+    
+    def _extract_author_safely(self, metadata: Dict) -> str:
+        """Safely extract author information from post metadata."""
+        try:
+            published_bylines = metadata.get('publishedBylines')
+            if published_bylines and isinstance(published_bylines, list) and len(published_bylines) > 0:
+                first_byline = published_bylines[0]
+                if isinstance(first_byline, dict) and 'name' in first_byline:
+                    return first_byline['name']
+            return 'Unknown Author'
+        except Exception as e:
+            print(f"    🔍 Debug: Author extraction error: {e}")
+            return 'Unknown Author'
 
     def _get_safe_name(self, url: str) -> str:
         """Convert URL to safe directory name."""
@@ -93,7 +106,7 @@ class NewsletterStore:
             'url': post.url,
             'newsletter_url': newsletter_url,
             'title': metadata['title'],
-            'author': metadata['publishedBylines'][0]['name'],
+            'author': self._extract_author_safely(metadata),
             'published_at': metadata.get('post_date'),  # Fix: use 'post_date' instead of 'publishedAt'
             'word_count': metadata.get('wordcount'),
             'content_path': str(content_path),

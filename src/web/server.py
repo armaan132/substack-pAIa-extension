@@ -112,6 +112,62 @@ class Server:
             except Exception as e:
                 return jsonify({'success': False, 'error': str(e)}), 500
         
+        # API endpoint for triggering incremental content update
+        @self.flask_app.route('/api/update_content', methods=['POST'])
+        def update_content():
+            try:
+                print("🔄 Incremental update requested via web interface")
+                
+                # Import the incremental updater with better path handling
+                import sys
+                import os
+                from pathlib import Path
+                
+                # Add multiple possible paths
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                # Ensure scripts directory is in Python path
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                print(f"🔍 Python path includes: {sys.path[:3]}...")
+                print(f"🔍 Scripts directory: {scripts_dir}")
+                
+                try:
+                    from incremental_update import IncrementalUpdater
+                    print("✅ Successfully imported IncrementalUpdater")
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    # Try alternative import path
+                    try:
+                        from scripts.incremental_update import IncrementalUpdater
+                        print("✅ Successfully imported via scripts.incremental_update")
+                    except ImportError as alt_error:
+                        print(f"❌ Alternative import also failed: {alt_error}")
+                        raise ImportError(f"Could not import IncrementalUpdater: {import_error}, then {alt_error}")
+                
+                # Run the incremental update
+                print("🚀 Starting incremental update...")
+                updater = IncrementalUpdater()
+                success = updater.run_incremental_update()
+                
+                if success:
+                    message = "Content updated successfully. New posts and sources have been added."
+                    print("✅ Update completed successfully")
+                    return jsonify({'success': True, 'message': message})
+                else:
+                    print("❌ Update process failed")
+                    return jsonify({'success': False, 'error': 'Update process failed'})
+                    
+            except Exception as e:
+                print(f"❌ Error during incremental update: {e}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({'success': False, 'error': str(e)}), 500
+        
         # Serve static files from project root
         @self.flask_app.route('/<path:filename>')
         def serve_file(filename):

@@ -336,7 +336,7 @@ class IndexGenerator:
         except Exception as e:
             print(f"❌ Error initializing personalization fields: {e}")
 
-    def create_index_html(self) -> None:
+    def create_index_html(self, output_file: str = "index.html") -> None:
         """Create an index.html file from the data in index.json."""
         # Load data from index.json
         json_path = self.base_dir / "index.json"
@@ -347,7 +347,15 @@ class IndexGenerator:
             index_data = json.load(f)
         
         content = """
-        <!--h1>Recent Newsletter Posts</h-->
+        <!-- Page Title -->
+        <div style="text-align: center; margin: 15px 0; padding: 10px;">
+            <h1 style="margin: 0; color: #2c3e50; font-size: 2em; font-weight: 400; letter-spacing: 0.5px;">
+                Daily Briefing pAIa
+                <span style="color: #7f8c8d; font-size: 0.6em; font-weight: 300; font-style: italic; margin-left: 15px;">
+                    Personal Content Curation
+                </span>
+            </h1>
+        </div>
         
         <!-- Main Category Selection and Visibility Controls -->
         <div class="main-category-section" style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;">
@@ -369,12 +377,26 @@ class IndexGenerator:
             </label>
         </div>
         
-        <!-- Search Bar -->
-        <div class="search-bar" style="margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 5px;">
-            <input type="text" id="search-input" placeholder="Search posts by title, newsletter, or content..." 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
-                   oninput="searchPosts(this.value)"
-                   onkeydown="if(event.key === 'Enter') { console.log('🟢 Enter key detected'); searchPosts(this.value); }">
+        <!-- Update and Search Section -->
+        <div style="display: flex; gap: 20px; margin: 20px 0;">
+            <!-- Update Button -->
+            <div style="flex: 0 0 auto;">
+                <button id="update-btn" onclick="triggerUpdate()" 
+                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">
+                    🔄 Update Content
+                </button>
+                <div id="update-status" style="margin-top: 5px; font-size: 12px; color: #666;"></div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div style="flex: 1;">
+                <div class="search-bar" style="padding: 15px; background: #e8f5e8; border-radius: 5px;">
+                    <input type="text" id="search-input" placeholder="Search posts by title, newsletter, or content..." 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+                           oninput="searchPosts(this.value)"
+                           onkeydown="if(event.key === 'Enter') { console.log('🟢 Enter key detected'); searchPosts(this.value); }">
+                </div>
+            </div>
         </div>
         
 
@@ -489,7 +511,8 @@ class IndexGenerator:
             date = post.get('published_at') or 'No date'
             display_date = self._format_date(date)
             newsletter_name = post['newsletter_name']
-            category = post['category']
+            # Handle missing category field gracefully
+            category = post.get('category', 'Uncategorized')
             
             # Handle content path calculation more robustly
             try:
@@ -930,6 +953,56 @@ class IndexGenerator:
                 }
             }
 
+            async function triggerUpdate() {
+                console.log('🔵 triggerUpdate() called');
+                
+                const updateBtn = document.getElementById('update-btn');
+                const updateStatus = document.getElementById('update-status');
+                
+                // Disable button and show loading state
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '⏳ Updating...';
+                updateBtn.style.background = '#6c757d';
+                updateStatus.innerHTML = '🔄 Starting incremental update...';
+                
+                try {
+                    const response = await fetch('/api/update_content', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        updateStatus.innerHTML = `✅ Update completed! ${result.message || ''}`;
+                        updateBtn.style.background = '#28a745';
+                        
+                        // Reload the page to show new content
+                        setTimeout(() => {
+                            updateStatus.innerHTML = '🔄 Reloading page to show new content...';
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        throw new Error(result.error || 'Update failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Update error:', error);
+                    updateStatus.innerHTML = `❌ Update failed: ${error.message}`;
+                    updateBtn.style.background = '#dc3545';
+                } finally {
+                    // Re-enable button
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = '🔄 Update Content';
+                }
+            }
+            
             async function updatePostHide(postId, hide) {
                 console.log(`🔵 updatePostHide('${postId}', ${hide}) called`);
                 try {
@@ -1063,18 +1136,18 @@ class IndexGenerator:
             css_path=self._get_css_path(1),
             content=content
         )
-        index_path = self.base_dir / "index.html"
+        index_path = self.base_dir / output_file
         index_path.write_text(html, encoding='utf-8')
-        print(f"✅ Created index.html from index.json at {index_path}")
+        print(f"✅ Created {output_file} from index.json at {index_path}")
 
-    def create_json_index(self) -> None:
+    def create_json_index(self, output_file: str = "index.json", input_file: str = "index.json") -> None:
         """Create a JSON index file for programmatic access."""
         # Load existing index.json to preserve personalization field values
         existing_not_interesting = {}
         existing_read = {}
         existing_like = {}
         existing_hide = {}
-        json_path = self.base_dir / "index.json"
+        json_path = self.base_dir / input_file
         if json_path.exists():
             try:
                 with open(json_path, 'r', encoding='utf-8') as f:
@@ -1119,8 +1192,9 @@ class IndexGenerator:
         newsletters = self.list_newsletters()
         for newsletter in sorted(newsletters):
             posts = self.list_posts(f"https://{newsletter}.substack.com")
-            if posts:
-                newsletter_url = posts[0]['newsletter_url']
+            if posts and len(posts) > 0:
+                # Ensure we have at least one post before accessing posts[0]
+                newsletter_url = posts[0].get('newsletter_url', f"https://{newsletter}.substack.com")
                 # Normalize the URL for comparison
                 normalized_url = newsletter_url.rstrip('/')
                 display_name = normalized_url_to_name.get(normalized_url, newsletter.title())
@@ -1159,11 +1233,89 @@ class IndexGenerator:
             }
             index_data["total_posts"] += len(posts)
         
-        json_path = self.base_dir / "index.json"
+        json_path = self.base_dir / output_file
         json_path.write_text(json.dumps(index_data, indent=2), encoding='utf-8')
-        print(f"Created index.json with personalization fields and categories at {json_path}")
+        print(f"Created {output_file} with personalization fields and categories at {json_path}")
 
     def create_rss_feed(self) -> None:
         """Create an RSS feed of all posts."""
         # This could be implemented later if needed
         pass 
+
+if __name__ == "__main__":
+    import argparse
+    import sys
+    
+    parser = argparse.ArgumentParser(
+        description="Generate index files for Daily Briefing pAIa",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python src/web/index_generator.py                    # Use default index.json
+  python src/web/index_generator.py index_test.json    # Use index_test.json
+  python src/web/index_generator.py --html-only        # Only generate HTML
+  python src/web/index_generator.py --json-only        # Only generate JSON
+        """
+    )
+    
+    parser.add_argument(
+        'input_file',
+        nargs='?',
+        default='index.json',
+        help='Input JSON file to generate from (default: index.json)'
+    )
+    
+    parser.add_argument(
+        '--html-only',
+        action='store_true',
+        help='Only generate HTML file, skip JSON generation'
+    )
+    
+    parser.add_argument(
+        '--json-only',
+        action='store_true',
+        help='Only generate JSON file, skip HTML generation'
+    )
+    
+    parser.add_argument(
+        '--output-html',
+        default='index.html',
+        help='Output HTML filename (default: index.html)'
+    )
+    
+    parser.add_argument(
+        '--output-json',
+        default='index.json',
+        help='Output JSON filename (default: index.json)'
+    )
+    
+    args = parser.parse_args()
+    
+    try:
+        # Check if input file exists (try current dir and data dir)
+        input_path = Path(args.input_file)
+        if not input_path.exists():
+            # Try in data directory
+            input_path = Path("data") / args.input_file
+            if not input_path.exists():
+                print(f"❌ Error: Input file '{args.input_file}' not found")
+                print(f"   Available files in current dir: {list(Path('.').glob('*.json'))}")
+                print(f"   Available files in data dir: {list(Path('data').glob('*.json'))}")
+                sys.exit(1)
+        
+        # Create IndexGenerator instance
+        ig = IndexGenerator()
+        
+        if not args.html_only:
+            print(f"📊 Generating JSON index from {args.input_file}...")
+            ig.create_json_index(output_file=args.output_json, input_file=args.input_file)
+        
+        if not args.json_only:
+            print(f"🌐 Generating HTML from {args.input_file}...")
+            ig.create_index_html(output_file=args.output_html)
+        
+        print("✅ Index generation completed successfully!")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        sys.exit(1) 
