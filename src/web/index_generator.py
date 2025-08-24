@@ -135,6 +135,31 @@ class IndexGenerator:
             return dt.strftime('%b %-d, %Y') if hasattr(dt, 'strftime') else dt.strftime('%b %d, %Y')
         except Exception:
             return date_str
+    
+    def _sort_json_data(self, data: Dict) -> Dict:
+        """Sort JSON data for consistent ordering: newsletters alphabetically, posts chronologically."""
+        if "newsletters" not in data:
+            return data
+        
+        # Sort newsletters alphabetically by URL
+        sorted_newsletters = {}
+        for url in sorted(data["newsletters"].keys()):
+            newsletter_data = data["newsletters"][url].copy()
+            
+            # Sort posts chronologically (newest first)
+            if "posts" in newsletter_data:
+                posts = newsletter_data["posts"]
+                # Sort by published_at, handling missing dates
+                posts.sort(
+                    key=lambda x: x.get('published_at', '') or '1970-01-01',
+                    reverse=True  # Newest first
+                )
+                newsletter_data["posts"] = posts
+            
+            sorted_newsletters[url] = newsletter_data
+        
+        data["newsletters"] = sorted_newsletters
+        return data
 
     def update_post_not_interesting(self, post_id: str, not_interesting: bool) -> bool:
         """Update the not_interesting field for a specific post in the JSON file."""
@@ -166,8 +191,10 @@ class IndexGenerator:
                 return False
             
             # Write updated JSON back to file
+            # Sort data for consistent ordering before saving
+            sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(index_data, f, indent=2)
+                json.dump(sorted_data, f, indent=2)
             
             print(f"✅ Updated post {post_id} not_interesting to {not_interesting}")
             return True
@@ -206,8 +233,10 @@ class IndexGenerator:
                 return False
             
             # Write updated JSON back to file
+            # Sort data for consistent ordering before saving
+            sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(index_data, f, indent=2)
+                json.dump(sorted_data, f, indent=2)
             
             print(f"✅ Updated post {post_id} read to {read}")
             return True
@@ -246,8 +275,10 @@ class IndexGenerator:
                 return False
             
             # Write updated JSON back to file
+            # Sort data for consistent ordering before saving
+            sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(index_data, f, indent=2)
+                json.dump(sorted_data, f, indent=2)
             
             print(f"✅ Updated post {post_id} like to {like}")
             return True
@@ -286,8 +317,10 @@ class IndexGenerator:
                 return False
             
             # Write updated JSON back to file
+            # Sort data for consistent ordering before saving
+            sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(index_data, f, indent=2)
+                json.dump(sorted_data, f, indent=2)
             
             print(f"✅ Updated post {post_id} hide to {hide}")
             return True
@@ -377,6 +410,14 @@ class IndexGenerator:
             </label>
         </div>
         
+        <!-- Subcategory Selection (hidden by default) -->
+        <div id="subcategory-row" class="subcategory-row" style="display: none; margin: 15px 0; padding: 15px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;">
+            <h4 style="margin: 0 0 10px 0; color: #856404; font-size: 1em;">Filter by Subcategory:</h4>
+            <div id="subcategory-buttons" class="subcategory-buttons">
+                <!-- Will be populated dynamically -->
+            </div>
+        </div>
+        
         <!-- Update and Search Section -->
         <div style="display: flex; gap: 20px; margin: 20px 0;">
             <!-- Update Button -->
@@ -463,6 +504,37 @@ class IndexGenerator:
             .action-btn:hover::after {
                 opacity: 1;
                 visibility: visible;
+            }
+            
+            /* Subcategory button styles */
+            .subcategory-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .subcategory-btn {
+                background: #f8f9fa;
+                color: #495057;
+                border: 1px solid #dee2e6;
+                padding: 6px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 13px;
+                transition: all 0.2s ease;
+            }
+            
+            .subcategory-btn:hover {
+                background: #e9ecef;
+                border-color: #adb5bd;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .subcategory-btn.active {
+                background: #007bff;
+                color: white;
+                border-color: #007bff;
             }
             
             .hidden-post { display: none; }
@@ -645,18 +717,90 @@ class IndexGenerator:
                 // Save the selection to localStorage for persistence
                 localStorage.setItem('selectedMainCategory', mainCategory);
                 
+                // Show/hide subcategory row and populate subcategory buttons
+                showSubcategoryLinks(mainCategory);
+                
                 // Update the display based on current category using unified AND logic
                 updateCategoryView();
             }
             
-
+            function showSubcategoryLinks(mainCategory) {
+                console.log(`🔵 showSubcategoryLinks('${mainCategory}') called`);
+                const subcategoryRow = document.getElementById('subcategory-row');
+                const subcategoryButtons = document.getElementById('subcategory-buttons');
+                
+                // Clear any active subcategory filter when switching main categories
+                currentSubcategory = null;
+                
+                if (mainCategory === 'All') {
+                    subcategoryRow.style.display = 'none';
+                    return;
+                }
+                
+                // Get unique subcategories for the selected main category
+                const subcategories = new Set();
+                const posts = document.querySelectorAll('.post-line');
+                posts.forEach(post => {
+                    const postMainCategory = post.getAttribute('data-main-category');
+                    if (postMainCategory === mainCategory) {
+                        const subcategory = post.getAttribute('data-subcategory');
+                        if (subcategory && subcategory !== 'Uncategorized') {
+                            subcategories.add(subcategory);
+                        }
+                    }
+                });
+                
+                if (subcategories.size === 0) {
+                    subcategoryRow.style.display = 'none';
+                    return;
+                }
+                
+                // Populate subcategory buttons
+                subcategoryButtons.innerHTML = '';
+                const sortedSubcategories = Array.from(subcategories).sort();
+                
+                sortedSubcategories.forEach(subcategory => {
+                    const button = document.createElement('button');
+                    button.className = 'subcategory-btn';
+                    button.textContent = subcategory;
+                    button.onclick = function() {
+                        console.log(`🟢 Subcategory button clicked: ${subcategory}`);
+                        filterBySubcategory(subcategory);
+                    };
+                    subcategoryButtons.appendChild(button);
+                });
+                
+                subcategoryRow.style.display = 'block';
+            }
             
-            // showSubcategoryLinks function is removed
+            function filterBySubcategory(subcategory) {
+                console.log(`🔵 filterBySubcategory('${subcategory}') called`);
+                
+                // Toggle: if clicking the same subcategory, turn it off
+                if (currentSubcategory === subcategory) {
+                    currentSubcategory = null;
+                    console.log('🔄 Toggling off subcategory filter');
+                } else {
+                    currentSubcategory = subcategory;
+                    console.log(`🔄 Setting subcategory filter to: ${subcategory}`);
+                }
+                
+                // Update button states
+                const buttons = document.querySelectorAll('.subcategory-btn');
+                buttons.forEach(btn => {
+                    if (btn.textContent === subcategory && currentSubcategory === subcategory) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Update the display
+                updateCategoryView();
+            }
             
             function updateCategoryView() {
                 console.log(`🔵 updateCategoryView() called`);
-                // Clear any subcategory filter
-                currentSubcategory = null;
                 
                 // Get current filter states
                 const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
@@ -674,6 +818,13 @@ class IndexGenerator:
                     const postMainCategory = post.getAttribute('data-main-category');
                     const categoryMatches = selectedCategory === 'All' || postMainCategory === selectedCategory;
                     
+                    // Apply Subcategory Filter (if active)
+                    let subcategoryMatches = true;
+                    if (currentSubcategory && selectedCategory !== 'All') {
+                        const postSubcategory = post.getAttribute('data-subcategory');
+                        subcategoryMatches = postSubcategory === currentSubcategory;
+                    }
+                    
                     // Apply Hidden Posts Filter
                     const isHidden = post.classList.contains('hidden-post') || 
                                    post.classList.contains('read-post') || 
@@ -686,7 +837,7 @@ class IndexGenerator:
                     const likedFilterPasses = !showLiked || isLiked;
                     
                     // Post must pass ALL active filters (AND logic)
-                    const shouldShow = categoryMatches && hiddenFilterPasses && likedFilterPasses;
+                    const shouldShow = categoryMatches && subcategoryMatches && hiddenFilterPasses && likedFilterPasses;
                     
                     if (shouldShow) {
                         post.style.display = 'block';
@@ -1141,7 +1292,24 @@ class IndexGenerator:
         print(f"✅ Created {output_file} from index.json at {index_path}")
 
     def create_json_index(self, output_file: str = "index.json", input_file: str = "index.json") -> None:
-        """Create a JSON index file for programmatic access."""
+        """Create a JSON index file for programmatic access.
+        
+        ⚠️ WARNING: This method regenerates JSON from content files!
+        This will overwrite manual deletions and curation decisions.
+        Use with extreme caution or disable entirely.
+        """
+        # SAFETY CHECK: Allow regeneration only when index.json is missing
+        if output_file == "index.json" and input_file == "index.json":
+            json_path = self.base_dir / "index.json"
+            if json_path.exists():
+                print("❌ SAFETY CHECK: Cannot overwrite existing index.json!")
+                print("❌ This would overwrite your manual curation decisions.")
+                print("❌ If you really need to regenerate, delete index.json first or use a different output filename.")
+                raise RuntimeError("JSON regeneration blocked for safety - JSON is source of truth")
+            else:
+                print("✅ index.json missing, allowing regeneration from newsletters.md")
+                print("🔄 This will create a fresh index.json with newsletter structure")
+        
         # Load existing index.json to preserve personalization field values
         existing_not_interesting = {}
         existing_read = {}
@@ -1177,61 +1345,64 @@ class IndexGenerator:
         
         # Load newsletter configuration from markdown for proper names and categories
         newsletter_configs = self.load_newsletters_with_categories()
-        # newsletter_configs is a dict, so we need to handle it differently
-        url_to_name = {config['url']: config['name'] for config in newsletter_configs.values()}
-        url_to_main_category = {config['url']: config['main_category'] for config in newsletter_configs.values()}
-        url_to_subcategory = {config['url']: config['subcategory'] for config in newsletter_configs.values()}
-        url_to_tags = {config['url']: config['tags'] for config in newsletter_configs.values()}
+        print(f"📋 Loaded {len(newsletter_configs)} newsletter configurations from newsletters.md")
         
-        # Create normalized URL mappings (remove trailing slashes for comparison)
-        normalized_url_to_name = {url.rstrip('/'): name for url, name in url_to_name.items()}
-        normalized_url_to_main_category = {url.rstrip('/'): cat for url, cat in url_to_main_category.items()}
-        normalized_url_to_subcategory = {url.rstrip('/'): subcat for url, subcat in url_to_subcategory.items()}
-        normalized_url_to_tags = {url.rstrip('/'): tags for url, tags in url_to_tags.items()}
-        
-        newsletters = self.list_newsletters()
-        for newsletter in sorted(newsletters):
-            posts = self.list_posts(f"https://{newsletter}.substack.com")
-            if posts and len(posts) > 0:
-                # Ensure we have at least one post before accessing posts[0]
-                newsletter_url = posts[0].get('newsletter_url', f"https://{newsletter}.substack.com")
-                # Normalize the URL for comparison
-                normalized_url = newsletter_url.rstrip('/')
-                display_name = normalized_url_to_name.get(normalized_url, newsletter.title())
-                main_category = normalized_url_to_main_category.get(normalized_url, 'Uncategorized')
-                subcategory = normalized_url_to_subcategory.get(normalized_url, 'Uncategorized')
-                tags = normalized_url_to_tags.get(normalized_url, [])
-            else:
-                newsletter_url = f"https://{newsletter}.substack.com"
-                display_name = newsletter.title()
-                main_category = 'Uncategorized'
-                subcategory = 'Uncategorized'
-                tags = []
+        # Create newsletter structure from newsletters.md (content files are optional)
+        for url, config in newsletter_configs.items():
+            newsletter_url = config['url']
+            display_name = config['name']
+            main_category = config['main_category']
+            subcategory = config['subcategory']
+            tags = config['tags']
             
-            # Ensure each post has all personalization fields and category info
-            for post in posts:
-                # Preserve existing values or default to False
-                post_url = post.get('url', '')
-                post['not_interesting'] = existing_not_interesting.get(post_url, False)
-                post['read'] = existing_read.get(post_url, False)
-                post['like'] = existing_like.get(post_url, False)
-                post['hide'] = existing_hide.get(post_url, False)
-                post['main_category'] = main_category
-                post['subcategory'] = subcategory
-                post['category'] = f"{main_category} > {subcategory}"  # For backward compatibility
-                post['tags'] = tags
+            # Check if we have existing posts for this newsletter (optional)
+            existing_posts = []
+            try:
+                # Try to load existing posts if they exist, but don't require them
+                newsletter_name = self._get_safe_name(newsletter_url)
+                metadata_dir = self.base_dir / "metadata" / newsletter_name
+                if metadata_dir.exists():
+                    for metadata_file in metadata_dir.glob("*.json"):
+                        try:
+                            with open(metadata_file, 'r', encoding='utf-8') as f:
+                                post_data = json.load(f)
+                                # Preserve existing personalization values
+                                post_url = post_data.get('url', '')
+                                if post_url:
+                                    post_data['not_interesting'] = existing_not_interesting.get(post_url, False)
+                                    post_data['read'] = existing_read.get(post_url, False)
+                                    post_data['like'] = existing_like.get(post_url, False)
+                                    post_data['hide'] = existing_hide.get(post_url, False)
+                                    post_data['main_category'] = main_category
+                                    post_data['subcategory'] = subcategory
+                                    post_data['category'] = f"{main_category} > {subcategory}"
+                                    post_data['tags'] = tags
+                                    existing_posts.append(post_data)
+                        except Exception as e:
+                            print(f"⚠️ Could not load post metadata {metadata_file}: {e}")
+                            continue
+            except Exception as e:
+                print(f"⚠️ Could not check existing posts for {display_name}: {e}")
             
-            index_data["newsletters"][newsletter] = {
+            # Sort posts chronologically (newest first)
+            existing_posts.sort(
+                key=lambda x: x.get('published_at', '') or '1970-01-01',
+                reverse=True
+            )
+            
+            index_data["newsletters"][newsletter_url] = {
                 "name": display_name,
                 "url": newsletter_url,
                 "main_category": main_category,
                 "subcategory": subcategory,
-                "category": f"{main_category} > {subcategory}",  # For backward compatibility
+                "category": f"{main_category} > {subcategory}",
                 "tags": tags,
-                "post_count": len(posts),
-                "posts": posts
+                "post_count": len(existing_posts),
+                "posts": existing_posts
             }
-            index_data["total_posts"] += len(posts)
+            index_data["total_posts"] += len(existing_posts)
+            
+            print(f"📰 {display_name}: {len(existing_posts)} existing posts (if any)")
         
         json_path = self.base_dir / output_file
         json_path.write_text(json.dumps(index_data, indent=2), encoding='utf-8')
@@ -1250,11 +1421,17 @@ if __name__ == "__main__":
         description="Generate index files for Daily Briefing pAIa",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+⚠️  SAFETY WARNING: JSON regeneration is blocked by default!
+JSON is the source of truth - regenerating it will overwrite your curation decisions.
+
 Examples:
-  python src/web/index_generator.py                    # Use default index.json
-  python src/web/index_generator.py index_test.json    # Use index_test.json
+  python src/web/index_generator.py                    # Use default index.json (HTML only)
+  python src/web/index_generator.py index_test.json    # Use index_test.json (HTML only)
   python src/web/index_generator.py --html-only        # Only generate HTML
-  python src/web/index_generator.py --json-only        # Only generate JSON
+  python src/web/index_generator.py --json-only        # Only generate JSON (SAFE: uses different output file)
+  
+To regenerate main index.json (DANGEROUS):
+  python src/web/index_generator.py --output-json index_new.json  # Creates new file, doesn't overwrite
         """
     )
     
@@ -1307,6 +1484,18 @@ Examples:
         ig = IndexGenerator()
         
         if not args.html_only:
+            # SAFETY CHECK: Allow regeneration only when index.json is missing
+            if args.output_json == "index.json":
+                json_path = Path("data/index.json")
+                if json_path.exists():
+                    print("❌ SAFETY CHECK: Cannot overwrite existing index.json!")
+                    print("❌ Use --output-json with a different filename to create new JSON files.")
+                    print("❌ Example: --output-json index_new.json")
+                    print("❌ Or delete index.json first to allow regeneration from newsletters.md")
+                    sys.exit(1)
+                else:
+                    print("✅ index.json missing, allowing regeneration from newsletters.md + content files")
+            
             print(f"📊 Generating JSON index from {args.input_file}...")
             ig.create_json_index(output_file=args.output_json, input_file=args.input_file)
         

@@ -143,7 +143,7 @@ class Server:
                     print(f"❌ Import error: {import_error}")
                     # Try alternative import path
                     try:
-                        from scripts.incremental_update import IncrementalUpdater
+                        from .updaters.incremental_update import IncrementalUpdater
                         print("✅ Successfully imported via scripts.incremental_update")
                     except ImportError as alt_error:
                         print(f"❌ Alternative import also failed: {alt_error}")
@@ -196,21 +196,28 @@ class Server:
             print("🛑 Server will stop when main process exits")
 
     def generate_files(self):
-        """Generate the index files with personalization features (JSON-first approach)."""
+        """Generate HTML from existing JSON (JSON is source of truth)."""
         try:
-            # Step 1: Generate JSON first (the single source of truth)
-            print("📝 Generating index.json (primary data)...")
-            self.generator.create_json_index()
+            # Check if index.json exists
+            json_path = Path("data/index.json")
+            if not json_path.exists():
+                print("⚠️ index.json missing, regenerating from newsletters.md...")
+                print("🔄 This will create a fresh index.json with newsletter structure")
+                self.generator.create_json_index()
+                print("✅ Fresh index.json created from newsletters.md")
             
-            # Step 2: Initialize personalization fields for existing posts
+            # JSON is the source of truth - use existing or newly created
+            print("📝 Using index.json as source of truth")
+            
+            # Step 1: Initialize personalization fields for existing posts (preserve JSON)
             print("🔧 Initializing personalization fields...")
             self.generator.initialize_personalization_fields()
             
-            # Step 3: Generate HTML from the JSON data
+            # Step 2: Generate HTML from the JSON data (JSON controls what exists)
             print("📝 Generating index.html from JSON...")
             self.generator.create_index_html()
             
-            print("✅ All files generated successfully!")
+            print("✅ HTML generated from index.json (JSON preserved as source of truth)")
             
         except Exception as e:
             print(f"❌ Error generating files: {e}")
@@ -223,10 +230,10 @@ def main():
     server = Server()
     
     try:
-        # Generate the index files first
+        # Generate HTML from existing JSON on startup (JSON is source of truth)
         server.generate_files()
         
-        print("✅ Files generated successfully!")
+        print("✅ HTML generated from existing JSON on startup")
         
         # Start the server
         server.start_server()

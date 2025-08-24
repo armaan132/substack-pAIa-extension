@@ -1,10 +1,10 @@
-# Substack pAIa
+# Daily Briefing pAIa
 
 ## Mission Statement
 
-A personal AI assistant that helps you discover, collect, and annotate science blogs from Substack - your intelligent companion for staying on top of scientific discussions and breakthroughs.
+A personal AI assistant that helps you discover, collect, and curate content from newsletters, blogs, and RSS feeds - your intelligent companion for staying on top of discussions and breakthroughs across your areas of interest.
 
-substack-pAIa is part of pAIa, an initiative to return control of the internet to its users. While today's internet is dominated by platforms that monetize user attention and data, pAIa tools help you interact with online content on your own terms. By enabling local storage and personal curation of Substack science blogs, this assistant lets you build your own knowledge base without sacrificing privacy or autonomy to platform algorithms.
+Daily Briefing pAIa is part of pAIa, an initiative to return control of the internet to its users. While today's internet is dominated by platforms that monetize user attention and data, pAIa tools help you interact with online content on your own terms. By enabling local storage and personal curation of newsletters, blogs, and RSS feeds, this assistant lets you build your own knowledge base without sacrificing privacy or autonomy to platform algorithms.
 
 In the future, pAIa will expand into a data science project on federated learning applied to the monitoring of centralized social media platforms. By decentralizing both the data collection and analysis processes, we aim to shift power away from platforms controlled by private financial interests that currently monopolize user data and control information flow. This federated approach will enable users to collectively understand platform dynamics while maintaining individual data sovereignty - a crucial step towards a more democratic and user-controlled internet ecosystem.
 
@@ -44,6 +44,10 @@ project_root/
 │   ├── web/                        
 │   │   ├── index_generator.py      # HTML/JSON index generation with personalization
 │   │   ├── server.py               # Main Flask server (core application)
+│   │   ├── updaters/               # Content update mechanisms
+│   │   │   ├── __init__.py         # Package initialization
+│   │   │   ├── incremental_update.py # Incremental updates with RSS fallback
+│   │   │   └── rss_updater.py      # RSS-based fast content discovery
 │   │   └── static/                 
 │   │       └── css/                # CSS styling files
 │   ├── scraper/                    # Web scraping 
@@ -98,6 +102,13 @@ project_root/
 - Handles user preference updates (not_interesting, read status)
 - Serves the generated HTML interface with hierarchical categorization
 - **Future-ready**: Foundation for AI training, user management, advanced filtering
+
+**Content Updates** (`src/web/updaters/`)
+- **RSS-first strategy**: Uses RSS feeds for fast content discovery (10x faster than scraping)
+- **Smart fallback**: Falls back to `substack_api` when RSS fails
+- **Incremental updates**: Only fetches new content, preserves existing data and personalization
+- **Web interface integration**: Update button in web UI triggers RSS-based updates
+- **Content preservation**: All user preferences (read, like, hide, not_interesting) are maintained
 
 **NLP Configuration** (`nlp-scripts/newsletters.nlp.md`)
 - AI instructions for generating rich YAML configuration

@@ -1,8 +1,6 @@
 # Downloaded newsletter data
-data/content/
-data/metadata/
-data/index.html
-
+data/
+server.log
 # Python
 __pycache__/
 *.py[cod]
