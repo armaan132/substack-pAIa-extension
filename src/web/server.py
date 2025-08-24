@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from .index_generator import IndexGenerator
+from index_generator import IndexGenerator
 from flask import Flask, request, jsonify, send_from_directory
 
 # Get the project root directory
@@ -143,7 +143,7 @@ class Server:
                     print(f"❌ Import error: {import_error}")
                     # Try alternative import path
                     try:
-                        from .updaters.incremental_update import IncrementalUpdater
+                        from updaters.incremental_update import IncrementalUpdater
                         print("✅ Successfully imported via scripts.incremental_update")
                     except ImportError as alt_error:
                         print(f"❌ Alternative import also failed: {alt_error}")
