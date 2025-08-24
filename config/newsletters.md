@@ -111,3 +111,4 @@ Matt Stoller https://www.thebignewsletter.com/ anti-trust https://en.wikipedia.o
 Andrew Tanner https://roguesystemsrecon.substack.com Ukraine
 Matthew Yglesias https://www.slowboring.com/ current affairs https://en.wikipedia.org/wiki/Matthew_Yglesias
 Robert Reich https://robertreich.substack.com/ public policy, current affairs, economics, inequality https://en.wikipedia.org/wiki/Robert_Reich
+Joe Wrote https://www.joewrote.com unions, leftism

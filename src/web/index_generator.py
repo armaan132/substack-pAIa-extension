@@ -353,19 +353,19 @@ class IndexGenerator:
         <div class="main-category-section" style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;">
             <!--h3 style="margin-top: 0;">Select Main Category:</h3-->
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="radio" name="main-category" value="All" checked onclick="filterByMainCategory('All')"> All
+                <input type="radio" name="main-category" value="All" checked onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="radio" name="main-category" value="Science" onclick="filterByMainCategory('Science')"> Science
+                <input type="radio" name="main-category" value="Science" onclick="console.log('🟢 Radio button clicked: Science'); filterByMainCategory('Science')"> Science
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="radio" name="main-category" value="News and Opinion" onclick="filterByMainCategory('News and Opinion')"> News and Opinion
+                <input type="radio" name="main-category" value="News and Opinion" onclick="console.log('🟢 Radio button clicked: News and Opinion'); filterByMainCategory('News and Opinion')"> News and Opinion
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-hidden" onclick="toggleHiddenPosts()"> Hidden Posts
+                <input type="checkbox" id="show-hidden" onclick="console.log('🟢 Hidden posts checkbox clicked'); toggleHiddenPosts()"> Hidden Posts
             </label>
             <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-liked" onclick="toggleLikedPosts()"> Liked Posts
+                <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> Liked Posts
             </label>
         </div>
         
@@ -629,11 +629,16 @@ class IndexGenerator:
         # Add JavaScript for view switching, main category filtering, and not_interesting functionality
         content += """
         <script>
+            // Simple test to see if JavaScript is working
+            console.log('🚀 JavaScript is loading!');
+            
             let currentMainCategory = 'All';
             let currentSubcategory = null;
             
             // Hide posts marked as hidden, read, or hide on page load (liked posts stay visible)
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('🔵 DOMContentLoaded event fired');
+                
                 hideNotInterestingPosts();
                 hideReadPosts();
                 hideHidePosts();
@@ -645,9 +650,19 @@ class IndexGenerator:
                 const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
                 currentMainCategory = selectedCategory;
                 updateCategoryView();
+                                
+                // Add event listener for search input
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        console.log(`🟢 Search input detected: "${this.value}"`);
+                        searchPosts(this.value);
+                    });
+                }                
             });
             
             function hideNotInterestingPosts() {
+                console.log('🔵 hideNotInterestingPosts() called');
                 const hiddenPosts = document.querySelectorAll('.hidden-post');
                 hiddenPosts.forEach(post => {
                     post.style.display = 'none';
@@ -655,15 +670,15 @@ class IndexGenerator:
             }
             
             function hideReadPosts() {
+                console.log('🔵 hideReadPosts() called');
                 const readPosts = document.querySelectorAll('.read-post');
                 readPosts.forEach(post => {
                     post.style.display = 'none';
                 });
             }
 
-
-
             function hideHidePosts() {
+                console.log('🔵 hideHidePosts() called');
                 const hidePosts = document.querySelectorAll('.hide-post');
                 hidePosts.forEach(post => {
                     post.style.display = 'none';
@@ -671,6 +686,7 @@ class IndexGenerator:
             }
             
             function filterByMainCategory(mainCategory) {
+                console.log(`🔵 filterByMainCategory('${mainCategory}') called`);
                 currentMainCategory = mainCategory;
                 currentSubcategory = null; // Clear subcategory filter when switching main categories
                 
@@ -684,6 +700,7 @@ class IndexGenerator:
 
             
             function showSubcategoryLinks() {
+                console.log('🔵 showSubcategoryLinks() called');
                 // Get the current main category
                 const selectedCategory = document.querySelector('input[name="main-category"]:checked').value;
                 
@@ -748,6 +765,7 @@ class IndexGenerator:
             }
             
             function scrollToSubcategory(subcategoryName) {
+                console.log(`🔵 scrollToSubcategory('${subcategoryName}') called`);
                 currentSubcategory = subcategoryName;
                 
                 // Filter posts to show only those in the selected subcategory
@@ -758,7 +776,11 @@ class IndexGenerator:
             }
             
             function filterPostsBySubcategory(subcategoryName) {
+                console.log(`🔵 filterPostsBySubcategory('${subcategoryName}') called`);
                 const allPosts = document.querySelectorAll('.post-line');
+                
+                let visibleCount = 0;
+                let hiddenCount = 0;
                 
                 allPosts.forEach(post => {
                     const postSubcategory = post.getAttribute('data-subcategory');
@@ -773,14 +795,17 @@ class IndexGenerator:
                         if (post.classList.contains('hidden-post') || post.classList.contains('read-post') || 
                             post.classList.contains('hide-post') || post.classList.contains('liked-post')) {
                             post.style.display = 'none';
+                            hiddenCount++;
                         } else {
                             post.style.display = 'block';
+                            visibleCount++;
                         }
                     } else {
                         post.style.display = 'none';
+                        hiddenCount++;
                     }
                 });
-                
+                                
                 // Hide all subcategory headers when filtering by subcategory
                 const subcategoryHeaders = document.querySelectorAll('.subcategory-header');
                 subcategoryHeaders.forEach(header => {
@@ -803,11 +828,15 @@ class IndexGenerator:
             }
             
             function updateCategoryView() {
+                console.log(`🔵 updateCategoryView() called`);
                 // Clear any subcategory filter
                 currentSubcategory = null;
                 
                 // Filter posts by main category and update the display
                 const allPosts = document.querySelectorAll('.post-line');
+                
+                let visibleCount = 0;
+                let hiddenCount = 0;
                 
                 allPosts.forEach(post => {
                     const postMainCategory = post.getAttribute('data-main-category');
@@ -818,14 +847,17 @@ class IndexGenerator:
                         if (post.classList.contains('hidden-post') || post.classList.contains('read-post') || 
                             post.classList.contains('hide-post') || post.classList.contains('liked-post')) {
                             post.style.display = 'none';
+                            hiddenCount++;
                         } else {
                             post.style.display = 'block';
+                            visibleCount++;
                         }
                     } else {
                         post.style.display = 'none';
+                        hiddenCount++;
                     }
                 });
-                
+                                
                 // Always hide subcategory headers for a clean view
                 const subcategoryHeaders = document.querySelectorAll('.subcategory-header');
                 subcategoryHeaders.forEach(header => {
@@ -890,6 +922,7 @@ class IndexGenerator:
 
             
             function toggleNotInteresting(postId, button) {
+                console.log(`🔵 toggleNotInteresting('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
                 
@@ -911,6 +944,7 @@ class IndexGenerator:
             }
             
             function toggleRead(postId, button) {
+                console.log(`🔵 toggleRead('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
                 
@@ -932,6 +966,7 @@ class IndexGenerator:
             }
             
             async function updatePostNotInteresting(postId, notInteresting) {
+                console.log(`🔵 updatePostNotInteresting('${postId}', ${notInteresting}) called`);
                 try {
                     const response = await fetch('/api/update_not_interesting', {
                         method: 'POST',
@@ -946,9 +981,9 @@ class IndexGenerator:
                     
                     const result = await response.json();
                     if (result.success) {
-                        console.log(`✅ Post ${postId} updated successfully`);
+                        console.log(`✅ Post ${postId} not_interesting updated successfully`);
                     } else {
-                        console.error(`❌ Failed to update post ${postId}:`, result.error);
+                        console.error(`❌ Failed to update post ${postId} not_interesting:`, result.error);
                         // Revert the UI change if the update failed
                         const button = document.querySelector(`[onclick*="${postId}"]`);
                         const postLine = button.closest('.post-line');
@@ -965,7 +1000,7 @@ class IndexGenerator:
                         }
                     }
                 } catch (error) {
-                    console.error('❌ Error updating post:', error);
+                    console.error('❌ Error updating post not_interesting:', error);
                     // Revert the UI change if the update failed
                     const button = document.querySelector(`[onclick*="${postId}"]`);
                     const postLine = button.closest('.post-line');
@@ -973,17 +1008,18 @@ class IndexGenerator:
                         button.classList.remove('marked');
                         button.innerHTML = '👎';
                         postLine.classList.remove('hidden-post');
-                        postLine.style.display = 'block'; // Show the post
+                        postLine.style.display = 'none'; // Hide the post
                     } else {
-                        button.classList.add('marked');
+                        button.classList.remove('marked');
                         button.innerHTML = '👎';
                         postLine.classList.add('hidden-post');
-                        postLine.style.display = 'none'; // Hide the post
+                        postLine.style.display = 'block'; // Show the post
                     }
                 }
             }
             
             async function updatePostRead(postId, read) {
+                console.log(`🔵 updatePostRead('${postId}', ${read}) called`);
                 try {
                     const response = await fetch('/api/update_read', {
                         method: 'POST',
@@ -1037,6 +1073,7 @@ class IndexGenerator:
             }
             
             function toggleLike(postId, button) {
+                console.log(`🔵 toggleLike('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
                 
@@ -1067,6 +1104,7 @@ class IndexGenerator:
             }
 
             function toggleHide(postId, button) {
+                console.log(`🔵 toggleHide('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
                 
@@ -1088,6 +1126,7 @@ class IndexGenerator:
             }
 
             async function updatePostLike(postId, like) {
+                console.log(`🔵 updatePostLike('${postId}', ${like}) called`);
                 try {
                     const response = await fetch('/api/update_like', {
                         method: 'POST',
@@ -1121,21 +1160,22 @@ class IndexGenerator:
                 } catch (error) {
                     console.error('❌ Error updating post like:', error);
                     // Revert the UI change if the update failed
-                    const button = document.querySelector(`[onclick*="${postId}"]`);
-                    const postLine = button.closest('.post-line');
-                    if (like) {
-                        button.classList.remove('marked');
-                        button.innerHTML = '👍';
-                        postLine.classList.remove('liked-post');
-                    } else {
-                        button.classList.add('marked');
-                        button.innerHTML = '👍';
-                        postLine.classList.add('liked-post');
-                    }
+                        const button = document.querySelector(`[onclick*="${postId}"]`);
+                        const postLine = button.closest('.post-line');
+                        if (like) {
+                            button.classList.remove('marked');
+                            button.innerHTML = '👍';
+                            postLine.classList.remove('liked-post');
+                        } else {
+                            button.classList.add('marked');
+                            button.innerHTML = '👍';
+                            postLine.classList.add('liked-post');
+                        }
                 }
             }
 
             async function updatePostHide(postId, hide) {
+                console.log(`🔵 updatePostHide('${postId}', ${hide}) called`);
                 try {
                     const response = await fetch('/api/update_hide', {
                         method: 'POST',
@@ -1176,11 +1216,12 @@ class IndexGenerator:
                     if (hide) {
                         button.classList.remove('marked');
                         button.innerHTML = 'Hide';
+                        postLine.classList.add('marked');
                         postLine.classList.remove('hide-post');
                         postLine.style.display = 'block'; // Show the post
                     } else {
-                        button.classList.add('marked');
-                        button.innerHTML = '✓ Hide';
+                        button.classList.remove('marked');
+                        button.innerHTML = 'Hide';
                         postLine.classList.add('hide-post');
                         postLine.style.display = 'none'; // Hide the post
                     }
@@ -1188,8 +1229,12 @@ class IndexGenerator:
             }
             
             function toggleHiddenPosts() {
+                console.log('🔵 toggleHiddenPosts() called');
                 const showHidden = document.getElementById('show-hidden').checked;
                 const allPosts = document.querySelectorAll('.post-line');
+                
+                let visibleCount = 0;
+                let hiddenCount = 0;
                 
                 allPosts.forEach(post => {
                     const isHidden = post.classList.contains('hidden-post') || 
@@ -1200,14 +1245,17 @@ class IndexGenerator:
                     if (showHidden) {
                         // Show ALL posts (including hidden ones)
                         post.style.display = 'block';
+                        visibleCount++;
                     } else {
                         // Hide posts that are marked as hidden, but respect current category filter
                         const postMainCategory = post.getAttribute('data-main-category');
                         const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
                         if (categoryMatches && !isHidden) {
                             post.style.display = 'block';
+                            visibleCount++;
                         } else {
                             post.style.display = 'none';
+                            hiddenCount++;
                         }
                     }
                 });
@@ -1219,8 +1267,12 @@ class IndexGenerator:
             }
             
             function toggleLikedPosts() {
+                console.log('🔵 toggleLikedPosts() called');
                 const showLiked = document.getElementById('show-liked').checked;
                 const allPosts = document.querySelectorAll('.post-line');
+                
+                let visibleCount = 0;
+                let hiddenCount = 0;
                 
                 allPosts.forEach(post => {
                     const isLiked = post.classList.contains('liked-post');
@@ -1229,8 +1281,10 @@ class IndexGenerator:
                         // Show ONLY liked posts (filter to just liked content)
                         if (isLiked) {
                             post.style.display = 'block';
+                            visibleCount++;
                         } else {
                             post.style.display = 'none';
+                            hiddenCount++;
                         }
                     } else {
                         // Show all posts (respecting other hiding rules and category filter)
@@ -1243,8 +1297,10 @@ class IndexGenerator:
                         const categoryMatches = currentMainCategory === 'All' || postMainCategory === currentMainCategory;
                         if (categoryMatches && !isHidden) {
                             post.style.display = 'block';
+                            visibleCount++;
                         } else {
                             post.style.display = 'none';
+                            hiddenCount++;
                         }
                     }
                 });
@@ -1256,6 +1312,7 @@ class IndexGenerator:
             }
             
             function searchPosts(query) {
+                console.log(`🔵 searchPosts('${query}') called`);
                 const searchTerm = query.toLowerCase().trim();
                 const allPosts = document.querySelectorAll('.post-line');
                 
@@ -1269,6 +1326,9 @@ class IndexGenerator:
                     currentMainCategory = 'All';
                     
                     // Show all posts and respect current view settings
+                    let visibleCount = 0;
+                    let hiddenCount = 0;
+                    
                     allPosts.forEach(post => {
                         const isHidden = post.classList.contains('hidden-post') || 
                                        post.classList.contains('read-post') || 
@@ -1294,6 +1354,7 @@ class IndexGenerator:
                         }
                         
                         post.style.display = shouldShow ? 'block' : 'none';
+                        if (shouldShow) visibleCount++; else hiddenCount++;
                         
                         // Remove search result styling
                         post.classList.remove('search-result-hidden');
@@ -1315,6 +1376,9 @@ class IndexGenerator:
                 // Add search mode styling to body
                 document.body.classList.add('search-mode');
                 
+                let matchCount = 0;
+                let hiddenMatchCount = 0;
+                
                 allPosts.forEach(post => {
                     const title = post.querySelector('a.local').textContent.toLowerCase();
                     const newsletter = post.querySelector('.newsletter-name').textContent.toLowerCase();
@@ -1331,6 +1395,7 @@ class IndexGenerator:
                     if (matches && categoryMatches) {
                         // Show the post regardless of hiding state when searching
                         post.style.display = 'block';
+                        matchCount++;
                         
                         // Add visual indicator if post is hidden
                         const isHidden = post.classList.contains('hidden-post') || 
@@ -1340,6 +1405,7 @@ class IndexGenerator:
                         
                         if (isHidden) {
                             post.classList.add('search-result-hidden');
+                            hiddenMatchCount++;
                         } else {
                             post.classList.remove('search-result-hidden');
                         }
