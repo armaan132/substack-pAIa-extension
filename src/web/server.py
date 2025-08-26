@@ -21,7 +21,8 @@ PORT = 8000
 
 class Server:
     def __init__(self):
-        self.generator = IndexGenerator()
+        # Ensure we use the correct data directory relative to project root
+        self.generator = IndexGenerator(DATA_DIR)
         self.flask_app = None
         self.server_thread = None
         
@@ -137,14 +138,14 @@ class Server:
                 print(f"🔍 Scripts directory: {scripts_dir}")
                 
                 try:
-                    from incremental_update import IncrementalUpdater
+                    from updaters.incremental_update import IncrementalUpdater
                     print("✅ Successfully imported IncrementalUpdater")
                 except ImportError as import_error:
                     print(f"❌ Import error: {import_error}")
                     # Try alternative import path
                     try:
                         from updaters.incremental_update import IncrementalUpdater
-                        print("✅ Successfully imported via scripts.incremental_update")
+                        print("✅ Successfully imported via updaters subdirectory")
                     except ImportError as alt_error:
                         print(f"❌ Alternative import also failed: {alt_error}")
                         raise ImportError(f"Could not import IncrementalUpdater: {import_error}, then {alt_error}")
@@ -155,19 +156,259 @@ class Server:
                 success = updater.run_incremental_update()
                 
                 if success:
-                    message = "Content updated successfully. New posts and sources have been added."
-                    print("✅ Update completed successfully")
-                    return jsonify({'success': True, 'message': message})
+                    return jsonify({'success': True, 'message': 'Content update completed successfully'})
                 else:
-                    print("❌ Update process failed")
-                    return jsonify({'success': False, 'error': 'Update process failed'})
+                    return jsonify({'success': False, 'error': 'Content update failed'}), 500
                     
             except Exception as e:
-                print(f"❌ Error during incremental update: {e}")
-                import traceback
-                traceback.print_exc()
+                print(f"❌ Error during content update: {e}")
                 return jsonify({'success': False, 'error': str(e)}), 500
         
+        # NEW: API endpoint for fast metadata updates (instant)
+        @self.flask_app.route('/api/update_metadata', methods=['POST'])
+        def update_metadata():
+            try:
+                print("⚡ Fast metadata update requested via web interface")
+                
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                    print("✅ Successfully imported IncrementalUpdater")
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Run only the fast metadata update
+                print("🚀 Starting fast metadata update...")
+                updater = IncrementalUpdater()
+                success = updater.run_pure_config_update()
+                
+                if success:
+                    return jsonify({'success': True, 'message': 'Configuration update completed successfully'})
+                else:
+                    return jsonify({'success': False, 'error': 'Configuration update failed'}), 500
+                    
+            except Exception as e:
+                print(f"❌ Error during metadata update: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # NEW: API endpoint to check metadata status (fast check)
+        @self.flask_app.route('/api/check_metadata_status', methods=['GET'])
+        def check_metadata_status():
+            try:
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Quick check if newsletters.md has changed
+                updater = IncrementalUpdater()
+                current_hash = updater.get_newsletter_md_hash()
+                
+                # Load existing data to get last known hash
+                if updater.index_path.exists():
+                    with open(updater.index_path, 'r', encoding='utf-8') as f:
+                        import json
+                        existing_data = json.load(f)
+                    last_hash = existing_data.get("newsletter_md_hash")
+                else:
+                    last_hash = None
+                
+                needs_update = current_hash != last_hash
+                
+                return jsonify({
+                    'needs_update': needs_update,
+                    'current_hash': current_hash,
+                    'last_hash': last_hash,
+                    'message': 'Metadata update needed' if needs_update else 'No metadata changes detected'
+                })
+                    
+            except Exception as e:
+                print(f"❌ Error checking metadata status: {e}")
+                return jsonify({'needs_update': False, 'error': str(e)}), 500
+
+        # NEW: API endpoint for structure updates (configuration + post metadata + HTML)
+        @self.flask_app.route('/api/update_structure', methods=['POST'])
+        def update_structure():
+            try:
+                print("🔄 Structure update requested via web interface")
+                
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                    print("✅ Successfully imported IncrementalUpdater")
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Run structure update (configuration + post metadata + HTML)
+                print("🚀 Starting structure update...")
+                updater = IncrementalUpdater()
+                success = updater.run_structure_update()
+                
+                if success:
+                    return jsonify({'success': True, 'message': 'Structure update completed successfully'})
+                else:
+                    return jsonify({'success': False, 'error': 'Structure update failed'}), 500
+                    
+            except Exception as e:
+                print(f"❌ Error during structure update: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # NEW: API endpoint for fast link discovery (new posts without content download)
+        @self.flask_app.route('/api/discover_links', methods=['POST'])
+        def discover_links():
+            try:
+                print("🚀 Fast link discovery requested via web interface")
+                
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                    print("✅ Successfully imported IncrementalUpdater")
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Run fast link discovery
+                print("🚀 Starting fast link discovery...")
+                updater = IncrementalUpdater()
+                success = updater.run_fast_link_discovery()
+                
+                if success:
+                    return jsonify({'success': True, 'message': 'Link discovery completed - new posts visible immediately'})
+                else:
+                    return jsonify({'success': False, 'error': 'Link discovery failed'}), 500
+                    
+            except Exception as e:
+                print(f"❌ Error during link discovery: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # NEW: API endpoint to get accurate pending downloads count
+        @self.flask_app.route('/api/pending_downloads_count', methods=['GET'])
+        def get_pending_downloads_count():
+            try:
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Get accurate pending downloads count
+                updater = IncrementalUpdater()
+                count = updater.get_accurate_pending_downloads_count()
+                
+                return jsonify({
+                    'pending_downloads': count,
+                    'message': f'{count} posts are currently pending download'
+                })
+                    
+            except Exception as e:
+                print(f"❌ Error getting pending downloads count: {e}")
+                return jsonify({'pending_downloads': 0, 'error': str(e)}), 500
+        
+        # NEW: API endpoint to trigger background content downloads
+        @self.flask_app.route('/api/download_pending_content', methods=['POST'])
+        def download_pending_content():
+            try:
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Start background downloads
+                updater = IncrementalUpdater()
+                updater.start_background_downloads()
+                
+                # Get updated count
+                count = updater.get_accurate_pending_downloads_count()
+                
+                return jsonify({
+                    'success': True,
+                    'message': f'Background downloads started. {count} posts still pending.',
+                    'pending_downloads': count
+                })
+                    
+            except Exception as e:
+                print(f"❌ Error starting background downloads: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
         # Serve static files from project root
         @self.flask_app.route('/<path:filename>')
         def serve_file(filename):
@@ -196,28 +437,34 @@ class Server:
             print("🛑 Server will stop when main process exits")
 
     def generate_files(self):
-        """Generate HTML from existing JSON (JSON is source of truth)."""
+        """Generate required files if they don't exist."""
         try:
             # Check if index.json exists
             json_path = Path("data/index.json")
             if not json_path.exists():
                 print("⚠️ index.json missing, regenerating from newsletters.md...")
-                print("🔄 This will create a fresh index.json with newsletter structure")
                 self.generator.create_json_index()
-                print("✅ Fresh index.json created from newsletters.md")
+            else:
+                # NEW: Always run metadata update on server startup (Tier 1 is fast and safe)
+                print("🔍 Running metadata update on server startup...")
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                    updater = IncrementalUpdater()
+                    
+                    print("📝 Updating configuration automatically on server startup...")
+                    success = updater.run_pure_config_update()
+                    if success:
+                        print("✅ Configuration updated successfully on server startup")
+                    else:
+                        print("⚠️ Configuration update failed on server startup")
+                        
+                except Exception as e:
+                    print(f"⚠️ Could not update metadata on startup: {e}")
+                    print("   Continuing with existing data...")
             
-            # JSON is the source of truth - use existing or newly created
-            print("📝 Using index.json as source of truth")
-            
-            # Step 1: Initialize personalization fields for existing posts (preserve JSON)
-            print("🔧 Initializing personalization fields...")
-            self.generator.initialize_personalization_fields()
-            
-            # Step 2: Generate HTML from the JSON data (JSON controls what exists)
-            print("📝 Generating index.html from JSON...")
+            # Always generate HTML
             self.generator.create_index_html()
-            
-            print("✅ HTML generated from index.json (JSON preserved as source of truth)")
+            print("✅ HTML generated successfully")
             
         except Exception as e:
             print(f"❌ Error generating files: {e}")

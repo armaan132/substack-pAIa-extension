@@ -5,9 +5,25 @@ Simple runner script to start the newsletter personalization server.
 
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import subprocess
+from pathlib import Path
 
-from src.web.server import main
+# Get the project root directory
+project_root = Path(__file__).parent.parent
 
 if __name__ == "__main__":
-    main()
+    # Change to project root directory and run server
+    os.chdir(project_root)
+    
+    # Run the server directly from the web directory
+    server_path = project_root / "src" / "web" / "server.py"
+    
+    # Use subprocess to run with proper Python path
+    result = subprocess.run([
+        sys.executable, 
+        str(server_path)
+    ], cwd=project_root)
+    
+    if result.returncode != 0:
+        print(f"❌ Server exited with code {result.returncode}")
+        sys.exit(result.returncode)

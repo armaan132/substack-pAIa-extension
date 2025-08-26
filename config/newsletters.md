@@ -2,12 +2,9 @@
 
 ## Science
 
-### General Science, Science Communication
+### General
 
 Astral Codex Ten https://www.astralcodexten.com/  bayesianism, longtermism, meta-politics, political epistemology, policy analysis https://en.wikipedia.org/wiki/Slate_Star_Codex
-Rachel Donald https://www.planetcritical.com/ environment, climate change https://en.wikipedia.org/wiki/Rachel_Donald
-Richard Crim https://richardcrim.substack.com climate change https://en.wikipedia.org/wiki/Richard_Crim
-Anthropology.net https://www.anthropology.net/ anthropology https://en.wikipedia.org/wiki/Anthropology.net
 
 ### Accounting, Auditing
 
@@ -15,7 +12,13 @@ Francine McKenna https://thedig.substack.com/ accounting, auditing https://en.wi
 
 ### Anthropology
 
+Anthropology.net https://www.anthropology.net/ anthropology 
 Dan Williams https://www.conspicuouscognition.com/ anthropology, evolutionary psychology 
+
+### Climate
+
+Rachel Donald https://www.planetcritical.com/ environment, climate change https://en.wikipedia.org/wiki/Rachel_Donald
+Richard Crim https://richardcrim.substack.com climate change https://en.wikipedia.org/wiki/Richard_Crim
 
 ### Economics
 
@@ -58,6 +61,7 @@ Steven Beschloss https://www.americaamerica.news journalism https://en.wikipedia
 ### Law
 
 Asha Rangappa https://asharangappa.substack.com law, global affairs, intelligence, FBI https://en.wikipedia.org/wiki/Asha_Rangappa
+David Lat https://davidlat.substack.com/ law 
 Joyce Vance https://joycevance.substack.com/ law https://en.wikipedia.org/wiki/Joyce_Vance
 Steve Vladeck https://www.stevevladeck.com law https://en.wikipedia.org/wiki/Steve_Vladeck
 
@@ -74,6 +78,7 @@ Amy Olberding https://digressionsimpressions.substack.com philosophy
 New Work in Philosophy https://newworkinphilosophy.substack.com/ philosophy 
 nescio13 https://digressionsimpressions.substack.com philosophy 
 Massimo Pigliucci https://massimopigliucci.org/ philosophy https://en.wikipedia.org/wiki/Massimo_Pigliucci
+John Plaice https://johnplaice.substack.com philosophy 
 Slavoj Žižek https://slavoj.substack.com/ philosophy https://en.wikipedia.org/wiki/Slavoj_%C5%BDi%C5%BEek
 
 ### Political Science
@@ -104,12 +109,22 @@ Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism
 
 Claire Berlinski https://claireberlinski.substack.com/ foreign affairs https://en.wikipedia.org/wiki/Claire_Berlinski
 Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current affairs, history https://en.wikipedia.org/wiki/Heather_Cox_Richardson
+Gil Duran https://www.theframelab.org anti-maga
 Rob Henderson https://www.robkhenderson.com/ https://en.wikipedia.org/wiki/Rob_Henderson
 Richard Hanania https://en.wikipedia.org/wiki/Richard_Hanania 
+Glenn Loury https://glennloury.substack.com, culture wars, 
 Stefan Korshak https://stefankorshak.substack.com Ukraine
 Jennifer Rubin https://contrarian.substack.com/ current affairs https://en.wikipedia.org/wiki/Jennifer_Rubin_(columnist)
 Matt Stoller https://www.thebignewsletter.com/ anti-trust https://en.wikipedia.org/wiki/Matt_Stoller
 Andrew Tanner https://roguesystemsrecon.substack.com Ukraine
 Matthew Yglesias https://www.slowboring.com/ current affairs https://en.wikipedia.org/wiki/Matthew_Yglesias
 Robert Reich https://robertreich.substack.com/ public policy, current affairs, economics, inequality https://en.wikipedia.org/wiki/Robert_Reich
+Brian Romanchuk https://bondeconomics.substack.com economics
 Joe Wrote https://www.joewrote.com unions, leftism
+The Downballot https://www.the-downballot.com US elections
+The Border Chronicle https://www.theborderchronicle.com/ US borders
+
+## Tech
+
+Ed Zitron https://www.wheresyoured.at/ 
+Gary Marcus https://garymarcus.substack.com AI https://en.wikipedia.org/wiki/Gary_Marcus

@@ -6,7 +6,24 @@ from typing import Dict, List, Optional
 
 # Constants
 CSS_PATH = 'src/web/static/css/substack-original.css'
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+
+# More robust project root detection
+def get_project_root():
+    """Get the project root directory, with fallback to current working directory."""
+    # Try to get from __file__ location first
+    file_based_root = Path(__file__).parent.parent.parent
+    if (file_based_root / "data").exists():
+        return file_based_root
+    
+    # Fallback to current working directory
+    cwd = Path.cwd()
+    if (cwd / "data").exists():
+        return cwd
+    
+    # If neither works, use the file-based approach
+    return file_based_root
+
+PROJECT_ROOT = get_project_root()
 DATA_DIR = PROJECT_ROOT / "data"
 METADATA_DIR = DATA_DIR / "metadata"
 CONTENT_DIR = DATA_DIR / "content"
