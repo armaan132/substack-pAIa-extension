@@ -40,7 +40,17 @@ def get_project_root():
 project_root = get_project_root()
 sys.path.append(str(project_root))
 
-from src.web.index_generator import IndexGenerator
+# Dynamic import to avoid circular import issues
+import importlib.util
+import sys
+from pathlib import Path
+
+# Get the path to index_generator.py
+index_generator_path = Path(__file__).parent.parent / "index_generator.py"
+spec = importlib.util.spec_from_file_location("index_generator", index_generator_path)
+index_generator_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(index_generator_module)
+IndexGenerator = index_generator_module.IndexGenerator
 
 class IncrementalUpdater:
     """Handles incremental updates while preserving existing data."""
@@ -886,12 +896,15 @@ class IncrementalUpdater:
         return domain
 
     def regenerate_category_index(self, existing_data: Dict) -> Dict:
-        """Regenerate the category-subcategory index from updated newsletter data."""
-        print("🔄 Regenerating category-subcategory index...")
+        """Regenerate the category-subcategory index from current newsletters.md configuration."""
+        print("🔄 Regenerating category-subcategory index from newsletters.md...")
         
-        # Build category-subcategory index from current newsletter data
+        # Build category-subcategory index from current newsletters.md configuration (not existing data)
+        index_generator = IndexGenerator(self.base_dir)
+        current_newsletters = index_generator.load_newsletters_with_categories()
+        
         category_index = {}
-        for newsletter_data in existing_data.get("newsletters", {}).values():
+        for newsletter_data in current_newsletters.values():
             main_category = newsletter_data.get('main_category')
             subcategory = newsletter_data.get('subcategory')
             
@@ -902,9 +915,6 @@ class IncrementalUpdater:
                 # Add subcategory if it exists and is different from main category
                 if subcategory and subcategory != main_category:
                     category_index[main_category].add(subcategory)
-                else:
-                    # Add a placeholder for newsletters without subcategories
-                    category_index[main_category].add("General")
         
         # Convert sets to sorted lists for JSON serialization
         for main_category, subcategories in category_index.items():
@@ -1650,6 +1660,74 @@ class IncrementalUpdater:
         except Exception as e:
             print(f"❌ Error in background downloads: {e}")
     
+    def _clean_html_content(self, html_content: str, post_url: str) -> str:
+        """Clean HTML content by removing JavaScript, external resources, and problematic elements."""
+        try:
+            from bs4 import BeautifulSoup
+            import re
+            
+            # Parse the HTML
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # Remove all script tags
+            for script in soup.find_all('script'):
+                script.decompose()
+            
+            # Remove all external CSS links (keep only inline styles)
+            for link in soup.find_all('link', rel='stylesheet'):
+                if link.get('href') and not link.get('href').startswith('#'):
+                    link.decompose()
+            
+            # Remove external image sources that might cause issues
+            for img in soup.find_all('img'):
+                if img.get('src') and img.get('src').startswith('http'):
+                    # Keep the image but make it local-friendly
+                    img['src'] = '#'
+                    img['alt'] = img.get('alt', 'Image') + ' (external)'
+            
+            # Remove external iframes
+            for iframe in soup.find_all('iframe'):
+                iframe.decompose()
+            
+            # Remove external embeds
+            for embed in soup.find_all('embed'):
+                embed.decompose()
+            
+            # Remove external objects
+            for obj in soup.find_all('object'):
+                obj.decompose()
+            
+            # Remove external video/audio sources
+            for media in soup.find_all(['video', 'audio']):
+                media.decompose()
+            
+            # Remove external fonts
+            for font in soup.find_all('link', rel='preload'):
+                if 'font' in font.get('as', ''):
+                    font.decompose()
+            
+            # Remove external analytics and tracking
+            for tag in soup.find_all(['noscript', 'meta']):
+                if tag.get('name') in ['google-site-verification', 'norton-safeweb-site-verification']:
+                    tag.decompose()
+            
+            # Add a simple header to indicate this is a cleaned local copy
+            header_div = soup.new_tag('div')
+            header_div['style'] = 'background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;'
+            header_div.string = f'📖 Local copy of: {post_url}'
+            
+            # Insert the header at the beginning of the body
+            if soup.body:
+                soup.body.insert(0, header_div)
+            
+            # Convert back to string
+            return str(soup)
+            
+        except Exception as e:
+            print(f"⚠️ Warning: Could not clean HTML content: {e}")
+            # Return original content if cleaning fails
+            return html_content
+    
     def _download_post_content(self, post_url: str, newsletter_url: str) -> Optional[Path]:
         """Download the content of a single post."""
         try:
@@ -1685,9 +1763,12 @@ class IncrementalUpdater:
             response = requests.get(post_url, headers=headers, timeout=30)
             response.raise_for_status()
             
-            # Save the content
+            # Clean the content by stripping JavaScript and external resources
+            cleaned_content = self._clean_html_content(response.text, post_url)
+            
+            # Save the cleaned content
             with open(content_file, 'w', encoding='utf-8') as f:
-                f.write(response.text)
+                f.write(cleaned_content)
             
             print(f"💾 Saved content to: {content_file}")
             return content_file
@@ -1712,6 +1793,203 @@ class IncrementalUpdater:
         except Exception as e:
             print(f"❌ Error getting pending downloads count: {e}")
             return 0
+
+    def run_aggressive_link_discovery(self) -> bool:
+        """Run aggressive link discovery using both RSS and substack API to find more recent posts."""
+        print("🚀 Starting aggressive link discovery (RSS + Substack API)...")
+        
+        # Load existing data
+        existing_data = self.load_existing_data()
+        print(f"📊 Loaded existing data: {len(existing_data.get('newsletters', {}))} newsletters")
+        
+        # Load current newsletter configuration
+        index_generator = IndexGenerator(self.base_dir)
+        current_newsletters = index_generator.load_newsletters_with_categories()
+        print(f"📋 Current configuration: {len(current_newsletters)} newsletters")
+        
+        new_posts_found = 0
+        
+        for newsletter_url, newsletter_data in current_newsletters.items():
+            try:
+                newsletter_name = newsletter_data.get('name', 'Unknown')
+                print(f"\n🔍 Checking {newsletter_name} ({newsletter_url})...")
+                
+                # Get existing post URLs for this newsletter
+                existing_posts = []
+                for newsletter_entry in existing_data.get("newsletters", {}).values():
+                    if newsletter_entry.get("url") == newsletter_url:
+                        existing_posts = newsletter_entry.get("posts", [])
+                        break
+                
+                existing_urls = {post.get("url") for post in existing_posts if post.get("url")}
+                print(f"  📄 Found {len(existing_posts)} existing posts")
+                
+                # Method 1: Check RSS feed (fast)
+                rss_posts = self._check_rss_for_new_posts(newsletter_url, newsletter_data, existing_urls)
+                if rss_posts:
+                    print(f"  📡 RSS: Found {len(rss_posts)} new posts")
+                    existing_data = self.add_new_posts_fast(newsletter_url, rss_posts, existing_data)
+                    new_posts_found += len(rss_posts)
+                    existing_urls.update(post.get("url") for post in rss_posts)
+                
+                # Method 2: Check Substack API (more thorough)
+                try:
+                    api_posts = self._check_substack_api_for_new_posts(newsletter_url, newsletter_data, existing_urls)
+                    if api_posts:
+                        print(f"  🔌 API: Found {len(api_posts)} new posts")
+                        existing_data = self.add_new_posts_fast(newsletter_url, api_posts, existing_data)
+                        new_posts_found += len(api_posts)
+                        existing_urls.update(post.get("url") for post in api_posts)
+                except Exception as e:
+                    print(f"  ⚠️ Substack API check failed: {e}")
+                
+            except Exception as e:
+                print(f"  ❌ Error checking {newsletter_data.get('name', 'Unknown')}: {e}")
+                continue
+        
+        if new_posts_found > 0:
+            # Update timestamps
+            existing_data["last_link_discovery"] = datetime.now(timezone.utc).isoformat()
+            
+            # Calculate actual pending downloads
+            total_pending = 0
+            for newsletter in existing_data.get("newsletters", {}).values():
+                for post in newsletter.get("posts", []):
+                    if post.get("status") == "pending_download":
+                        total_pending += 1
+            
+            existing_data["pending_downloads"] = total_pending
+            
+            # Sort and save data
+            existing_data = self._sort_json_data(existing_data)
+            
+            if self.save_data(existing_data):
+                print(f"\n💾 Aggressive discovery completed: {new_posts_found} new posts found")
+                
+                # Regenerate HTML immediately
+                print("🔄 Regenerating HTML with new post links...")
+                index_generator.create_index_html()
+                print("✅ HTML regenerated - new posts visible immediately")
+                
+                return True
+            else:
+                print("❌ Failed to save data after aggressive discovery")
+                return False
+        else:
+            print("\n✅ No new posts found during aggressive discovery")
+            return True
+    
+    def _check_rss_for_new_posts(self, newsletter_url: str, newsletter_data: Dict, existing_urls: Set[str]) -> List[Dict]:
+        """Check RSS feed for new posts."""
+        try:
+            rss_url = f"{newsletter_url.rstrip('/')}/feed"
+            response = requests.get(rss_url, timeout=10)
+            
+            if response.status_code != 200:
+                return []
+            
+            import feedparser
+            feed = feedparser.parse(response.content)
+            
+            new_posts = []
+            for entry in feed.entries[:15]:  # Check last 15 entries instead of 10
+                post_url = entry.get("link")
+                if post_url and post_url not in existing_urls:
+                    new_post = {
+                        "title": entry.get("title", "Unknown Title"),
+                        "url": post_url,
+                        "published_at": entry.get("published", ""),
+                        "author": newsletter_data.get("name", "Unknown Author"),
+                        "content_path": "",
+                        "main_category": newsletter_data.get("main_category", "Unknown"),
+                        "subcategory": newsletter_data.get("subcategory", "Unknown"),
+                        "category": newsletter_data.get("category", "Unknown"),
+                        "tags": newsletter_data.get("tags", []),
+                        "read": False,
+                        "like": False,
+                        "hide": False,
+                        "not_interesting": False,
+                        "status": "pending_download",
+                        "discovered_at": datetime.now(timezone.utc).isoformat(),
+                        "source": "rss"
+                    }
+                    new_posts.append(new_post)
+            
+            return new_posts
+            
+        except Exception as e:
+            print(f"    ⚠️ RSS check failed: {e}")
+            return []
+    
+    def _check_substack_api_for_new_posts(self, newsletter_url: str, newsletter_data: Dict, existing_urls: Set[str]) -> List[Dict]:
+        """Check Substack API for new posts."""
+        try:
+            # Import here to avoid circular imports
+            import sys
+            from pathlib import Path
+            
+            project_root = Path(__file__).parent.parent.parent
+            scripts_dir = project_root / "scripts"
+            
+            if str(scripts_dir) not in sys.path:
+                sys.path.insert(0, str(scripts_dir))
+            
+            try:
+                from substack_api import Newsletter
+            except ImportError:
+                print(f"    ⚠️ substack_api not available, skipping API check")
+                return []
+            
+            newsletter = Newsletter(newsletter_url)
+            
+            # Get more posts from API (limit 20 instead of 10)
+            recent_posts = newsletter.get_posts(limit=20)
+            
+            new_posts = []
+            for post in recent_posts:
+                try:
+                    post_url = getattr(post, 'url', None)
+                    if not post_url or post_url in existing_urls:
+                        continue
+                    
+                    post_title = getattr(post, 'title', 'Unknown Title')
+                    
+                    # Get metadata if available
+                    try:
+                        metadata = post.get_metadata()
+                        post_date = metadata.get('post_date', '')
+                    except Exception:
+                        post_date = ''
+                    
+                    new_post = {
+                        "title": post_title,
+                        "url": post_url,
+                        "published_at": post_date,
+                        "author": newsletter_data.get("name", "Unknown Author"),
+                        "content_path": "",
+                        "main_category": newsletter_data.get("main_category", "Unknown"),
+                        "subcategory": newsletter_data.get("subcategory", "Unknown"),
+                        "category": newsletter_data.get("category", "Unknown"),
+                        "tags": newsletter_data.get("tags", []),
+                        "read": False,
+                        "like": False,
+                        "hide": False,
+                        "not_interesting": False,
+                        "status": "pending_download",
+                        "discovered_at": datetime.now(timezone.utc).isoformat(),
+                        "source": "substack_api"
+                    }
+                    new_posts.append(new_post)
+                    
+                except Exception as e:
+                    print(f"    ⚠️ Error processing API post: {e}")
+                    continue
+            
+            return new_posts
+            
+        except Exception as e:
+            print(f"    ⚠️ Substack API check failed: {e}")
+            return []
 
 def main():
     """Main function."""

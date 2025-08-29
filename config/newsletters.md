@@ -80,6 +80,7 @@ nescio13 https://digressionsimpressions.substack.com philosophy
 Massimo Pigliucci https://massimopigliucci.org/ philosophy https://en.wikipedia.org/wiki/Massimo_Pigliucci
 John Plaice https://johnplaice.substack.com philosophy 
 Slavoj Žižek https://slavoj.substack.com/ philosophy https://en.wikipedia.org/wiki/Slavoj_%C5%BDi%C5%BEek
+David Livington Smith https://davidlivingstonesmith.substack.com philosophy, dehumanization, genocide, monsters and metaphysical threat
 
 ### Political Science
 
@@ -112,6 +113,7 @@ Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current aff
 Gil Duran https://www.theframelab.org anti-maga
 Rob Henderson https://www.robkhenderson.com/ https://en.wikipedia.org/wiki/Rob_Henderson
 Richard Hanania https://en.wikipedia.org/wiki/Richard_Hanania 
+Adam Klasfeld https://www.allrisenews.com https://en.wikipedia.org/wiki/Adam_Klasfeld
 Glenn Loury https://glennloury.substack.com, culture wars, 
 Stefan Korshak https://stefankorshak.substack.com Ukraine
 Jennifer Rubin https://contrarian.substack.com/ current affairs https://en.wikipedia.org/wiki/Jennifer_Rubin_(columnist)
@@ -123,6 +125,8 @@ Brian Romanchuk https://bondeconomics.substack.com economics
 Joe Wrote https://www.joewrote.com unions, leftism
 The Downballot https://www.the-downballot.com US elections
 The Border Chronicle https://www.theborderchronicle.com/ US borders
+Bleeding Heartland https://www.bleedingheartland.com Iowa
+Court Watch https://www.courtwatch.news 
 
 ## Tech
 

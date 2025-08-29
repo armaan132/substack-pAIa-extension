@@ -1,7 +1,7 @@
-# Newsletter Personalization Server Specification
+# Server Specification
 
 ## Overview
-The newsletter personalization server is a Flask-based web application that serves as the backend for the newsletter personalization interface. It provides a unified architecture that handles both static file serving and dynamic API operations for user personalization data.
+The newsletter personalization server is a Flask-based web application that serves as the backend for the newsletter personalization interface. It provides a unified architecture that handles both static file serving and dynamic API operations for user personalization data, implementing the three-tier update system architecture.
 
 ## Architecture Overview
 
@@ -32,7 +32,23 @@ The newsletter personalization server is a Flask-based web application that serv
 
 ## API Endpoints
 
-### Personalization Data Management
+### **Three-Tier Update System Endpoints**
+
+#### **Tier 1: Configuration Updates**
+- **`/api/update_metadata`** (POST) - Trigger pure configuration update (20-200ms)
+- **`/api/check_metadata_status`** (GET) - Check if newsletters.md has changed
+
+#### **Tier 2: Structure Updates**
+- **`/api/update_structure`** (POST) - Configuration + post metadata + HTML structure (1-5 seconds)
+
+#### **Tier 3: Content Updates**
+- **`/api/discover_links`** (POST) - Fast discovery of new posts (10 seconds - 2 minutes)
+- **`/api/download_pending_content`** (POST) - Background content download (background process)
+- **`/api/pending_downloads_count`** (GET) - Get count of posts waiting for download
+
+### **Legacy Endpoints**
+
+#### **Personalization Data Management**
 
 #### Update Not Interesting Status
 - **Endpoint**: `/api/update_not_interesting`

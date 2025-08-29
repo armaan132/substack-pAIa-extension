@@ -146,6 +146,28 @@ class IndexGenerator:
 
         return newsletters_by_url
 
+    def _get_web_path(self, file_path):
+        """Convert absolute file system path to web-relative path."""
+        if not file_path:
+            return ""
+        
+        # Convert to string if it's a Path object
+        file_path_str = str(file_path)
+        
+        # Convert absolute path to relative web path
+        if file_path_str.startswith('/'):
+            # Remove the project root part and keep only the content/... part
+            if 'data/content/' in file_path_str:
+                # Extract everything from 'content/' onwards (skip the 'data/' part)
+                start_idx = file_path_str.find('content/')
+                return file_path_str[start_idx:]
+            else:
+                # Fallback: just use the filename
+                return Path(file_path_str).name
+        else:
+            # Already a relative path
+            return file_path_str
+    
     def _format_date(self, date_str):
         """Format ISO date string as 'Jul 7, 2025'."""
         if not date_str or date_str == 'No date':
@@ -413,17 +435,8 @@ class IndexGenerator:
         <!-- Main Category Selection and Visibility Controls -->
         <div class="main-category-section" style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;">
             <!--h3 style="margin-top: 0;">Select Main Category:</h3-->
-            <label style="margin-right: 20px; cursor: pointer;">
-                <input type="radio" name="main-category" value="All" onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
-            </label>
-            <!-- Dynamic category radio buttons will be generated here -->
+            <!-- All category radio buttons and filter checkboxes will be generated here -->
             <div id="dynamic-categories"></div>
-            <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-hidden" onclick="console.log('🟢 Hidden posts checkbox clicked'); toggleHiddenPosts()"> <span title="Include Hidden Posts">Hidden Posts</span>
-            </label>
-            <label style="margin-right: 20px; cursor: pointer;">
-                <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> <span title="Only Liked Posts">Liked Posts</span>
-            </label>
         </div>
         
         <!-- Subcategory Selection (hidden by default) -->
@@ -436,53 +449,41 @@ class IndexGenerator:
         
         <!-- Update and Search Section -->
         <div style="display: flex; gap: 20px; margin: 20px 0;">
-            <!-- Update Buttons -->
+            <!-- Update Buttons - 3-Tier System -->
             <div style="flex: 0 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;">
-                <!-- Configuration Update Button (Manual Override) -->
-                <button id="config-btn" onclick="triggerConfigUpdate()" 
+                <!-- Tier 1: Configuration Update Button -->
+                <button id="metadata-btn" onclick="triggerMetadataUpdate()" 
                         style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
-                        title="Manual configuration update (runs automatically on page load)">
-                    ⚡ Force Config Update
+                        title="Tier 1: Fast configuration update (newsletter structure, categories)">
+                    ⚡ Update Config
                 </button>
                 
-                <!-- Structure Update Button -->
+                <!-- Tier 2: Structure Update Button -->
                 <button id="structure-btn" onclick="triggerStructureUpdate()" 
                         style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
-                        title="Update configuration + post metadata + HTML structure">
+                        title="Tier 2: Configuration + post metadata + HTML structure">
                     🔧 Update Structure
                 </button>
                 
-                <!-- Fast Link Discovery Button -->
-                <button id="discover-btn" onclick="triggerLinkDiscovery()" 
-                        style="padding: 10px 20px; background: #ffc107; color: #212529; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
-                        title="Fast discovery of new posts (links appear immediately, content downloads in background)">
-                    🔍 Discover Links
+                <!-- Tier 3: Content Discovery & Download Button -->
+                <button id="content-btn" onclick="triggerContentUpdate()" 
+                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
+                        title="Tier 3: Discover new posts + download content for offline reading">
+                    🔍 Discover & Download
                 </button>
                 
-                <!-- Background Download Button -->
-                <button id="download-btn" onclick="triggerBackgroundDownloads()" 
-                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
-                        title="Start downloading content for pending posts">
-                    📥 Download Content
-                </button>
-                
-                <!-- Content Update Button -->
-                <button id="update-btn" onclick="triggerUpdate()" 
-                        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
-                        title="Full update including new posts and content">
-                    🔄 Update Content
+                <!-- Advanced: Deep Discovery Button (RSS + API) -->
+                <button id="aggressive-btn" onclick="triggerAggressiveDiscovery()" 
+                        style="padding: 10px 20px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
+                        title="Advanced: Deep discovery using both RSS feeds and Substack API for maximum coverage">
+                    🚀 Deep Discovery
                 </button>
             </div>
             
             <!-- Update Status (moved outside button container) -->
             <div id="update-status" style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;"></div>
             
-            <!-- NEW: Metadata Status Indicator -->
-            <div style="flex: 0 0 auto; margin-left: 20px;">
-                <div id="metadata-status" style="font-size: 12px; color: #666; padding: 5px 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">
-                    <span id="metadata-indicator">⏳ Checking...</span>
-                </div>
-            </div>
+
             
             <!-- Search Bar -->
             <div style="flex: 1;">
@@ -661,15 +662,8 @@ class IndexGenerator:
             category = post.get('category', 'Uncategorized')
             status = post.get('status', 'downloaded')
             
-            # Handle content path calculation more robustly
-            try:
-                if Path(post['content_path']).is_absolute():
-                    content_path = Path(post['content_path']).relative_to(self.base_dir)
-                else:
-                    content_path = post['content_path']
-            except ValueError:
-                # Fallback: use the filename only
-                content_path = Path(post['content_path']).name
+            # Keep the original content_path for _get_web_path to handle
+            content_path = post['content_path']
             
             not_interesting = post.get('not_interesting', False)
             read = post.get('read', False)
@@ -689,7 +683,7 @@ class IndexGenerator:
                      data-main-category="{post.get('main_category', 'Uncategorized')}"
                      data-subcategory="{post.get('subcategory', 'Uncategorized')}">
                     <span class="newsletter-name">{newsletter_name}</span>
-                    <a href="{post['url']}" class="original" target="_blank" title="View original post">{title}</a>
+                    <a href="{post['url']}" class="original" target="_blank" title="View local post">{title}</a>
                     <span class="date">{display_date}</span>
                     <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
                     <span style="color: #ffc107; font-size: 0.8em; margin-left: 10px;">⏳ Downloading...</span>
@@ -705,8 +699,8 @@ class IndexGenerator:
                          data-main-category="{post.get('main_category', 'Uncategorized')}"
                          data-subcategory="{post.get('subcategory', 'Uncategorized')}">
                         <span class="newsletter-name">{newsletter_name}</span>
-                        <a href="{content_path}" class="local" title="Read offline">📖 {title}</a>
-                        <a href="{post['url']}" class="original" target="_blank" title="View original post">📄 Original</a>
+                        <a href="{post['url']}" class="local" target="_blank" title="View original post">{title}</a>
+                        <a href="{self._get_web_path(content_path)}" class="original" title="Read offline">📄</a>
                         <span class="date">{display_date}</span>
                         <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
                         <button class="action-btn read-btn {'' if not read else 'marked'}" 
@@ -739,7 +733,7 @@ class IndexGenerator:
                          data-main-category="{post.get('main_category', 'Uncategorized')}"
                          data-subcategory="{post.get('subcategory', 'Uncategorized')}">
                         <span class="newsletter-name">{newsletter_name}</span>
-                        <a href="{post['url']}" class="original" target="_blank" title="View original post">📄 {title}</a>
+                        <a href="{post['url']}" class="local" target="_blank" title="View original post">{title}</a>
                         <span class="date">{display_date}</span>
                         <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
                         <span style="color: #dc3545; font-size: 0.8em; margin-left: 10px;">⚠️ No offline content</span>
@@ -820,6 +814,13 @@ class IndexGenerator:
                 const categoryIndex = window.categoryIndex || {};
                 let categoriesHtml = '';
                 
+                // Always start with "All" button
+                categoriesHtml += `
+                    <label style="margin-right: 20px; cursor: pointer;">
+                        <input type="radio" name="main-category" value="All" onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
+                    </label>
+                `;
+                
                 // Preserve human-curated order from newsletters.md instead of alphabetical sorting
                 // The order should be: Science, News and Opinion, Tech (as defined in newsletters.md)
                 const humanCuratedOrder = ['Science', 'News and Opinion', 'Tech'];
@@ -848,18 +849,32 @@ class IndexGenerator:
                     `;
                 }
                 
+                // Add filter checkboxes on the same line
+                categoriesHtml += `
+                    <label style="margin-right: 20px; cursor: pointer;">
+                        <input type="checkbox" id="show-hidden" onclick="console.log('🟢 Hidden posts checkbox clicked'); toggleHiddenPosts()"> <span title="Include Hidden Posts">Hidden Posts</span>
+                    </label>
+                    <label style="margin-right: 20px; cursor: pointer;">
+                        <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> <span title="Only Liked Posts">Liked Posts</span>
+                    </label>
+                `;
+                
                 dynamicCategoriesDiv.innerHTML = categoriesHtml;
-                console.log(`🔧 Generated ${orderedCategories.length} dynamic category radio buttons in human-curated order: ${orderedCategories.join(', ')}`);
+                console.log(`🔧 Generated ${orderedCategories.length + 1} dynamic category radio buttons (including All) plus filter checkboxes in human-curated order: All, ${orderedCategories.join(', ')}`);
             }
             
             // Check for metadata updates on page load
+            let metadataCheckSuccessful = false;
+            
             async function checkForMetadataUpdates() {
                 console.log('🔵 checkForMetadataUpdates() called');
                 
                 try {
                     // Quick check if newsletters.md has changed
                     const response = await fetch('/api/check_metadata_status', {
-                        method: 'GET'
+                        method: 'GET',
+                        // Add timeout and better error handling
+                        signal: AbortSignal.timeout(10000) // 10 second timeout
                     });
                     
                     if (response.ok) {
@@ -882,38 +897,37 @@ class IndexGenerator:
                             // Regenerate category radio buttons after update
                             generateCategoryRadioButtons();
                         } else {
-                            const metadataStatus = document.getElementById('metadata-status');
-                            metadataStatus.innerHTML = `
-                                <span style="color: #28a745;">✅ Up to date</span>
-                            `;
-                            metadataStatus.style.color = '#28a745';
-                            metadataStatus.style.background = '#e8f5e8';
-                            metadataStatus.style.borderColor = '#28a745';
+                            console.log('✅ Metadata is up to date');
+                            metadataCheckSuccessful = true; // Mark as successful
                         }
                     } else {
-                        console.log('ℹ️ Could not check metadata status:', response.statusText);
-                        const metadataStatus = document.getElementById('metadata-status');
-                        metadataStatus.innerHTML = `
-                            <span style="color: #dc3545;">❌ Error checking status</span>
-                        `;
-                        metadataStatus.style.color = '#dc3545';
-                        metadataStatus.style.background = '#f8d7da';
-                        metadataStatus.style.borderColor = '#dc3545';
+                        console.log('⚠️ Server error checking metadata status:', response.statusText);
+                        // Keep the UI clean - no error status updates needed
                     }
                 } catch (error) {
                     console.log('ℹ️ Could not check metadata status:', error.message);
-                    const metadataStatus = document.getElementById('metadata-status');
-                    metadataStatus.innerHTML = `
-                        <span style="color: #dc3545;">❌ Error checking status</span>
-                    `;
-                    metadataStatus.style.color = '#dc3545';
-                    metadataStatus.style.background = '#f8d7da';
-                    metadataStatus.style.borderColor = '#dc3545';
+                    
+                    // Better error categorization for console logging
+                    if (error.name === 'AbortError') {
+                        console.log('⏱️ Request timeout');
+                    } else if (error.message.includes('Failed to fetch')) {
+                        console.log('🔌 Connection failed');
+                    } else {
+                        console.log(`❌ Error: ${error.message}`);
+                    }
                 }
             }
             
-            // Call metadata check after a short delay to avoid blocking page load
-            setTimeout(checkForMetadataUpdates, 1000);
+            // Call metadata check after a longer delay to ensure server is ready
+            setTimeout(checkForMetadataUpdates, 3000);
+            
+            // Retry once more after 5 seconds ONLY if the first attempt failed
+            setTimeout(() => {
+                if (!metadataCheckSuccessful) {
+                    console.log('🔄 Retrying metadata status check...');
+                    checkForMetadataUpdates();
+                }
+            }, 5000);
             
             // NEW: Background metadata check every 5 minutes
             setInterval(checkForMetadataUpdates, 5 * 60 * 1000);
@@ -1342,17 +1356,12 @@ class IndexGenerator:
                 
                 const metadataBtn = document.getElementById('metadata-btn');
                 const updateStatus = document.getElementById('update-status');
-                const metadataIndicator = document.getElementById('metadata-indicator');
                 
                 // Disable button and show loading state
                 metadataBtn.disabled = true;
                 metadataBtn.innerHTML = '⏳ Updating...';
                 metadataBtn.style.background = '#6c757d';
-                updateStatus.innerHTML = '⚡ Starting metadata update...';
-                metadataIndicator.textContent = '⏳ Updating...';
-                metadataIndicator.style.color = '#666';
-                metadataIndicator.style.background = '#f8f9fa';
-                metadataIndicator.style.borderColor = '#dee2e6';
+                updateStatus.innerHTML = '⚡ Starting Tier 1: Configuration update...';
                 
                 try {
                     const response = await fetch('/api/update_metadata', {
@@ -1369,12 +1378,8 @@ class IndexGenerator:
                     const result = await response.json();
                     
                     if (result.success) {
-                        updateStatus.innerHTML = `✅ Metadata update completed! ${result.message || ''}`;
-                        metadataBtn.style.background = '#17a2b8';
-                        metadataIndicator.textContent = '✅ Up to date';
-                        metadataIndicator.style.color = '#28a745';
-                        metadataIndicator.style.background = '#e8f5e8';
-                        metadataIndicator.style.borderColor = '#28a745';
+                        updateStatus.innerHTML = `✅ Tier 1 completed! ${result.message || ''}`;
+                        metadataBtn.style.background = '#6c757d';
                         
                         // Reload the page to show new structure
                         setTimeout(() => {
@@ -1382,17 +1387,13 @@ class IndexGenerator:
                             location.reload();
                         }, 1500);
                     } else {
-                        throw new Error(result.error || 'Metadata update failed');
+                        throw new Error(result.error || 'Configuration update failed');
                     }
                     
                 } catch (error) {
-                    console.error('❌ Metadata update error:', error);
-                    updateStatus.innerHTML = `❌ Metadata update failed: ${error.message}`;
+                    console.error('❌ Configuration update error:', error);
+                    updateStatus.innerHTML = `❌ Configuration update failed: ${error.message}`;
                     metadataBtn.style.background = '#dc3545';
-                    metadataIndicator.textContent = '❌ Error';
-                    metadataIndicator.style.color = '#dc3545';
-                    metadataIndicator.style.background = '#f8d7da';
-                    metadataIndicator.style.borderColor = '#dc3545';
                 } finally {
                     // Re-enable button
                     metadataBtn.disabled = false;
@@ -1400,20 +1401,20 @@ class IndexGenerator:
                 }
             }
             
-            async function triggerUpdate() {
-                console.log('🔵 triggerUpdate() called');
+            async function triggerStructureUpdate() {
+                console.log('🔵 triggerStructureUpdate() called');
                 
-                const updateBtn = document.getElementById('update-btn');
+                const structureBtn = document.getElementById('structure-btn');
                 const updateStatus = document.getElementById('update-status');
                 
                 // Disable button and show loading state
-                updateBtn.disabled = true;
-                updateBtn.innerHTML = '⏳ Updating...';
-                updateBtn.style.background = '#6c757d';
-                updateStatus.innerHTML = '🔄 Starting incremental update...';
+                structureBtn.disabled = true;
+                structureBtn.innerHTML = '⏳ Updating...';
+                structureBtn.style.background = '#6c757d';
+                updateStatus.innerHTML = '🔧 Starting Tier 2: Structure update...';
                 
                 try {
-                    const response = await fetch('/api/update_content', {
+                    const response = await fetch('/api/update_structure', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1427,28 +1428,153 @@ class IndexGenerator:
                     const result = await response.json();
                     
                     if (result.success) {
-                        updateStatus.innerHTML = `✅ Update completed! ${result.message || ''}`;
-                        updateBtn.style.background = '#28a745';
+                        updateStatus.innerHTML = `✅ Tier 2 completed! ${result.message || ''}`;
+                        structureBtn.style.background = '#17a2b8';
                         
-                        // Reload the page to show new content
+                        // Reload the page to show new structure
                         setTimeout(() => {
-                            updateStatus.innerHTML = '🔄 Reloading page to show new content...';
+                            updateStatus.innerHTML = '🔄 Reloading page to show new structure...';
                             location.reload();
-                        }, 2000);
+                        }, 1500);
                     } else {
-                        throw new Error(result.error || 'Update failed');
+                        throw new Error(result.error || 'Structure update failed');
                     }
                     
                 } catch (error) {
-                    console.error('❌ Update error:', error);
-                    updateStatus.innerHTML = `❌ Update failed: ${error.message}`;
-                    updateBtn.style.background = '#dc3545';
+                    console.error('❌ Structure update error:', error);
+                    updateStatus.innerHTML = `❌ Structure update failed: ${error.message}`;
+                    structureBtn.style.background = '#dc3545';
                 } finally {
                     // Re-enable button
-                    updateBtn.disabled = false;
-                    updateBtn.innerHTML = '🔄 Update Content';
+                    structureBtn.disabled = false;
+                    structureBtn.innerHTML = '🔧 Update Structure';
                 }
             }
+            
+            async function triggerContentUpdate() {
+                console.log('🔵 triggerContentUpdate() called');
+                
+                const contentBtn = document.getElementById('content-btn');
+                const updateStatus = document.getElementById('update-status');
+                
+                // Disable button and show loading state
+                contentBtn.disabled = true;
+                contentBtn.innerHTML = '⏳ Updating...';
+                contentBtn.style.background = '#6c757d';
+                updateStatus.innerHTML = '🔍 Starting Tier 3: Content discovery and download...';
+                
+                try {
+                    // First discover new links (Tier 3a)
+                    updateStatus.innerHTML = '🔍 Tier 3a: Discovering new posts...';
+                    const discoverResponse = await fetch('/api/discover_links', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (!discoverResponse.ok) {
+                        throw new Error(`Link discovery failed: HTTP ${discoverResponse.status}`);
+                    }
+                    
+                    const discoverResult = await discoverResponse.json();
+                    
+                    if (discoverResult.success) {
+                        updateStatus.innerHTML = `✅ Tier 3a completed! ${discoverResult.message || ''}`;
+                        
+                        // Then start background downloads (Tier 3b)
+                        updateStatus.innerHTML = '📥 Tier 3b: Starting background downloads...';
+                        const downloadResponse = await fetch('/api/download_pending_content', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        
+                        if (!downloadResponse.ok) {
+                            throw new Error(`Download start failed: HTTP ${downloadResponse.status}`);
+                        }
+                        
+                        const downloadResult = await downloadResponse.json();
+                        
+                        if (downloadResult.success) {
+                            updateStatus.innerHTML = `✅ Tier 3 completed! ${downloadResult.message || ''}`;
+                            contentBtn.style.background = '#28a745';
+                            
+                            // Reload the page to show new content
+                            setTimeout(() => {
+                                updateStatus.innerHTML = '🔄 Reloading page to show new content...';
+                                location.reload();
+                            }, 1500);
+                        } else {
+                            throw new Error(downloadResult.error || 'Download start failed');
+                        }
+                    } else {
+                        throw new Error(discoverResult.error || 'Link discovery failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Content update error:', error);
+                    updateStatus.innerHTML = `❌ Content update failed: ${error.message}`;
+                    contentBtn.style.background = '#dc3545';
+                } finally {
+                    // Re-enable button
+                    contentBtn.disabled = false;
+                    contentBtn.innerHTML = '🔍 Discover & Download';
+                }
+            }
+            
+            async function triggerAggressiveDiscovery() {
+                console.log('🔵 triggerAggressiveDiscovery() called');
+                
+                const aggressiveBtn = document.getElementById('aggressive-btn');
+                const updateStatus = document.getElementById('update-status');
+                
+                // Disable button and show loading state
+                aggressiveBtn.disabled = true;
+                aggressiveBtn.innerHTML = '⏳ Deep Discovery...';
+                aggressiveBtn.style.background = '#6c757d';
+                updateStatus.innerHTML = '🚀 Starting aggressive discovery using RSS + Substack API...';
+                
+                try {
+                    const response = await fetch('/api/aggressive_discovery', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        updateStatus.innerHTML = `✅ Aggressive discovery completed! ${result.message || ''}`;
+                        aggressiveBtn.style.background = '#ff5722';
+                        
+                        // Reload the page to show new post links
+                        setTimeout(() => {
+                            updateStatus.innerHTML = '🔄 Reloading page to show new post links...';
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error || 'Aggressive discovery failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Aggressive discovery error:', error);
+                    updateStatus.innerHTML = `❌ Aggressive discovery failed: ${error.message}`;
+                    aggressiveBtn.style.background = '#dc3545';
+                } finally {
+                    // Re-enable button
+                    aggressiveBtn.disabled = false;
+                    aggressiveBtn.innerHTML = '🚀 Deep Discovery';
+                }
+            }
+            
+
             
             async function updatePostHide(postId, hide) {
                 console.log(`🔵 updatePostHide('${postId}', ${hide}) called`);
@@ -1588,55 +1714,7 @@ class IndexGenerator:
                 console.log(`✅ Search completed: ${matchCount} matches found, ${hiddenMatchCount} hidden matches`);
             }
             
-            async function triggerLinkDiscovery() {
-                console.log('🔵 triggerLinkDiscovery() called');
-                
-                const discoverBtn = document.getElementById('discover-btn');
-                const updateStatus = document.getElementById('update-status');
-                
-                // Disable button and show loading state
-                discoverBtn.disabled = true;
-                discoverBtn.innerHTML = '⏳ Discovering...';
-                discoverBtn.style.background = '#6c757d';
-                updateStatus.innerHTML = '🔍 Starting fast link discovery...';
-                
-                try {
-                    const response = await fetch('/api/discover_links', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        updateStatus.innerHTML = `✅ Link discovery completed! ${result.message || ''}`;
-                        discoverBtn.style.background = '#ffc107';
-                        
-                        // Reload the page to show new post links
-                        setTimeout(() => {
-                            updateStatus.innerHTML = '🔄 Reloading page to show new post links...';
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        throw new Error(result.error || 'Link discovery failed');
-                    }
-                    
-                } catch (error) {
-                    console.error('❌ Link discovery error:', error);
-                    updateStatus.innerHTML = `❌ Link discovery failed: ${error.message}`;
-                    discoverBtn.style.background = '#dc3545';
-                } finally {
-                    // Re-enable button
-                    discoverBtn.disabled = false;
-                    discoverBtn.innerHTML = '🔍 Discover Links';
-                }
-            }
+
             
             // NEW: Update pending downloads count
             async function updatePendingDownloadsCount() {
@@ -1666,97 +1744,7 @@ class IndexGenerator:
                 }
             }
             
-            // NEW: Trigger config update function
-            async function triggerConfigUpdate() {
-                console.log('🔵 triggerConfigUpdate() called');
-                try {
-                    const response = await fetch('/api/update_metadata', {
-                        method: 'POST'
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('✅ Config update result:', result);
-                        
-                        // Refresh the page to show updated content
-                        window.location.reload();
-                    } else {
-                        console.error('❌ Config update failed:', response.status);
-                    }
-                } catch (error) {
-                    console.error('❌ Error during config update:', error);
-                }
-            }
-            
-            // NEW: Trigger structure update function
-            async function triggerStructureUpdate() {
-                console.log('🔵 triggerStructureUpdate() called');
-                try {
-                    const response = await fetch('/api/update_structure', {
-                        method: 'POST'
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('✅ Structure update result:', result);
-                        
-                        // Refresh the page to show updated content
-                        window.location.reload();
-                    } else {
-                        console.error('❌ Structure update failed:', response.status);
-                    }
-                } catch (error) {
-                    console.error('❌ Error during structure update:', error);
-                }
-            }
-            
-            // NEW: Trigger background downloads function
-            async function triggerBackgroundDownloads() {
-                console.log('🔵 triggerBackgroundDownloads() called');
-                
-                const downloadBtn = document.getElementById('download-btn');
-                const updateStatus = document.getElementById('update-status');
-                
-                // Disable button and show loading state
-                downloadBtn.disabled = true;
-                downloadBtn.innerHTML = '⏳ Downloading...';
-                downloadBtn.style.background = '#6c757d';
-                updateStatus.innerHTML = '📥 Starting background content downloads...';
-                
-                try {
-                    const response = await fetch('/api/download_pending_content', {
-                        method: 'POST'
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        updateStatus.innerHTML = `✅ Downloads started! ${result.message}`;
-                        downloadBtn.style.background = '#28a745';
-                        
-                        // Reload the page after a delay to show updated status
-                        setTimeout(() => {
-                            updateStatus.innerHTML = '🔄 Reloading page to show updated status...';
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        throw new Error(result.error || 'Background downloads failed');
-                    }
-                    
-                } catch (error) {
-                    console.error('❌ Background downloads error:', error);
-                    updateStatus.innerHTML = `❌ Downloads failed: ${error.message}`;
-                    downloadBtn.style.background = '#dc3545';
-                } finally {
-                    // Re-enable button
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = '📥 Download Content';
-                }
-            }
+
             
             function hideNotInterestingPosts() {
                 console.log('🔵 hideNotInterestingPosts() called');

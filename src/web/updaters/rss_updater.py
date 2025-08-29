@@ -15,10 +15,20 @@ from typing import Dict, List, Set, Optional
 from urllib.parse import urlparse
 
 # Add project root to path
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).parent.parent.parent.parent
 sys.path.append(str(project_root))
 
-from src.database.filesystem_store import NewsletterStore
+# Dynamic import to avoid circular import issues
+import importlib.util
+import sys
+from pathlib import Path
+
+# Get the path to filesystem_store.py
+filesystem_store_path = project_root / "src" / "database" / "filesystem_store.py"
+spec = importlib.util.spec_from_file_location("filesystem_store", filesystem_store_path)
+filesystem_store_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(filesystem_store_module)
+NewsletterStore = filesystem_store_module.NewsletterStore
 
 
 class RSSUpdater:

@@ -333,6 +333,46 @@ class Server:
                 print(f"❌ Error during link discovery: {e}")
                 return jsonify({'success': False, 'error': str(e)}), 500
 
+        # NEW: API endpoint for aggressive link discovery (RSS + Substack API)
+        @self.flask_app.route('/api/aggressive_discovery', methods=['POST'])
+        def aggressive_discovery():
+            try:
+                print("🚀 Aggressive link discovery requested via web interface")
+                
+                # Import the incremental updater
+                import sys
+                import os
+                from pathlib import Path
+                
+                project_root = Path(__file__).parent.parent.parent
+                scripts_dir = project_root / "scripts"
+                
+                if str(scripts_dir) not in sys.path:
+                    sys.path.insert(0, str(scripts_dir))
+                if str(project_root) not in sys.path:
+                    sys.path.insert(0, str(project_root))
+                
+                try:
+                    from updaters.incremental_update import IncrementalUpdater
+                    print("✅ Successfully imported IncrementalUpdater")
+                except ImportError as import_error:
+                    print(f"❌ Import error: {import_error}")
+                    raise ImportError(f"Could not import IncrementalUpdater: {import_error}")
+                
+                # Run aggressive link discovery
+                print("🚀 Starting aggressive link discovery...")
+                updater = IncrementalUpdater()
+                success = updater.run_aggressive_link_discovery()
+                
+                if success:
+                    return jsonify({'success': True, 'message': 'Aggressive discovery completed - new posts visible immediately'})
+                else:
+                    return jsonify({'success': False, 'error': 'Aggressive discovery failed'}), 500
+                    
+            except Exception as e:
+                print(f"❌ Error during aggressive discovery: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
         # NEW: API endpoint to get accurate pending downloads count
         @self.flask_app.route('/api/pending_downloads_count', methods=['GET'])
         def get_pending_downloads_count():
