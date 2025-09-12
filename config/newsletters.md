@@ -27,12 +27,16 @@ Scott Cunningham https://causalinf.substack.com/ economics https://en.wikipedia.
 Robin Hanson https://www.overcomingbias.com/ economics, libertarian https://en.wikipedia.org/wiki/Robin_Hanson
 Steve Keen https://profstevekeen.substack.com/ economics https://en.wikipedia.org/wiki/Steve_Keen
 Stephanie Kelton https://stephaniekelton.substack.com economics, MMT https://en.wikipedia.org/wiki/Stephanie_Kelton
+Oliver Kim https://www.global-developments.org/ development economics "A story getting covered in The New York Times is usually a lagging indicator: a good way to learn that something horrible has happened, long after you could conceivably profit from the news." 
 Arnold Kling https://arnoldkling.substack.com economics https://en.wikipedia.org/wiki/Arnold_Kling
 Paul Krugman https://paulkrugman.substack.com/ economics https://en.wikipedia.org/wiki/Paul_Krugman
 Branko Milanovic https://branko2f7.substack.com/ economics, inequality https://en.wikipedia.org/wiki/Branko_Milanovi%C4%87
 Ann Pettifor https://annpettifor.substack.com/ economics, global finance, debt cancellation, https://en.wikipedia.org/wiki/Ann_Pettifor
+Claudia Sahm https://stayathomemacro.substack.com https://en.wikipedia.org/wiki/Claudia_Sahm economics, macro economics, Sahm Recession Indicator
 Scott Sumner https://scottsumner.substack.com/ economics, monetary theory, finance https://en.wikipedia.org/wiki/Scott_Sumner
 Tanju Yurukoglu https://tanjuyurukoglu.substack.com/ economics, Turkey 
+
+Center for Economic & Policy Research (CEPR) https://cepr.net/ US economics
 
 ### Economic History
 
@@ -109,10 +113,12 @@ Michael Satlow https://mlsatlow.substack.com/ religious studies, judaism
 ## News and Opinion
 
 Claire Berlinski https://claireberlinski.substack.com/ foreign affairs https://en.wikipedia.org/wiki/Claire_Berlinski
+Jonathan Cook https://jonathancook.substack.com 
 Heather Cox Richardson https://heathercoxrichardson.substack.com/ US current affairs, history https://en.wikipedia.org/wiki/Heather_Cox_Richardson
 Gil Duran https://www.theframelab.org anti-maga
 Rob Henderson https://www.robkhenderson.com/ https://en.wikipedia.org/wiki/Rob_Henderson
 Richard Hanania https://en.wikipedia.org/wiki/Richard_Hanania 
+Thom Hartmann https://hartmannreport.com https://en.wikipedia.org/wiki/Thom_Hartmann progressive radio host, author
 Adam Klasfeld https://www.allrisenews.com https://en.wikipedia.org/wiki/Adam_Klasfeld
 Glenn Loury https://glennloury.substack.com, culture wars, 
 Stefan Korshak https://stefankorshak.substack.com Ukraine
@@ -126,7 +132,13 @@ Joe Wrote https://www.joewrote.com unions, leftism
 The Downballot https://www.the-downballot.com US elections
 The Border Chronicle https://www.theborderchronicle.com/ US borders
 Bleeding Heartland https://www.bleedingheartland.com Iowa
+
+Brian Morrissey https://www.therebooting.com new media
+
+Commonplace https://www.commonplace.org/ 
+The Line https://www.readtheline.ca 
 Court Watch https://www.courtwatch.news 
+Paper Trail Media https://www.papertrailmedia.de/ 
 
 ## Tech
 
