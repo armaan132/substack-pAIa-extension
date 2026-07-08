@@ -11,6 +11,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import datetime
+from html import unescape
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 from urllib.parse import urlparse, urlunparse
@@ -27,6 +28,7 @@ except ImportError:  # pragma: no cover - exercised when optional deps are absen
 
 
 SUBSTACK_HOST_RE = re.compile(r"(^|\.)substack\.com$", re.IGNORECASE)
+SUBSTACK_POST_PATH_RE = re.compile(r"^/p/[^/]+/?$", re.IGNORECASE)
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
 ANCHOR_RE = re.compile(
     r"<a\b[^>]*href=[\"'](?P<href>[^\"']+)[\"'][^>]*>(?P<text>.*?)</a>",
@@ -121,7 +123,7 @@ class CitationSentimentAnalyzer:
 
         for link in content.find_all("a", href=True):
             target_url = normalize_url(link["href"])
-            if not is_substack_url(target_url):
+            if not is_substack_post_url(target_url):
                 continue
             if source_normalized and target_url == source_normalized:
                 continue
@@ -142,7 +144,7 @@ class CitationSentimentAnalyzer:
                     target_newsletter_url=target_newsletter_url,
                     target_domain=urlparse(target_newsletter_url).netloc,
                     anchor_text=anchor_text[:160],
-                    context=context[:500],
+                    context=unescape(context[:500]),
                     sentiment=sentiment["label"],
                     polarity=sentiment["polarity"],
                     subjectivity=sentiment["subjectivity"],
@@ -163,7 +165,7 @@ class CitationSentimentAnalyzer:
 
         for match in ANCHOR_RE.finditer(html):
             target_url = normalize_url(match.group("href"))
-            if not is_substack_url(target_url):
+            if not is_substack_post_url(target_url):
                 continue
             if source_normalized and target_url == source_normalized:
                 continue
@@ -184,7 +186,7 @@ class CitationSentimentAnalyzer:
                     target_newsletter_url=target_newsletter_url,
                     target_domain=urlparse(target_newsletter_url).netloc,
                     anchor_text=anchor_text[:160],
-                    context=context[:500],
+                    context=unescape(context[:500]),
                     sentiment=sentiment["label"],
                     polarity=sentiment["polarity"],
                     subjectivity=sentiment["subjectivity"],
@@ -304,7 +306,7 @@ def score_sentiment(text: str) -> Dict:
     else:
         label = "neutral"
 
-    confidence = round(min(1.0, abs(polarity) + (subjectivity * 0.25)), 4)
+    confidence = round(min(1.0, (abs(polarity) * 0.75) + (subjectivity * 0.25)), 4)
     recommendation_signal = round(polarity * confidence, 4)
     return {
         "label": label,
@@ -370,8 +372,8 @@ def score_sentiment_with_lexicon(text: str) -> tuple[float, float]:
     if signal_words == 0:
         return 0.0, 0.0
 
-    polarity = (supportive - critical) / max(signal_words, 1)
-    subjectivity = min(1.0, signal_words / max(len(words) * 0.15, 1))
+    polarity = (supportive - critical) / max(signal_words, 3)
+    subjectivity = min(1.0, signal_words / max(len(words) * 0.05, 1))
     return round(polarity, 4), round(subjectivity, 4)
 
 
@@ -392,6 +394,12 @@ def is_substack_url(url: str) -> bool:
     parsed = urlparse(url)
     host = parsed.netloc.lower()
     return bool(parsed.scheme in {"http", "https"} and SUBSTACK_HOST_RE.search(host))
+
+
+def is_substack_post_url(url: str) -> bool:
+    """Return True only for actual Substack post links, not subscribe/admin pages."""
+    parsed = urlparse(url)
+    return is_substack_url(url) and bool(SUBSTACK_POST_PATH_RE.match(parsed.path))
 
 
 def normalize_url(url: str) -> str:
