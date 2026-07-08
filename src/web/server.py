@@ -449,6 +449,34 @@ class Server:
                 print(f"❌ Error starting background downloads: {e}")
                 return jsonify({'success': False, 'error': str(e)}), 500
 
+        # API endpoint to analyze author feedback toward cited Substack posts
+        @self.flask_app.route('/api/update_citation_sentiment', methods=['POST'])
+        def update_citation_sentiment():
+            try:
+                print("💬 Citation sentiment analysis requested via web interface")
+
+                from src.analysis.citation_sentiment import update_index_with_citation_sentiment
+
+                index_path = DATA_DIR / "index.json"
+                if not index_path.exists():
+                    return jsonify({
+                        'success': False,
+                        'error': 'index.json not found. Generate or discover content first.'
+                    }), 404
+
+                metadata = update_index_with_citation_sentiment(index_path)
+                self.generator.create_index_html()
+
+                return jsonify({
+                    'success': True,
+                    'message': 'Citation sentiment analysis completed',
+                    **metadata
+                })
+
+            except Exception as e:
+                print(f"❌ Error during citation sentiment analysis: {e}")
+                return jsonify({'success': False, 'error': str(e)}), 500
+
         # Serve static files from project root
         @self.flask_app.route('/<path:filename>')
         def serve_file(filename):

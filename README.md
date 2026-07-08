@@ -80,6 +80,13 @@ project_root/
 - Extracts context around references to other Substack posts
 - Outputs YAML format with sentiment scores and confidence levels
 
+[`update_citation_sentiment.py`](scripts/update_citation_sentiment.py) (recommendation feature)
+- Usage: `python scripts/update_citation_sentiment.py`
+- Analyzes locally saved post HTML for links to other Substack posts/newsletters
+- Scores the author's surrounding context as supportive, neutral, or critical
+- Stores citation-level and per-post summary signals in `data/index.json`
+- Regenerates `data/index.html` with citation sentiment badges for recommender debugging
+
 ### Architecture
 
 **Data Storage** (`src/database/filesystem_store.py`)
@@ -100,6 +107,7 @@ project_root/
 - Single clean server architecture (no duplicate server code)
 - Provides both static file serving and interactive API functionality  
 - Handles user preference updates (not_interesting, read status)
+- Runs citation sentiment analysis from the web UI via the "Analyze Citations" button
 - Serves the generated HTML interface with hierarchical categorization
 - **Future-ready**: Foundation for AI training, user management, advanced filtering
 
@@ -128,7 +136,7 @@ project_root/
 - Interactive "Not Interesting" and "Read/Unread" buttons with instant hiding
 - Persistent user preferences (survives server restarts and page refreshes)
 - JSON-first architecture with `index.json` as single source of truth
-- Sentiment analysis of newsletter citations and references
+- Sentiment analysis of newsletter citations and references, including stored author feedback signals for recommendation ranking
 - AI-powered YAML configuration generation from markdown
 - Metadata extraction (authors, roles, topics, tags)
 

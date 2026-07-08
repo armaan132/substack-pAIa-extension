@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 from typing import Dict, List
 from datetime import datetime
+from html import escape
 
 
 # Constants
@@ -15,12 +16,12 @@ def get_project_root():
     file_based_root = Path(__file__).parent.parent.parent
     if (file_based_root / "data").exists():
         return file_based_root
-    
+
     # Fallback to current working directory
     cwd = Path.cwd()
     if (cwd / "data").exists():
         return cwd
-    
+
     # If neither works, use the file-based approach
     return file_based_root
 
@@ -45,7 +46,7 @@ HTML_TEMPLATE = """
 
 class IndexGenerator:
     """Handles generation of index.html and other presentation files."""
-    
+
     def __init__(self, base_dir=None):
         if base_dir is None:
             self.base_dir = DATA_DIR
@@ -63,7 +64,7 @@ class IndexGenerator:
         domain = url.split("//")[1]
         if domain.startswith("www."):
             domain = domain[4:]  # Remove www.
-        
+
         # Extract the main part before .substack.com or other TLD
         if ".substack.com" in domain:
             return domain.split(".substack.com")[0]
@@ -83,15 +84,15 @@ class IndexGenerator:
         """Get all posts for a specific newsletter."""
         newsletter_name = self._get_safe_name(newsletter_url)
         newsletter_dir = self.metadata_dir / newsletter_name
-        
+
         if not newsletter_dir.exists():
             return []
-        
+
         posts = []
         for metadata_file in newsletter_dir.glob("*.json"):
             metadata = json.loads(metadata_file.read_text(encoding='utf-8'))
             posts.append(metadata)
-        
+
         # Sort by published date, handling None values
         posts.sort(
             key=lambda x: x.get('published_at', '') or '',  # Use empty string if None
@@ -132,7 +133,7 @@ class IndexGenerator:
                             effective_subcategory = current_subcategory
                         else:
                             effective_subcategory = None  # No subcategory for this newsletter
-                        
+
                         newsletters_by_url[url] = {
                             'name': name,
                             'url': url,
@@ -150,10 +151,10 @@ class IndexGenerator:
         """Convert absolute file system path to web-relative path."""
         if not file_path:
             return ""
-        
+
         # Convert to string if it's a Path object
         file_path_str = str(file_path)
-        
+
         # Convert absolute path to relative web path
         if file_path_str.startswith('/'):
             # Remove the project root part and keep only the content/... part
@@ -167,7 +168,7 @@ class IndexGenerator:
         else:
             # Already a relative path
             return file_path_str
-    
+
     def _format_date(self, date_str):
         """Format ISO date string as 'Jul 7, 2025'."""
         if not date_str or date_str == 'No date':
@@ -177,17 +178,17 @@ class IndexGenerator:
             return dt.strftime('%b %-d, %Y') if hasattr(dt, 'strftime') else dt.strftime('%b %d, %Y')
         except Exception:
             return date_str
-    
+
     def _sort_json_data(self, data: Dict) -> Dict:
         """Sort JSON data for consistent ordering: newsletters alphabetically, posts chronologically."""
         if "newsletters" not in data:
             return data
-        
+
         # Sort newsletters alphabetically by URL
         sorted_newsletters = {}
         for url in sorted(data["newsletters"].keys()):
             newsletter_data = data["newsletters"][url].copy()
-            
+
             # Sort posts chronologically (newest first)
             if "posts" in newsletter_data:
                 posts = newsletter_data["posts"]
@@ -197,9 +198,9 @@ class IndexGenerator:
                     reverse=True  # Newest first
                 )
                 newsletter_data["posts"] = posts
-            
+
             sorted_newsletters[url] = newsletter_data
-        
+
         data["newsletters"] = sorted_newsletters
         return data
 
@@ -210,11 +211,11 @@ class IndexGenerator:
             if not json_path.exists():
                 print(f"❌ index.json not found at {json_path}")
                 return False
-            
+
             # Load current JSON data
             with open(json_path, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
-            
+
             # Find and update the post
             post_found = False
             for newsletter_name, newsletter_data in index_data["newsletters"].items():
@@ -227,24 +228,24 @@ class IndexGenerator:
                         break
                 if post_found:
                     break
-            
+
             if not post_found:
                 print(f"❌ Post with ID {post_id} not found")
                 return False
-            
+
             # Write updated JSON back to file
             # Sort data for consistent ordering before saving
             sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(sorted_data, f, indent=2)
-            
+
             print(f"✅ Updated post {post_id} not_interesting to {not_interesting}")
             return True
-            
+
         except Exception as e:
             print(f"❌ Error updating post {post_id}: {e}")
             return False
-    
+
     def update_post_read(self, post_id: str, read: bool) -> bool:
         """Update the read field for a specific post in the JSON file."""
         try:
@@ -252,11 +253,11 @@ class IndexGenerator:
             if not json_path.exists():
                 print(f"❌ index.json not found at {json_path}")
                 return False
-            
+
             # Load current JSON data
             with open(json_path, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
-            
+
             # Find and update the post
             post_found = False
             for newsletter_name, newsletter_data in index_data["newsletters"].items():
@@ -269,20 +270,20 @@ class IndexGenerator:
                         break
                 if post_found:
                     break
-            
+
             if not post_found:
                 print(f"❌ Post with ID {post_id} not found")
                 return False
-            
+
             # Write updated JSON back to file
             # Sort data for consistent ordering before saving
             sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(sorted_data, f, indent=2)
-            
+
             print(f"✅ Updated post {post_id} read to {read}")
             return True
-            
+
         except Exception as e:
             print(f"❌ Error updating post {post_id}: {e}")
             return False
@@ -294,11 +295,11 @@ class IndexGenerator:
             if not json_path.exists():
                 print(f"❌ index.json not found at {json_path}")
                 return False
-            
+
             # Load current JSON data
             with open(json_path, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
-            
+
             # Find and update the post
             post_found = False
             for newsletter_name, newsletter_data in index_data["newsletters"].items():
@@ -311,20 +312,20 @@ class IndexGenerator:
                         break
                 if post_found:
                     break
-            
+
             if not post_found:
                 print(f"❌ Post with ID {post_id} not found")
                 return False
-            
+
             # Write updated JSON back to file
             # Sort data for consistent ordering before saving
             sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(sorted_data, f, indent=2)
-            
+
             print(f"✅ Updated post {post_id} like to {like}")
             return True
-            
+
         except Exception as e:
             print(f"❌ Error updating post {post_id}: {e}")
             return False
@@ -336,11 +337,11 @@ class IndexGenerator:
             if not json_path.exists():
                 print(f"❌ index.json not found at {json_path}")
                 return False
-            
+
             # Load current JSON data
             with open(json_path, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
-            
+
             # Find and update the post
             post_found = False
             for newsletter_name, newsletter_data in index_data["newsletters"].items():
@@ -353,20 +354,20 @@ class IndexGenerator:
                         break
                 if post_found:
                     break
-            
+
             if not post_found:
                 print(f"❌ Post with ID {post_id} not found")
                 return False
-            
+
             # Write updated JSON back to file
             # Sort data for consistent ordering before saving
             sorted_data = self._sort_json_data(index_data)
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(sorted_data, f, indent=2)
-            
+
             print(f"✅ Updated post {post_id} hide to {hide}")
             return True
-            
+
         except Exception as e:
             print(f"❌ Error updating post {post_id}: {e}")
             return False
@@ -378,11 +379,11 @@ class IndexGenerator:
             if not json_path.exists():
                 print(f"ℹ️ index.json not found, will be created with personalization fields")
                 return
-            
+
             # Load current JSON data
             with open(json_path, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
-            
+
             # Check if any posts are missing personalization fields
             needs_update = False
             for newsletter_name, newsletter_data in index_data["newsletters"].items():
@@ -399,7 +400,7 @@ class IndexGenerator:
                     if 'hide' not in post:
                         post['hide'] = False
                         needs_update = True
-            
+
             if needs_update:
                 # Write updated JSON back to file
                 with open(json_path, 'w', encoding='utf-8') as f:
@@ -407,9 +408,35 @@ class IndexGenerator:
                 print("✅ Initialized personalization fields for existing posts")
             else:
                 print("ℹ️ All posts already have personalization fields")
-                
+
         except Exception as e:
             print(f"❌ Error initializing personalization fields: {e}")
+
+    def _format_citation_sentiment_badge(self, post: Dict) -> str:
+        """Return a compact badge summarizing author feedback toward cited posts."""
+        summary = post.get("citation_sentiment_summary") or {}
+        total = int(summary.get("total", 0) or 0)
+        if total == 0:
+            return ""
+
+        supportive = int(summary.get("supportive", 0) or 0)
+        critical = int(summary.get("critical", 0) or 0)
+        neutral = int(summary.get("neutral", 0) or 0)
+        average_signal = float(summary.get("average_recommendation_signal", 0.0) or 0.0)
+        label = "positive" if average_signal > 0 else "negative" if average_signal < 0 else "neutral"
+        badge_color = "#198754" if average_signal > 0 else "#dc3545" if average_signal < 0 else "#6c757d"
+        tooltip = (
+            f"Author feedback toward cited Substack posts: "
+            f"{supportive} supportive, {critical} critical, {neutral} neutral. "
+            f"Average recommendation signal: {average_signal:+.3f}"
+        )
+        return (
+            f'<span class="sentiment-badge sentiment-{label}" '
+            f'title="{escape(tooltip)}" '
+            f'style="color: {badge_color}; font-size: 0.8em; margin-left: 10px;">'
+            f'💬 {total} refs ({average_signal:+.2f})'
+            f'</span>'
+        )
 
     def create_index_html(self, output_file: str = "index.html") -> None:
         """Create an index.html file from the data in index.json."""
@@ -417,10 +444,10 @@ class IndexGenerator:
         json_path = self.base_dir / "index.json"
         if not json_path.exists():
             raise FileNotFoundError(f"index.json not found at {json_path}. Generate it first with create_json_index().")
-        
+
         with open(json_path, 'r', encoding='utf-8') as f:
             index_data = json.load(f)
-        
+
         content = """
         <!-- Page Title -->
         <div style="text-align: center; margin: 15px 0; padding: 10px;">
@@ -431,14 +458,14 @@ class IndexGenerator:
                 </span>
             </h1>
         </div>
-        
+
         <!-- Main Category Selection and Visibility Controls -->
         <div class="main-category-section" style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 5px;">
             <!--h3 style="margin-top: 0;">Select Main Category:</h3-->
             <!-- All category radio buttons and filter checkboxes will be generated here -->
             <div id="dynamic-categories"></div>
         </div>
-        
+
         <!-- Subcategory Selection (hidden by default) -->
         <div id="subcategory-row" class="subcategory-row" style="display: none; margin: 15px 0; padding: 15px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;">
             <!--h4 style="margin: 0 0 10px 0; color: #856404; font-size: 1em;">Filter by Subcategory:</h4-->
@@ -446,58 +473,65 @@ class IndexGenerator:
                 <!-- Will be populated dynamically -->
             </div>
         </div>
-        
+
         <!-- Update and Search Section -->
         <div style="display: flex; gap: 20px; margin: 20px 0;">
             <!-- Update Buttons - 3-Tier System -->
             <div style="flex: 0 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;">
                 <!-- Tier 1: Configuration Update Button -->
-                <button id="metadata-btn" onclick="triggerMetadataUpdate()" 
+                <button id="metadata-btn" onclick="triggerMetadataUpdate()"
                         style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
                         title="Tier 1: Fast configuration update (newsletter structure, categories)">
                     ⚡ Update Config
                 </button>
-                
+
                 <!-- Tier 2: Structure Update Button -->
-                <button id="structure-btn" onclick="triggerStructureUpdate()" 
+                <button id="structure-btn" onclick="triggerStructureUpdate()"
                         style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
                         title="Tier 2: Configuration + post metadata + HTML structure">
                     🔧 Update Structure
                 </button>
-                
+
                 <!-- Tier 3: Content Discovery & Download Button -->
-                <button id="content-btn" onclick="triggerContentUpdate()" 
+                <button id="content-btn" onclick="triggerContentUpdate()"
                         style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
                         title="Tier 3: Discover new posts + download content for offline reading">
                     🔍 Discover & Download
                 </button>
-                
+
                 <!-- Advanced: Deep Discovery Button (RSS + API) -->
-                <button id="aggressive-btn" onclick="triggerAggressiveDiscovery()" 
+                <button id="aggressive-btn" onclick="triggerAggressiveDiscovery()"
                         style="padding: 10px 20px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
                         title="Advanced: Deep discovery using both RSS feeds and Substack API for maximum coverage">
                     🚀 Deep Discovery
                 </button>
+
+                <!-- Analysis: Citation Sentiment Button -->
+                <button id="sentiment-btn" onclick="triggerCitationSentimentUpdate()"
+                        style="padding: 10px 20px; background: #6f42c1; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; white-space: nowrap;"
+                        title="Analyze author feedback toward linked Substack posts for recommendation signals">
+                    💬 Analyze Citations
+                </button>
             </div>
-            
+
             <!-- Update Status (moved outside button container) -->
             <div id="update-status" style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;"></div>
-            
 
-            
+
+
             <!-- Search Bar -->
             <div style="flex: 1;">
                 <div class="search-bar" style="padding: 15px; background: #e8f5e8; border-radius: 5px;">
-                    <input type="text" id="search-input" placeholder="Search posts by title, newsletter, or content..." 
+                    <input type="text" id="search-input" placeholder="Search posts by title, newsletter, or content..."
                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
                            oninput="searchPosts(this.value)"
                            onkeydown="if(event.key === 'Enter') { console.log('🟢 Enter key detected'); searchPosts(this.value); }">
                 </div>
             </div>
         </div>
-        
 
-        
+
+
         <style>
             .post-line { margin: 8px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
             .post-line a { margin-right: 15px; text-decoration: none; }
@@ -508,36 +542,36 @@ class IndexGenerator:
             .newsletter-name { color: #333; font-weight: bold; margin-right: 10px; }
             .date { color: #888; font-size: 0.8em; margin-left: 10px; }
             .category { color: #666; font-size: 0.8em; margin-left: 10px; }
-            .action-btn { 
-                background: #fef7e0; 
-                color: #666; 
-                border: 1px solid #ddd; 
-                padding: 6px 8px; 
-                border-radius: 4px; 
-                cursor: pointer; 
+            .action-btn {
+                background: #fef7e0;
+                color: #666;
+                border: 1px solid #ddd;
+                padding: 6px 8px;
+                border-radius: 4px;
+                cursor: pointer;
                 font-size: 14px;
                 margin-left: 8px;
                 transition: all 0.2s ease;
                 position: relative;
             }
-            .action-btn:hover { 
-                background: #e0e0e0; 
+            .action-btn:hover {
+                background: #e0e0e0;
                 border-color: #bbb;
                 transform: translateY(-1px);
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
-            .action-btn.marked { 
-                background: #2196f3; 
-                color: white; 
+            .action-btn.marked {
+                background: #2196f3;
+                color: white;
                 border-color: #2196f3;
             }
-            
+
             /* All marked buttons use the same blue color */
             .action-btn.read-btn.marked { background: #2196f3; border-color: #2196f3; }
             .action-btn.not-interesting-btn.marked { background: #2196f3; border-color: #2196f3; }
             .action-btn.like-btn.marked { background: #2196f3; border-color: #2196f3; }
             .action-btn.hide-btn.marked { background: #2196f3; border-color: #2196f3; }
-            
+
             /* Tooltip styles */
             .action-btn::after {
                 content: attr(data-tooltip);
@@ -561,14 +595,14 @@ class IndexGenerator:
                 opacity: 1;
                 visibility: visible;
             }
-            
+
             /* Subcategory button styles */
             .subcategory-buttons {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 8px;
             }
-            
+
             .subcategory-btn {
                 background: #f8f9fa;
                 color: #495057;
@@ -579,37 +613,37 @@ class IndexGenerator:
                 font-size: 13px;
                 transition: all 0.2s ease;
             }
-            
+
             .subcategory-btn:hover {
                 background: #e9ecef;
                 border-color: #adb5bd;
                 transform: translateY(-1px);
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
-            
+
             .subcategory-btn.active {
                 background: #007bff;
                 color: white;
                 border-color: #007bff;
             }
-            
+
             .hidden-post { display: none; }
             .read-post { display: none; }
             .hide-post { display: none; }
             .liked-post { display: none; } /* Hide liked posts by default (they're read) */
-            
 
-            
+
+
             /* Search result styling for hidden posts */
             .search-result-hidden {
                 opacity: 0.7;
                 border-left: 3px solid #ff9800;
                 padding-left: 10px;
             }
-            
+
             /* Search mode styling */
 
-            
+
             .search-mode .search-bar {
                 background: #fff3cd !important;
                 border-color: #ffc107 !important;
@@ -624,7 +658,7 @@ class IndexGenerator:
             main_category = newsletter_data.get("main_category", "Unknown")
             subcategory = newsletter_data.get("subcategory", "Unknown")
             category = newsletter_data.get("category", "Unknown")
-            
+
             for post in newsletter_data.get("posts", []):
                 post_data = post.copy()
                 post_data["newsletter_name"] = newsletter_name
@@ -633,16 +667,16 @@ class IndexGenerator:
                 post_data["subcategory"] = subcategory
                 post_data["category"] = category
                 all_posts.append(post_data)
-        
+
         # Sort posts by date (newest first)
         all_posts.sort(key=lambda x: x.get('published_at', '') or '1970-01-01', reverse=True)
-        
+
         # Add pending downloads indicator if any
         pending_downloads = 0
         for post in all_posts:
             if post.get('status') == 'pending_download':
                 pending_downloads += 1
-        
+
         if pending_downloads > 0:
             content += f"""
             <!-- Pending Downloads Indicator -->
@@ -661,19 +695,20 @@ class IndexGenerator:
             newsletter_name = post['newsletter_name']
             category = post.get('category', 'Uncategorized')
             status = post.get('status', 'downloaded')
-            
+
             # Keep the original content_path for _get_web_path to handle
             content_path = post['content_path']
-            
+
             not_interesting = post.get('not_interesting', False)
             read = post.get('read', False)
             like = post.get('like', False)
             hide = post.get('hide', False)
             post_id = post.get('url', '').split('/')[-1]
+            sentiment_badge = self._format_citation_sentiment_badge(post)
 
             # Apply liked-post class if post is both read AND liked
             liked_post_class = 'liked-post' if read and like else ''
-            
+
             # Determine post display based on status
             if status == 'pending_download':
                 # Post is discovered but not downloaded yet - show just the link (no icon)
@@ -686,6 +721,7 @@ class IndexGenerator:
                     <a href="{post['url']}" class="original" target="_blank" title="View local post">{title}</a>
                     <span class="date">{display_date}</span>
                     <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
+                    {sentiment_badge}
                     <span style="color: #ffc107; font-size: 0.8em; margin-left: 10px;">⏳ Downloading...</span>
                 </div>
                 """
@@ -694,7 +730,7 @@ class IndexGenerator:
                 if post.get('content_path') and Path(post['content_path']).exists():
                     # Local content available
                     posts_html += f"""
-                    <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}" 
+                    <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}"
                          data-post-id="{post_id}"
                          data-main-category="{post.get('main_category', 'Uncategorized')}"
                          data-subcategory="{post.get('subcategory', 'Uncategorized')}">
@@ -703,22 +739,23 @@ class IndexGenerator:
                         <a href="{self._get_web_path(content_path)}" class="original" title="Read offline">📄</a>
                         <span class="date">{display_date}</span>
                         <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
-                        <button class="action-btn read-btn {'' if not read else 'marked'}" 
+                        {sentiment_badge}
+                        <button class="action-btn read-btn {'' if not read else 'marked'}"
                                 onclick="toggleRead('{post_id}', this)"
                                 data-tooltip="Mark as Read">
                             👁️
                         </button>
-                        <button class="action-btn not-interesting-btn {'' if not not_interesting else 'marked'}" 
+                        <button class="action-btn not-interesting-btn {'' if not not_interesting else 'marked'}"
                                 onclick="toggleNotInteresting('{post_id}', this)"
                                 data-tooltip="Mark as Not Interesting">
                             👎
                         </button>
-                        <button class="action-btn like-btn {'' if not like else 'marked'}" 
+                        <button class="action-btn like-btn {'' if not like else 'marked'}"
                                 onclick="toggleLike('{post_id}', this)"
                                 data-tooltip="Like">
                             👍
                         </button>
-                        <button class="action-btn hide-btn {'' if not hide else 'marked'}" 
+                        <button class="action-btn hide-btn {'' if not hide else 'marked'}"
                                 onclick="toggleHide('{post_id}', this)"
                                 data-tooltip="Hide">
                             🚫
@@ -728,7 +765,7 @@ class IndexGenerator:
                 else:
                     # No local content
                     posts_html += f"""
-                    <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}" 
+                    <div class="post-line {'' if not not_interesting else 'hidden-post'} {'' if not read else 'read-post'} {liked_post_class} {'' if not hide else 'hide-post'}"
                          data-post-id="{post_id}"
                          data-main-category="{post.get('main_category', 'Uncategorized')}"
                          data-subcategory="{post.get('subcategory', 'Uncategorized')}">
@@ -736,6 +773,7 @@ class IndexGenerator:
                         <a href="{post['url']}" class="local" target="_blank" title="View original post">{title}</a>
                         <span class="date">{display_date}</span>
                         <span class="category">({post.get('main_category', 'Uncategorized')}{f' > {post.get("subcategory", "Uncategorized")}' if post.get('subcategory') and post.get('subcategory') != post.get('main_category') else ''})</span>
+                        {sentiment_badge}
                         <span style="color: #dc3545; font-size: 0.8em; margin-left: 10px;">⚠️ No offline content</span>
                     </div>
                     """
@@ -757,45 +795,45 @@ class IndexGenerator:
                 console.log('📊 Category index loaded:', window.categoryIndex);
             </script>
             """
-        
+
         # Add JavaScript for view switching, main category filtering, and not_interesting functionality
         content += category_index_html + """
         <script>
             // Simple test to see if JavaScript is working
             console.log('🚀 JavaScript is loading!');
-            
+
             let currentMainCategory = 'All';
             let currentSubcategory = null;
-            
+
             // Hide posts marked as hidden, read, or hide on page load (liked posts stay visible)
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔵 DOMContentLoaded event fired');
-                
+
                 hideNotInterestingPosts();
                 hideReadPosts();
                 hideHidePosts();
-                
+
                 // Generate dynamic category radio buttons FIRST
                 generateCategoryRadioButtons();
-                
+
                 // Restore saved category selection from localStorage
                 const savedCategory = localStorage.getItem('selectedMainCategory') || 'All';
                 currentMainCategory = savedCategory;
-                
+
                 // Set the radio button to match the saved selection
                 const radioButton = document.querySelector(`input[name="main-category"][value="${savedCategory}"]`);
                 if (radioButton) {
                     radioButton.checked = true;
                 }
-                
+
                 // Show subcategory row if a specific category is selected (not 'All')
                 if (savedCategory !== 'All') {
                     showSubcategoryLinks(savedCategory);
                 }
-                
+
                 // Apply the saved category filtering to show the correct posts
                 updateCategoryView();
-                
+
                 // Add event listener for search input
                 const searchInput = document.getElementById('search-input');
                 if (searchInput) {
@@ -805,27 +843,27 @@ class IndexGenerator:
                     });
                 }
             });
-            
+
             // Generate dynamic category radio buttons
             function generateCategoryRadioButtons() {
                 const dynamicCategoriesDiv = document.getElementById('dynamic-categories');
                 if (!dynamicCategoriesDiv) return;
-                
+
                 const categoryIndex = window.categoryIndex || {};
                 let categoriesHtml = '';
-                
+
                 // Always start with "All" button
                 categoriesHtml += `
                     <label style="margin-right: 20px; cursor: pointer;">
                         <input type="radio" name="main-category" value="All" onclick="console.log('🟢 Radio button clicked: All'); filterByMainCategory('All')"> All
                     </label>
                 `;
-                
+
                 // Preserve human-curated order from newsletters.md instead of alphabetical sorting
                 // The order should be: Science, News and Opinion, Tech (as defined in newsletters.md)
                 const humanCuratedOrder = ['Science', 'News and Opinion', 'Tech'];
                 const availableCategories = Object.keys(categoryIndex);
-                
+
                 // Use human-curated order for known categories, append any others at the end
                 const orderedCategories = [];
                 for (const category of humanCuratedOrder) {
@@ -833,14 +871,14 @@ class IndexGenerator:
                         orderedCategories.push(category);
                     }
                 }
-                
+
                 // Add any remaining categories that weren't in the human-curated list
                 for (const category of availableCategories) {
                     if (!orderedCategories.includes(category)) {
                         orderedCategories.push(category);
                     }
                 }
-                
+
                 for (const category of orderedCategories) {
                     categoriesHtml += `
                         <label style="margin-right: 20px; cursor: pointer;">
@@ -848,7 +886,7 @@ class IndexGenerator:
                         </label>
                     `;
                 }
-                
+
                 // Add filter checkboxes on the same line
                 categoriesHtml += `
                     <label style="margin-right: 20px; cursor: pointer;">
@@ -858,17 +896,17 @@ class IndexGenerator:
                         <input type="checkbox" id="show-liked" onclick="console.log('🟢 Liked posts checkbox clicked'); toggleLikedPosts()"> <span title="Only Liked Posts">Liked Posts</span>
                     </label>
                 `;
-                
+
                 dynamicCategoriesDiv.innerHTML = categoriesHtml;
                 console.log(`🔧 Generated ${orderedCategories.length + 1} dynamic category radio buttons (including All) plus filter checkboxes in human-curated order: All, ${orderedCategories.join(', ')}`);
             }
-            
+
             // Check for metadata updates on page load
             let metadataCheckSuccessful = false;
-            
+
             async function checkForMetadataUpdates() {
                 console.log('🔵 checkForMetadataUpdates() called');
-                
+
                 try {
                     // Quick check if newsletters.md has changed
                     const response = await fetch('/api/check_metadata_status', {
@@ -876,12 +914,12 @@ class IndexGenerator:
                         // Add timeout and better error handling
                         signal: AbortSignal.timeout(10000) // 10 second timeout
                     });
-                    
+
                     if (response.ok) {
                         const result = await response.json();
                         if (result.needs_update) {
                             console.log('📝 newsletters.md has changed - automatically updating metadata...');
-                            
+
                             // Show notification to user
                             const updateStatus = document.getElementById('update-status');
                             updateStatus.innerHTML = `
@@ -890,10 +928,10 @@ class IndexGenerator:
                                     Your newsletters.md has changed. Applying updates automatically...
                                 </div>
                             `;
-                            
+
                             // Automatically run metadata update
                             await triggerMetadataUpdate();
-                            
+
                             // Regenerate category radio buttons after update
                             generateCategoryRadioButtons();
                         } else {
@@ -906,7 +944,7 @@ class IndexGenerator:
                     }
                 } catch (error) {
                     console.log('ℹ️ Could not check metadata status:', error.message);
-                    
+
                     // Better error categorization for console logging
                     if (error.name === 'AbortError') {
                         console.log('⏱️ Request timeout');
@@ -917,10 +955,10 @@ class IndexGenerator:
                     }
                 }
             }
-            
+
             // Call metadata check after a longer delay to ensure server is ready
             setTimeout(checkForMetadataUpdates, 3000);
-            
+
             // Retry once more after 5 seconds ONLY if the first attempt failed
             setTimeout(() => {
                 if (!metadataCheckSuccessful) {
@@ -928,13 +966,13 @@ class IndexGenerator:
                     checkForMetadataUpdates();
                 }
             }, 5000);
-            
+
             // NEW: Background metadata check every 5 minutes
             setInterval(checkForMetadataUpdates, 5 * 60 * 1000);
-            
+
             // NEW: Update pending downloads count every 30 seconds
             setInterval(updatePendingDownloadsCount, 30 * 1000);
-            
+
             function hideNotInterestingPosts() {
                 console.log('🔵 hideNotInterestingPosts() called');
                 const hiddenPosts = document.querySelectorAll('.hidden-post');
@@ -942,7 +980,7 @@ class IndexGenerator:
                     post.style.display = 'none';
                 });
             }
-            
+
             function hideReadPosts() {
                 console.log('🔵 hideReadPosts() called');
                 const readPosts = document.querySelectorAll('.read-post');
@@ -958,48 +996,48 @@ class IndexGenerator:
                     post.style.display = 'none';
                 });
             }
-            
+
             function filterByMainCategory(mainCategory) {
                 console.log(`🔵 filterByMainCategory('${mainCategory}') called`);
                 currentMainCategory = mainCategory;
                 currentSubcategory = null; // Clear subcategory filter when switching main categories
-                
+
                 // Save the selection to localStorage for persistence
                 localStorage.setItem('selectedMainCategory', mainCategory);
-                
+
                 // Show/hide subcategory row and populate subcategory buttons
                 showSubcategoryLinks(mainCategory);
-                
+
                 // Update the display based on current category using unified AND logic
                 updateCategoryView();
             }
-            
+
             function showSubcategoryLinks(mainCategory) {
                 console.log(`🔵 showSubcategoryLinks('${mainCategory}') called`);
                 const subcategoryRow = document.getElementById('subcategory-row');
                 const subcategoryButtons = document.getElementById('subcategory-buttons');
-                
+
                 // Clear any active subcategory filter when switching main categories
                 currentSubcategory = null;
-                
+
                 if (mainCategory === 'All') {
                     subcategoryRow.style.display = 'none';
                     return;
                 }
-                
+
                 // Use the pre-built category index from index.json for efficiency
                 const categoryIndex = window.categoryIndex || {};
                 const subcategories = categoryIndex[mainCategory] || [];
-                
+
                 if (subcategories.length === 0) {
                     subcategoryRow.style.display = 'none';
                     return;
                 }
-                
+
                 // Populate subcategory buttons
                 subcategoryButtons.innerHTML = '';
                 const sortedSubcategories = subcategories; // Already sorted from JSON
-                
+
                 sortedSubcategories.forEach(subcategory => {
                     const button = document.createElement('button');
                     button.className = 'subcategory-btn';
@@ -1010,13 +1048,13 @@ class IndexGenerator:
                     };
                     subcategoryButtons.appendChild(button);
                 });
-                
+
                 subcategoryRow.style.display = 'block';
             }
-            
+
             function filterBySubcategory(subcategory) {
                 console.log(`🔵 filterBySubcategory('${subcategory}') called`);
-                
+
                 // Toggle: if clicking the same subcategory, turn it off
                 if (currentSubcategory === subcategory) {
                     currentSubcategory = null;
@@ -1025,7 +1063,7 @@ class IndexGenerator:
                     currentSubcategory = subcategory;
                     console.log(`🔄 Setting subcategory filter to: ${subcategory}`);
                 }
-                
+
                 // Update button states
                 const buttons = document.querySelectorAll('.subcategory-btn');
                 buttons.forEach(btn => {
@@ -1035,57 +1073,57 @@ class IndexGenerator:
                         btn.classList.remove('active');
                     }
                 });
-                
+
                 // Update the display
                 updateCategoryView();
             }
-            
+
             function updateCategoryView() {
                 console.log(`🔵 updateCategoryView() called`);
-                
+
                 // Get current filter states with safety check
                 const checkedRadio = document.querySelector('input[name="main-category"]:checked');
                 if (!checkedRadio) {
                     console.log('⚠️ No category radio button checked yet, skipping update');
                     return;
                 }
-                
+
                 const selectedCategory = checkedRadio.value;
                 const showHidden = document.getElementById('show-hidden').checked;
                 const showLiked = document.getElementById('show-liked').checked;
-                
+
                 // Filter posts by applying ALL active filters with AND logic
                 const allPosts = document.querySelectorAll('.post-line');
-                
+
                 let visibleCount = 0;
                 let hiddenCount = 0;
-                
+
                 allPosts.forEach(post => {
                     // Apply Category Filter
                     const postMainCategory = post.getAttribute('data-main-category');
                     const categoryMatches = selectedCategory === 'All' || postMainCategory === selectedCategory;
-                    
+
                     // Apply Subcategory Filter (if active)
                     let subcategoryMatches = true;
                     if (currentSubcategory && selectedCategory !== 'All') {
                         const postSubcategory = post.getAttribute('data-subcategory');
                         subcategoryMatches = postSubcategory === currentSubcategory;
                     }
-                    
+
                     // Apply Hidden Posts Filter
-                    const isHidden = post.classList.contains('hidden-post') || 
-                                   post.classList.contains('read-post') || 
-                                   post.classList.contains('hide-post') || 
+                    const isHidden = post.classList.contains('hidden-post') ||
+                                   post.classList.contains('read-post') ||
+                                   post.classList.contains('hide-post') ||
                                    post.classList.contains('liked-post');
                     const hiddenFilterPasses = showHidden || !isHidden;
-                    
+
                     // Apply Liked Posts Filter
                     const isLiked = post.classList.contains('liked-post');
                     const likedFilterPasses = !showLiked || isLiked;
-                    
+
                     // Post must pass ALL active filters (AND logic)
                     const shouldShow = categoryMatches && subcategoryMatches && hiddenFilterPasses && likedFilterPasses;
-                    
+
                     if (shouldShow) {
                         post.style.display = 'block';
                         visibleCount++;
@@ -1095,14 +1133,14 @@ class IndexGenerator:
                     }
                 });
             }
-            
 
-            
+
+
             function toggleNotInteresting(postId, button) {
                 console.log(`🔵 toggleNotInteresting('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
-                
+
                 // Toggle the button appearance and visibility
                 if (isCurrentlyMarked) {
                     button.classList.remove('marked');
@@ -1115,16 +1153,16 @@ class IndexGenerator:
                     postLine.classList.add('hidden-post');
                     postLine.style.display = 'none'; // Hide the post immediately
                 }
-                
+
                 // Update the JSON data via API
                 updatePostNotInteresting(postId, !isCurrentlyMarked);
             }
-            
+
             function toggleRead(postId, button) {
                 console.log(`🔵 toggleRead('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
-                
+
                 // Toggle the button appearance and visibility
                 if (isCurrentlyMarked) {
                     button.classList.remove('marked');
@@ -1137,11 +1175,11 @@ class IndexGenerator:
                     postLine.classList.add('read-post');
                     postLine.style.display = 'none'; // Hide the post immediately
                 }
-                
+
                 // Update the JSON data via API
                 updatePostRead(postId, !isCurrentlyMarked);
             }
-            
+
             async function updatePostNotInteresting(postId, notInteresting) {
                 console.log(`🔵 updatePostNotInteresting('${postId}', ${notInteresting}) called`);
                 try {
@@ -1155,7 +1193,7 @@ class IndexGenerator:
                             not_interesting: notInteresting
                         })
                     });
-                    
+
                     const result = await response.json();
                     if (result.success) {
                         console.log(`✅ Post ${postId} not_interesting updated successfully`);
@@ -1194,7 +1232,7 @@ class IndexGenerator:
                     }
                 }
             }
-            
+
             async function updatePostRead(postId, read) {
                 console.log(`🔵 updatePostRead('${postId}', ${read}) called`);
                 try {
@@ -1208,7 +1246,7 @@ class IndexGenerator:
                             read: read
                         })
                     });
-                    
+
                     const result = await response.json();
                     if (result.success) {
                         console.log(`✅ Post ${postId} read status updated successfully`);
@@ -1248,12 +1286,12 @@ class IndexGenerator:
                     }
                 }
             }
-            
+
             function toggleLike(postId, button) {
                 console.log(`🔵 toggleLike('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
-                
+
                 // Toggle the button appearance
                 if (isCurrentlyMarked) {
                     button.classList.remove('marked');
@@ -1264,7 +1302,7 @@ class IndexGenerator:
                     button.innerHTML = '👍'; // Keep thumbs up, but with colored background
                     postLine.classList.add('liked-post');
                 }
-                
+
                 // Check if post should be hidden (if both read AND liked)
                 const isRead = postLine.classList.contains('read-post');
                 if (isRead && !isCurrentlyMarked) {
@@ -1275,7 +1313,7 @@ class IndexGenerator:
                     postLine.style.display = 'block';
                 }
                 // If post is not read, visibility depends on other factors
-                
+
                 // Update the JSON data via API
                 updatePostLike(postId, !isCurrentlyMarked);
             }
@@ -1284,7 +1322,7 @@ class IndexGenerator:
                 console.log(`🔵 toggleHide('${postId}') called`);
                 const postLine = button.closest('.post-line');
                 const isCurrentlyMarked = button.classList.contains('marked');
-                
+
                 // Toggle the button appearance and visibility
                 if (isCurrentlyMarked) {
                     button.classList.remove('marked');
@@ -1297,7 +1335,7 @@ class IndexGenerator:
                     postLine.classList.add('hide-post');
                     postLine.style.display = 'none'; // Hide the post immediately
                 }
-                
+
                 // Update the JSON data via API
                 updatePostHide(postId, !isCurrentlyMarked);
             }
@@ -1315,7 +1353,7 @@ class IndexGenerator:
                             like: like
                         })
                     });
-                    
+
                     const result = await response.json();
                     if (result.success) {
                         console.log(`✅ Post ${postId} like updated successfully`);
@@ -1353,16 +1391,16 @@ class IndexGenerator:
 
             async function triggerMetadataUpdate() {
                 console.log('🔵 triggerMetadataUpdate() called');
-                
+
                 const metadataBtn = document.getElementById('metadata-btn');
                 const updateStatus = document.getElementById('update-status');
-                
+
                 // Disable button and show loading state
                 metadataBtn.disabled = true;
                 metadataBtn.innerHTML = '⏳ Updating...';
                 metadataBtn.style.background = '#6c757d';
                 updateStatus.innerHTML = '⚡ Starting Tier 1: Configuration update...';
-                
+
                 try {
                     const response = await fetch('/api/update_metadata', {
                         method: 'POST',
@@ -1370,17 +1408,17 @@ class IndexGenerator:
                             'Content-Type': 'application/json',
                         }
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    
+
                     const result = await response.json();
-                    
+
                     if (result.success) {
                         updateStatus.innerHTML = `✅ Tier 1 completed! ${result.message || ''}`;
                         metadataBtn.style.background = '#6c757d';
-                        
+
                         // Reload the page to show new structure
                         setTimeout(() => {
                             updateStatus.innerHTML = '🔄 Reloading page to show new structure...';
@@ -1389,7 +1427,7 @@ class IndexGenerator:
                     } else {
                         throw new Error(result.error || 'Configuration update failed');
                     }
-                    
+
                 } catch (error) {
                     console.error('❌ Configuration update error:', error);
                     updateStatus.innerHTML = `❌ Configuration update failed: ${error.message}`;
@@ -1400,19 +1438,19 @@ class IndexGenerator:
                     metadataBtn.innerHTML = '⚡ Update Config';
                 }
             }
-            
+
             async function triggerStructureUpdate() {
                 console.log('🔵 triggerStructureUpdate() called');
-                
+
                 const structureBtn = document.getElementById('structure-btn');
                 const updateStatus = document.getElementById('update-status');
-                
+
                 // Disable button and show loading state
                 structureBtn.disabled = true;
                 structureBtn.innerHTML = '⏳ Updating...';
                 structureBtn.style.background = '#6c757d';
                 updateStatus.innerHTML = '🔧 Starting Tier 2: Structure update...';
-                
+
                 try {
                     const response = await fetch('/api/update_structure', {
                         method: 'POST',
@@ -1420,17 +1458,17 @@ class IndexGenerator:
                             'Content-Type': 'application/json',
                         }
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    
+
                     const result = await response.json();
-                    
+
                     if (result.success) {
                         updateStatus.innerHTML = `✅ Tier 2 completed! ${result.message || ''}`;
                         structureBtn.style.background = '#17a2b8';
-                        
+
                         // Reload the page to show new structure
                         setTimeout(() => {
                             updateStatus.innerHTML = '🔄 Reloading page to show new structure...';
@@ -1439,7 +1477,7 @@ class IndexGenerator:
                     } else {
                         throw new Error(result.error || 'Structure update failed');
                     }
-                    
+
                 } catch (error) {
                     console.error('❌ Structure update error:', error);
                     updateStatus.innerHTML = `❌ Structure update failed: ${error.message}`;
@@ -1450,19 +1488,19 @@ class IndexGenerator:
                     structureBtn.innerHTML = '🔧 Update Structure';
                 }
             }
-            
+
             async function triggerContentUpdate() {
                 console.log('🔵 triggerContentUpdate() called');
-                
+
                 const contentBtn = document.getElementById('content-btn');
                 const updateStatus = document.getElementById('update-status');
-                
+
                 // Disable button and show loading state
                 contentBtn.disabled = true;
                 contentBtn.innerHTML = '⏳ Updating...';
                 contentBtn.style.background = '#6c757d';
                 updateStatus.innerHTML = '🔍 Starting Tier 3: Content discovery and download...';
-                
+
                 try {
                     // First discover new links (Tier 3a)
                     updateStatus.innerHTML = '🔍 Tier 3a: Discovering new posts...';
@@ -1472,16 +1510,16 @@ class IndexGenerator:
                             'Content-Type': 'application/json',
                         }
                     });
-                    
+
                     if (!discoverResponse.ok) {
                         throw new Error(`Link discovery failed: HTTP ${discoverResponse.status}`);
                     }
-                    
+
                     const discoverResult = await discoverResponse.json();
-                    
+
                     if (discoverResult.success) {
                         updateStatus.innerHTML = `✅ Tier 3a completed! ${discoverResult.message || ''}`;
-                        
+
                         // Then start background downloads (Tier 3b)
                         updateStatus.innerHTML = '📥 Tier 3b: Starting background downloads...';
                         const downloadResponse = await fetch('/api/download_pending_content', {
@@ -1490,17 +1528,17 @@ class IndexGenerator:
                                 'Content-Type': 'application/json',
                             }
                         });
-                        
+
                         if (!downloadResponse.ok) {
                             throw new Error(`Download start failed: HTTP ${downloadResponse.status}`);
                         }
-                        
+
                         const downloadResult = await downloadResponse.json();
-                        
+
                         if (downloadResult.success) {
                             updateStatus.innerHTML = `✅ Tier 3 completed! ${downloadResult.message || ''}`;
                             contentBtn.style.background = '#28a745';
-                            
+
                             // Reload the page to show new content
                             setTimeout(() => {
                                 updateStatus.innerHTML = '🔄 Reloading page to show new content...';
@@ -1512,7 +1550,7 @@ class IndexGenerator:
                     } else {
                         throw new Error(discoverResult.error || 'Link discovery failed');
                     }
-                    
+
                 } catch (error) {
                     console.error('❌ Content update error:', error);
                     updateStatus.innerHTML = `❌ Content update failed: ${error.message}`;
@@ -1523,19 +1561,19 @@ class IndexGenerator:
                     contentBtn.innerHTML = '🔍 Discover & Download';
                 }
             }
-            
+
             async function triggerAggressiveDiscovery() {
                 console.log('🔵 triggerAggressiveDiscovery() called');
-                
+
                 const aggressiveBtn = document.getElementById('aggressive-btn');
                 const updateStatus = document.getElementById('update-status');
-                
+
                 // Disable button and show loading state
                 aggressiveBtn.disabled = true;
                 aggressiveBtn.innerHTML = '⏳ Deep Discovery...';
                 aggressiveBtn.style.background = '#6c757d';
                 updateStatus.innerHTML = '🚀 Starting aggressive discovery using RSS + Substack API...';
-                
+
                 try {
                     const response = await fetch('/api/aggressive_discovery', {
                         method: 'POST',
@@ -1543,17 +1581,17 @@ class IndexGenerator:
                             'Content-Type': 'application/json',
                         }
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    
+
                     const result = await response.json();
-                    
+
                     if (result.success) {
                         updateStatus.innerHTML = `✅ Aggressive discovery completed! ${result.message || ''}`;
                         aggressiveBtn.style.background = '#ff5722';
-                        
+
                         // Reload the page to show new post links
                         setTimeout(() => {
                             updateStatus.innerHTML = '🔄 Reloading page to show new post links...';
@@ -1562,7 +1600,7 @@ class IndexGenerator:
                     } else {
                         throw new Error(result.error || 'Aggressive discovery failed');
                     }
-                    
+
                 } catch (error) {
                     console.error('❌ Aggressive discovery error:', error);
                     updateStatus.innerHTML = `❌ Aggressive discovery failed: ${error.message}`;
@@ -1573,9 +1611,56 @@ class IndexGenerator:
                     aggressiveBtn.innerHTML = '🚀 Deep Discovery';
                 }
             }
-            
 
-            
+            async function triggerCitationSentimentUpdate() {
+                console.log('🔵 triggerCitationSentimentUpdate() called');
+
+                const sentimentBtn = document.getElementById('sentiment-btn');
+                const updateStatus = document.getElementById('update-status');
+
+                sentimentBtn.disabled = true;
+                sentimentBtn.innerHTML = '⏳ Analyzing...';
+                sentimentBtn.style.background = '#6c757d';
+                updateStatus.innerHTML = '💬 Analyzing citation sentiment in saved post HTML...';
+
+                try {
+                    const response = await fetch('/api/update_citation_sentiment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        updateStatus.innerHTML = `✅ Citation analysis completed: ${result.total_citations} citations across ${result.posts_with_citations} posts.`;
+                        sentimentBtn.style.background = '#6f42c1';
+
+                        setTimeout(() => {
+                            updateStatus.innerHTML = '🔄 Reloading page to show citation sentiment badges...';
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error || 'Citation sentiment analysis failed');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Citation sentiment update error:', error);
+                    updateStatus.innerHTML = `❌ Citation sentiment analysis failed: ${error.message}`;
+                    sentimentBtn.style.background = '#dc3545';
+                } finally {
+                    sentimentBtn.disabled = false;
+                    sentimentBtn.innerHTML = '💬 Analyze Citations';
+                }
+            }
+
+
+
             async function updatePostHide(postId, hide) {
                 console.log(`🔵 updatePostHide('${postId}', ${hide}) called`);
                 try {
@@ -1589,7 +1674,7 @@ class IndexGenerator:
                             hide: hide
                         })
                     });
-                    
+
                     const result = await response.json();
                     if (result.success) {
                         console.log(`✅ Post ${postId} hide updated successfully`);
@@ -1629,44 +1714,44 @@ class IndexGenerator:
                     }
                 }
             }
-            
+
             function toggleHiddenPosts() {
                 console.log('🔵 toggleHiddenPosts() called');
                 // Simply update the category view to apply all filters with AND logic
                 updateCategoryView();
             }
-            
+
             function toggleLikedPosts() {
                 console.log('🔵 toggleLikedPosts() called');
                 // Simply update the category view to apply all filters with AND logic
                 updateCategoryView();
             }
-            
+
             function searchPosts(query) {
                 console.log(`🔵 searchPosts('${query}') called`);
                 const searchTerm = query.toLowerCase().trim();
-                
+
                 console.log(`🔍 Searching for: "${searchTerm}"`);
-                
+
                 if (searchTerm === '') {
                     // Remove search mode styling from body
                     document.body.classList.remove('search-mode');
-                    
+
                     // When search is cleared, restore normal category view
                     updateCategoryView();
                     return;
                 }
-                
+
                 // Add search mode styling to body
                 document.body.classList.add('search-mode');
-                
+
                 // Get all currently visible posts (based on filter row settings)
                 const visiblePosts = document.querySelectorAll('.post-line[style*="block"]');
                 console.log(`🔍 Found ${visiblePosts.length} visible posts to search through`);
-                
+
                 let matchCount = 0;
                 let hiddenMatchCount = 0;
-                
+
                 visiblePosts.forEach(post => {
                     // Handle different types of posts (local, original, pending download)
                     let titleElement = post.querySelector('a.local') || post.querySelector('a.original');
@@ -1674,27 +1759,27 @@ class IndexGenerator:
                         // Skip posts that don't have a title link
                         return;
                     }
-                    
+
                     const title = titleElement.textContent.toLowerCase();
                     const newsletter = post.querySelector('.newsletter-name')?.textContent.toLowerCase() || '';
                     const category = post.querySelector('.category')?.textContent.toLowerCase() || '';
-                    
+
                     // Check if post matches search term
-                    const matches = title.includes(searchTerm) || 
-                                  newsletter.includes(searchTerm) || 
+                    const matches = title.includes(searchTerm) ||
+                                  newsletter.includes(searchTerm) ||
                                   category.includes(searchTerm);
-                    
+
                     if (matches) {
                         // Keep the post visible
                         post.style.display = 'block';
                         matchCount++;
-                        
+
                         // Add visual indicator if post is hidden
-                        const isHidden = post.classList.contains('hidden-post') || 
-                                       post.classList.contains('read-post') || 
-                                       post.classList.contains('hide-post') || 
+                        const isHidden = post.classList.contains('hidden-post') ||
+                                       post.classList.contains('read-post') ||
+                                       post.classList.contains('hide-post') ||
                                        post.classList.contains('liked-post');
-                        
+
                         if (isHidden) {
                             post.classList.add('search-result-hidden');
                             hiddenMatchCount++;
@@ -1707,26 +1792,26 @@ class IndexGenerator:
                         post.classList.remove('search-result-hidden');
                     }
                 });
-                
+
                 // Update subcategory links if they exist
                 // showSubcategoryLinks(); // This function is removed
-                
+
                 console.log(`✅ Search completed: ${matchCount} matches found, ${hiddenMatchCount} hidden matches`);
             }
-            
 
-            
+
+
             // NEW: Update pending downloads count
             async function updatePendingDownloadsCount() {
                 try {
                     const response = await fetch('/api/pending_downloads_count', {
                         method: 'GET'
                     });
-                    
+
                     if (response.ok) {
                         const result = await response.json();
                         const count = result.pending_downloads;
-                        
+
                         // Update the pending downloads indicator if it exists
                         const indicator = document.querySelector('[data-pending-downloads]');
                         if (indicator && count > 0) {
@@ -1743,9 +1828,9 @@ class IndexGenerator:
                     console.log('ℹ️ Could not update pending downloads count:', error.message);
                 }
             }
-            
 
-            
+
+
             function hideNotInterestingPosts() {
                 console.log('🔵 hideNotInterestingPosts() called');
                 const hiddenPosts = document.querySelectorAll('.hidden-post');
@@ -1767,7 +1852,7 @@ class IndexGenerator:
 
     def create_json_index(self, output_file: str = "index.json", input_file: str = "index.json") -> None:
         """Create a JSON index file using RSS feeds and Substack API for fresh content discovery.
-        
+
         This method generates a fresh index.json from newsletters.md and current content,
         using RSS for fast post detection and API for complete content download.
         """
@@ -1782,7 +1867,7 @@ class IndexGenerator:
             else:
                 print("✅ index.json missing, allowing regeneration from newsletters.md + content discovery")
                 print("🔄 This will create a fresh index.json with current content")
-        
+
         # Load existing index.json to preserve personalization field values
         existing_personalization = {}
         if input_file != "none":
@@ -1807,38 +1892,38 @@ class IndexGenerator:
                     print(f"⚠️ Could not load existing personalization: {e}")
         else:
             print("🔄 Starting fresh regeneration - no existing personalization to preserve")
-        
+
         index_data = {
             "generated_at": datetime.now().isoformat(),
             "total_posts": 0,
             "categories": {},  # New: maps main_category -> list of subcategories
             "newsletters": {}
         }
-        
+
         # Load newsletter configuration from markdown for proper names and categories
         newsletter_configs = self.load_newsletters_with_categories()
         print(f"📋 Loaded {len(newsletter_configs)} newsletter configurations from newsletters.md")
-        
+
         # Build category-subcategory index for efficient UI generation
         category_index = {}
         for url, config in newsletter_configs.items():
             main_category = config['main_category']
             subcategory = config['subcategory']
-            
+
             # Only add subcategories that are actually different from main category
             if subcategory and subcategory != main_category:
                 if main_category not in category_index:
                     category_index[main_category] = set()
                 category_index[main_category].add(subcategory)
-        
+
         # Convert sets to sorted lists for JSON serialization
         for main_category, subcategories in category_index.items():
             index_data["categories"][main_category] = sorted(list(subcategories))
-        
+
         print(f"📊 Built category index: {len(category_index)} main categories with subcategories")
         for main_category, subcategories in index_data["categories"].items():
             print(f"   {main_category}: {len(subcategories)} subcategories")
-        
+
         # Create newsletter structure and discover current content
         for url, config in newsletter_configs.items():
             newsletter_url = config['url']
@@ -1846,12 +1931,12 @@ class IndexGenerator:
             main_category = config['main_category']
             subcategory = config['subcategory']
             tags = config['tags']
-            
+
             print(f"🔍 Discovering content for: {display_name}")
-            
+
             # Discover current posts via RSS + API
             current_posts = self._discover_newsletter_content(newsletter_url, display_name)
-            
+
             # Apply personalization from existing data
             for post in current_posts:
                 post_url = post.get('url', '')
@@ -1865,7 +1950,7 @@ class IndexGenerator:
                         'like': False,
                         'hide': False
                     })
-                
+
                 # Add category information
                 post['main_category'] = main_category
                 post['subcategory'] = subcategory
@@ -1875,13 +1960,13 @@ class IndexGenerator:
                 else:
                     post['category'] = main_category
                 post['tags'] = tags
-            
+
             # Sort posts chronologically (newest first)
             current_posts.sort(
                 key=lambda x: x.get('published_at', '') or '1970-01-01',
                 reverse=True
             )
-            
+
             index_data["newsletters"][newsletter_url] = {
                 "name": display_name,
                 "url": newsletter_url,
@@ -1893,34 +1978,34 @@ class IndexGenerator:
                 "posts": current_posts
             }
             index_data["total_posts"] += len(current_posts)
-            
+
             print(f"📰 {display_name}: {len(current_posts)} posts discovered")
-        
+
         # Sort the final data for consistency
         sorted_data = self._sort_json_data(index_data)
-        
+
         json_path = self.base_dir / output_file
         json_path.write_text(json.dumps(sorted_data, indent=2), encoding='utf-8')
         print(f"✅ Created {output_file} with fresh content discovery at {json_path}")
 
     def _discover_newsletter_content(self, newsletter_url: str, display_name: str) -> List[Dict]:
         """Discover current posts for a newsletter using RSS + API approach.
-        
+
         Args:
             newsletter_url: The newsletter's URL
             display_name: Human-readable name for logging
-            
+
         Returns:
             List of post dictionaries with complete metadata
         """
         try:
             print(f"  📡 Checking RSS feed for {display_name}...")
-            
+
             # Step 1: Try RSS feed first (fast discovery)
             rss_posts = self._get_posts_from_rss(newsletter_url)
             if rss_posts:
                 print(f"  ✅ RSS: Found {len(rss_posts)} posts")
-                
+
                 # Step 2: Download content via API for each post
                 complete_posts = []
                 for rss_post in rss_posts:
@@ -1932,13 +2017,13 @@ class IndexGenerator:
                         print(f"  ⚠️ Failed to download post {rss_post.get('title', 'Unknown')}: {e}")
                         # Add RSS data as fallback
                         complete_posts.append(rss_post)
-                
+
                 return complete_posts
             else:
                 print(f"  ⚠️ RSS: No posts found, trying API fallback...")
                 # Fallback to direct API discovery
                 return self._discover_posts_via_api(newsletter_url)
-                
+
         except Exception as e:
             print(f"  ❌ Content discovery failed for {display_name}: {e}")
             return []
@@ -1948,7 +2033,7 @@ class IndexGenerator:
         try:
             # Try multiple RSS URL patterns
             rss_patterns = []
-            
+
             if 'substack.com' in newsletter_url:
                 # Substack RSS format: https://newsletter.substack.com/feed
                 rss_patterns.append(newsletter_url.rstrip('/') + '/feed')
@@ -1964,20 +2049,20 @@ class IndexGenerator:
                     base_url + '/blog/feed',
                     base_url + '/blog/rss'
                 ])
-            
+
             # Import feedparser here to avoid dependency issues
             try:
                 import feedparser
             except ImportError:
                 print("    ⚠️ feedparser not available, skipping RSS")
                 return []
-            
+
             # Try each RSS pattern until one works
             for rss_url in rss_patterns:
                 try:
                     print(f"    🔍 Trying RSS: {rss_url}")
                     feed = feedparser.parse(rss_url)
-                    
+
                     if not feed.bozo and feed.entries:
                         print(f"    ✅ RSS found: {len(feed.entries)} entries")
                         posts = []
@@ -1997,14 +2082,14 @@ class IndexGenerator:
                             print(f"    ⚠️ RSS malformed: {feed.bozo_exception}")
                         else:
                             print(f"    ⚠️ No entries found")
-                        
+
                 except Exception as e:
                     print(f"    ⚠️ RSS failed for {rss_url}: {e}")
                     continue
-            
+
             print(f"    ❌ All RSS patterns failed for {newsletter_url}")
             return []
-            
+
         except Exception as e:
             print(f"    ❌ RSS discovery failed: {e}")
             return []
@@ -2013,7 +2098,7 @@ class IndexGenerator:
         """Parse RSS date string to ISO format."""
         if not date_str:
             return datetime.now().isoformat()
-        
+
         try:
             # Try common RSS date formats
             from email.utils import parsedate_to_datetime
@@ -2030,7 +2115,7 @@ class IndexGenerator:
                         continue
             except Exception:
                 pass
-        
+
         # Final fallback
         print(f"    ⚠️ Could not parse date: {date_str}, using current time")
         return datetime.now().isoformat()
@@ -2042,22 +2127,22 @@ class IndexGenerator:
             post_url = rss_post.get('url', '')
             if not post_url:
                 return rss_post
-            
+
             # Generate safe filename for local storage
             safe_name = self._get_safe_name(newsletter_url)
             post_id = post_url.split('/')[-1] or 'post'
             content_filename = f"{post_id}.html"
             content_path = f"data/content/{safe_name}/{content_filename}"
-            
+
             # Check if we already have this content
             full_content_path = self.base_dir / content_path
             if full_content_path.exists():
                 print(f"    📁 Content already exists: {content_path}")
                 rss_post['content_path'] = content_path
                 return rss_post
-            
+
             print(f"    ⬇️ Downloading content for: {rss_post.get('title', 'Unknown')}")
-            
+
             # Try to download via Substack API
             try:
                 import substack_api
@@ -2071,7 +2156,7 @@ class IndexGenerator:
                 rss_post['content_path'] = content_path
                 rss_post['needs_download'] = True
                 return rss_post
-                
+
         except Exception as e:
             print(f"    ❌ API download failed: {e}")
             return rss_post
@@ -2080,21 +2165,21 @@ class IndexGenerator:
         """Fallback method to discover posts via API when RSS fails."""
         try:
             print(f"    🔍 Trying API discovery for {newsletter_url}")
-            
+
             # Try to use substack_api library for discovery
             try:
                 import substack_api
                 print(f"    📡 Using Substack API for {newsletter_url}")
-                
+
                 # This would use the substack_api library to discover posts
                 # For now, return empty list to indicate no posts found
                 # TODO: Implement actual API discovery
                 return []
-                
+
             except ImportError:
                 print(f"    ⚠️ substack_api not available for {newsletter_url}")
                 return []
-            
+
         except Exception as e:
             print(f"    ❌ API discovery failed: {e}")
             return []
@@ -2102,12 +2187,12 @@ class IndexGenerator:
     def create_rss_feed(self) -> None:
         """Create an RSS feed of all posts."""
         # This could be implemented later if needed
-        pass 
+        pass
 
 if __name__ == "__main__":
     import argparse
     import sys
-    
+
     parser = argparse.ArgumentParser(
         description="Generate index files for Daily Briefing pAIa",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -2120,55 +2205,55 @@ Examples:
   python src/web/index_generator.py index_test.json    # Use index_test.json (HTML only)
   python src/web/index_generator.py --html-only        # Only generate HTML
   python src/web/index_generator.py --json-only        # Only generate JSON (SAFE: uses different output file)
-  
+
 To regenerate main index.json (DANGEROUS):
   python src/web/index_generator.py --output-json index_new.json  # Creates new file, doesn't overwrite
         """
     )
-    
+
     parser.add_argument(
         'input_file',
         nargs='?',
         default='index.json',
         help='Input JSON file to generate from (default: index.json)'
     )
-    
+
     parser.add_argument(
         '--html-only',
         action='store_true',
         help='Only generate HTML file, skip JSON generation'
     )
-    
+
     parser.add_argument(
         '--json-only',
         action='store_true',
         help='Only generate JSON file, skip HTML generation'
     )
-    
+
     parser.add_argument(
         '--output-html',
         default='index.html',
         help='Output HTML filename (default: index.html)'
     )
-    
+
     parser.add_argument(
         '--output-json',
         default='index.json',
         help='Output JSON filename (default: index.json)'
     )
-    
+
     parser.add_argument(
         '--regenerate',
         action='store_true',
         help='Regenerate index.json from newsletters.md using RSS + API (for testing only)'
     )
-    
+
     args = parser.parse_args()
-    
+
     try:
         # Create IndexGenerator instance
         ig = IndexGenerator()
-        
+
         # Check if input file exists (only when not regenerating)
         if not args.regenerate:
             input_path = Path(args.input_file)
@@ -2180,7 +2265,7 @@ To regenerate main index.json (DANGEROUS):
                     print(f"   Available files in current dir: {list(Path('.').glob('*.json'))}")
                     print(f"   Available files in data dir: {list(Path('data').glob('*.json'))}")
                     sys.exit(1)
-        
+
         if not args.html_only:
             if args.regenerate:
                 # Allow regeneration from scratch using new RSS + API approach
@@ -2198,16 +2283,16 @@ To regenerate main index.json (DANGEROUS):
                         sys.exit(1)
                     else:
                         print("✅ index.json missing, allowing regeneration from newsletters.md + content files")
-                
+
                 print(f"📊 Generating JSON index from {args.input_file}...")
                 ig.create_json_index(output_file=args.output_json, input_file=args.input_file)
-        
+
         if not args.json_only:
             print(f"🌐 Generating HTML from {args.input_file}...")
             ig.create_index_html(output_file=args.output_html)
-        
+
         print("✅ Index generation completed successfully!")
-        
+
     except Exception as e:
         print(f"❌ Error: {e}")
-        sys.exit(1) 
+        sys.exit(1)

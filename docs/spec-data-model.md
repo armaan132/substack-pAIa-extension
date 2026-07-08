@@ -46,7 +46,28 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
     "not_interesting": false,
     "read": false,
     "like": false,
-    "hide": false
+    "hide": false,
+    "citation_sentiment": [
+      {
+        "target_url": "https://other-newsletter.substack.com/p/linked-post",
+        "target_newsletter_url": "https://other-newsletter.substack.com",
+        "anchor_text": "linked post",
+        "context": "Sentence window around the citation link.",
+        "sentiment": "supportive",
+        "polarity": 0.32,
+        "confidence": 0.41,
+        "recommendation_signal": 0.13,
+        "is_known_newsletter": true
+      }
+    ],
+    "citation_sentiment_summary": {
+      "total": 1,
+      "supportive": 1,
+      "critical": 0,
+      "neutral": 0,
+      "average_polarity": 0.32,
+      "average_recommendation_signal": 0.13
+    }
   }
 ]
 ```
@@ -67,6 +88,8 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
 - **Content Storage**: HTML files stored in organized directory structure
 - **Personalization**: User preferences stored as boolean flags
 - **Status Tracking**: Download status and content availability
+- **Citation Sentiment**: Links to other Substack posts/newsletters are analyzed from saved HTML to capture author feedback toward cited sources
+- **Recommendation Signals**: `citation_sentiment_summary.average_recommendation_signal` provides a numeric feature for future ranking
 
 ## Data Persistence
 
@@ -80,6 +103,7 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
 - **Configuration Changes**: `newsletters.md` → `index.json` → `index.html`
 - **Content Discovery**: RSS feeds → post metadata → content download
 - **Personalization**: User actions → `index.json` → immediate UI update
+- **Citation Analysis**: saved HTML content → `citation_sentiment` fields → recommendation features + `index.html` badges
 
 ## Data Validation
 
@@ -109,4 +133,3 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
 - **JSON Compression**: Efficient serialization and parsing
 - **Content Organization**: Logical directory structure
 - **Incremental Updates**: Only changed data processed
-
