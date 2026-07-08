@@ -56,6 +56,8 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
         "sentiment": "supportive",
         "polarity": 0.32,
         "confidence": 0.41,
+        "reliability": "medium",
+        "evidence": ["supportive: recommend (recommend)"],
         "recommendation_signal": 0.13,
         "is_known_newsletter": true
       }
@@ -90,6 +92,7 @@ JSON-based data model supporting newsletter personalization with hierarchical ca
 - **Status Tracking**: Download status and content availability
 - **Citation Sentiment**: Links to other Substack posts/newsletters are analyzed from saved HTML to capture author feedback toward cited sources
 - **Recommendation Signals**: `citation_sentiment_summary.average_recommendation_signal` provides a numeric feature for future ranking
+- **Reliability Labels**: Citation sentiment includes `low`, `medium`, or `high` reliability so recommendation code can ignore weak or ambiguous evidence
 
 ## Data Persistence
 

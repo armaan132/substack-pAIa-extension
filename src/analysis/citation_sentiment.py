@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from html import unescape
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse, urlunparse
 
 try:
@@ -35,28 +35,31 @@ ANCHOR_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 TAG_RE = re.compile(r"<[^>]+>")
-SUPPORTIVE_WORDS = {
-    "careful",
-    "excellent",
-    "great",
-    "helpful",
-    "insightful",
-    "persuasive",
-    "recommend",
-    "smart",
-    "strong",
-    "useful",
-}
-CRITICAL_WORDS = {
-    "bad",
-    "careless",
-    "flawed",
-    "misleading",
-    "poor",
-    "shallow",
-    "weak",
-    "wrong",
-}
+CONTRAST_RE = re.compile(r"\b(but|however|still|although|though|yet)\b", re.IGNORECASE)
+NEGATION_RE = re.compile(r"\b(no|not|never|hardly|rarely|without|isn't|aren't|wasn't|weren't|don't|doesn't|didn't)\b", re.IGNORECASE)
+HEDGE_RE = re.compile(r"\b(maybe|perhaps|somewhat|partly|sort of|kind of|seems|appears|might|could)\b", re.IGNORECASE)
+EVALUATION_TARGET_RE = re.compile(
+    r"\b(argument|essay|post|piece|claim|analysis|forecast|evidence|conclusion|model|thread|write[- ]?up)\b",
+    re.IGNORECASE,
+)
+SUPPORTIVE_PATTERNS: List[Tuple[re.Pattern, float, str]] = [
+    (re.compile(r"\b(strongly )?recommend(?:ed|s|ing)?\b", re.IGNORECASE), 1.2, "recommend"),
+    (re.compile(r"\bworth (reading|your time|checking out|a read)\b", re.IGNORECASE), 1.1, "worth reading"),
+    (re.compile(r"\b(excellent|great|smart|insightful|helpful|useful|persuasive|careful|convincing|strong|valuable|important)\b", re.IGNORECASE), 0.8, "positive evaluation"),
+    (re.compile(r"\b(i agree|agree with|right about|gets? this right)\b", re.IGNORECASE), 0.9, "agreement"),
+    (re.compile(r"\b(good evidence|strong evidence|well argued|well-argued|well researched|well-researched)\b", re.IGNORECASE), 1.0, "strong evidence"),
+]
+CRITICAL_PATTERNS: List[Tuple[re.Pattern, float, str]] = [
+    (re.compile(r"\b(weak|misleading|wrong|flawed|poor|shallow|careless|unconvincing|dubious|confused|false|overstated|overstates)\b", re.IGNORECASE), -0.8, "negative evaluation"),
+    (re.compile(r"\b(bad look|bad argument|bad evidence|bad analysis)\b", re.IGNORECASE), -0.7, "bad evaluation"),
+    (re.compile(r"\b(i disagree|disagree with|not convinced|unpersuaded|would not rely on)\b", re.IGNORECASE), -1.0, "disagreement"),
+    (re.compile(r"\b(strawman|straw man|fails? to|does not address|misses? the point)\b", re.IGNORECASE), -0.9, "critique"),
+    (re.compile(r"\b(lacks evidence|unsupported|no evidence)\b", re.IGNORECASE), -1.0, "weak evidence"),
+]
+NEUTRAL_CITATION_RE = re.compile(
+    r"\b(see also|via|published|discusses|mentions|links? to|according to|as noted by|in the past|last week)\b",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -73,6 +76,8 @@ class CitationAnalysisResult:
     subjectivity: float
     confidence: float
     recommendation_signal: float
+    reliability: str
+    evidence: List[str]
     is_known_newsletter: bool
 
     def as_dict(self) -> Dict:
@@ -87,6 +92,8 @@ class CitationAnalysisResult:
             "subjectivity": self.subjectivity,
             "confidence": self.confidence,
             "recommendation_signal": self.recommendation_signal,
+            "reliability": self.reliability,
+            "evidence": self.evidence,
             "is_known_newsletter": self.is_known_newsletter,
         }
 
@@ -136,7 +143,7 @@ class CitationSentimentAnalyzer:
                 continue
 
             target_newsletter_url = normalize_newsletter_url(target_url)
-            sentiment = score_sentiment(context)
+            sentiment = score_author_stance(context, anchor_text)
             seen_targets.add(target_url)
             results.append(
                 CitationAnalysisResult(
@@ -150,6 +157,8 @@ class CitationSentimentAnalyzer:
                     subjectivity=sentiment["subjectivity"],
                     confidence=sentiment["confidence"],
                     recommendation_signal=sentiment["recommendation_signal"],
+                    reliability=sentiment["reliability"],
+                    evidence=sentiment["evidence"],
                     is_known_newsletter=target_newsletter_url in self.known_newsletter_urls,
                 )
             )
@@ -178,7 +187,7 @@ class CitationSentimentAnalyzer:
                 continue
 
             target_newsletter_url = normalize_newsletter_url(target_url)
-            sentiment = score_sentiment(context)
+            sentiment = score_author_stance(context, anchor_text)
             seen_targets.add(target_url)
             results.append(
                 CitationAnalysisResult(
@@ -192,6 +201,8 @@ class CitationSentimentAnalyzer:
                     subjectivity=sentiment["subjectivity"],
                     confidence=sentiment["confidence"],
                     recommendation_signal=sentiment["recommendation_signal"],
+                    reliability=sentiment["reliability"],
+                    evidence=sentiment["evidence"],
                     is_known_newsletter=target_newsletter_url in self.known_newsletter_urls,
                 )
             )
@@ -291,30 +302,77 @@ def summarize_citations(citations: List[Dict]) -> Dict:
 
 
 def score_sentiment(text: str) -> Dict:
-    """Score context text and map it to author feedback labels."""
-    if TextBlob is not None:
-        blob = TextBlob(text)
-        polarity = round(blob.sentiment.polarity, 4)
-        subjectivity = round(blob.sentiment.subjectivity, 4)
-    else:
-        polarity, subjectivity = score_sentiment_with_lexicon(text)
+    """Backward-compatible wrapper for author stance scoring."""
+    return score_author_stance(text)
+
+
+def score_author_stance(text: str, anchor_text: str = "") -> Dict:
+    """Score the author's stance toward the cited post, not generic sentiment.
+
+    The scorer is intentionally conservative: generic emotional language is not
+    enough. It looks for evaluative cue phrases near the citation and returns
+    low confidence when evidence is sparse or mostly neutral.
+    """
+    clean_text = normalize_text(text)
+    if not clean_text:
+        return stance_result("neutral", 0.0, 0.0, 0.0, 0.0, "low", [])
+
+    clauses = split_evidence_clauses(clean_text)
+    weighted_score = 0.0
+    weighted_abs = 0.0
+    evidence: List[str] = []
+
+    anchor_index = find_anchor_clause_index(clauses, anchor_text)
+
+    for index, clause in enumerate(clauses):
+        clause_weight = clause_position_weight(index, clauses, anchor_index)
+        if HEDGE_RE.search(clause):
+            clause_weight *= 0.75
+
+        score, clause_evidence = score_clause(clause)
+        if not clause_evidence:
+            continue
+
+        weighted_score += score * clause_weight
+        weighted_abs += abs(score) * clause_weight
+        evidence.extend(clause_evidence)
+
+    if weighted_abs == 0:
+        reliability = "low"
+        confidence = 0.0
+        if NEUTRAL_CITATION_RE.search(clean_text):
+            evidence.append("neutral citation/reference language")
+        return stance_result("neutral", 0.0, 0.0, confidence, 0.0, reliability, evidence)
+
+    polarity = max(-1.0, min(1.0, weighted_score / max(weighted_abs, 1.0)))
+    subjectivity = min(1.0, weighted_abs / 3.0)
+    evidence_count = len(evidence)
+    confidence = calculate_stance_confidence(
+        polarity=polarity,
+        subjectivity=subjectivity,
+        evidence_count=evidence_count,
+        weighted_abs=weighted_abs,
+        text=clean_text,
+    )
 
     if polarity >= 0.15:
         label = "supportive"
-    elif polarity <= -0.1:
+    elif polarity <= -0.15:
         label = "critical"
     else:
         label = "neutral"
 
-    confidence = round(min(1.0, (abs(polarity) * 0.75) + (subjectivity * 0.25)), 4)
+    reliability = reliability_label(confidence, evidence_count)
     recommendation_signal = round(polarity * confidence, 4)
-    return {
-        "label": label,
-        "polarity": polarity,
-        "subjectivity": subjectivity,
-        "confidence": confidence,
-        "recommendation_signal": recommendation_signal,
-    }
+    return stance_result(
+        label,
+        round(polarity, 4),
+        round(subjectivity, 4),
+        confidence,
+        recommendation_signal,
+        reliability,
+        evidence[:6],
+    )
 
 
 def extract_link_context(link, anchor_text: str, context_window: int = 2) -> str:
@@ -361,20 +419,142 @@ def extract_plain_text_context(text: str, anchor_text: str, context_window: int 
 
 
 def score_sentiment_with_lexicon(text: str) -> tuple[float, float]:
-    """Small fallback scorer for environments without TextBlob."""
-    words = re.findall(r"[a-zA-Z']+", text.lower())
-    if not words:
-        return 0.0, 0.0
+    """Small fallback scorer retained for callers that need numeric polarity."""
+    result = score_author_stance(text)
+    return result["polarity"], result["subjectivity"]
 
-    supportive = sum(1 for word in words if word in SUPPORTIVE_WORDS)
-    critical = sum(1 for word in words if word in CRITICAL_WORDS)
-    signal_words = supportive + critical
-    if signal_words == 0:
-        return 0.0, 0.0
 
-    polarity = (supportive - critical) / max(signal_words, 3)
-    subjectivity = min(1.0, signal_words / max(len(words) * 0.05, 1))
-    return round(polarity, 4), round(subjectivity, 4)
+def score_clause(clause: str) -> tuple[float, List[str]]:
+    """Score one evidence clause and return human-readable evidence labels."""
+    score = 0.0
+    evidence: List[str] = []
+
+    for pattern, weight, label in SUPPORTIVE_PATTERNS + CRITICAL_PATTERNS:
+        for match in pattern.finditer(clause):
+            negated = has_local_negation(clause, match.start())
+            adjusted_weight = -weight if negated else weight
+            score += adjusted_weight
+            direction = "supportive" if adjusted_weight > 0 else "critical"
+            evidence_label = f"negated {label}" if negated else label
+            evidence.append(f"{direction}: {evidence_label} ({match.group(0)})")
+
+    # Generic evaluative words are more reliable when attached to a citation target.
+    if evidence and not EVALUATION_TARGET_RE.search(clause):
+        score *= 0.65
+
+    return score, evidence
+
+
+def split_evidence_clauses(text: str) -> List[str]:
+    """Split context into manageable clauses while preserving contrast markers."""
+    sentences = split_sentences(text)
+    clauses: List[str] = []
+    for sentence in sentences:
+        parts = re.split(r"([,;:])", sentence)
+        current = ""
+        for part in parts:
+            current += part
+            if part in {",", ";", ":"}:
+                if current.strip():
+                    clauses.append(current.strip())
+                current = ""
+        if current.strip():
+            clauses.append(current.strip())
+    return clauses or [text]
+
+
+def find_anchor_clause_index(clauses: List[str], anchor_text: str = "") -> Optional[int]:
+    if not anchor_text:
+        return None
+    return next((i for i, clause in enumerate(clauses) if anchor_text in clause), None)
+
+
+def clause_position_weight(index: int, clauses: List[str], anchor_index: Optional[int]) -> float:
+    """Weight clauses near/after contrast words more heavily."""
+    clause = clauses[index]
+    if anchor_index is None:
+        weight = 0.8
+    else:
+        distance = abs(index - anchor_index)
+        if distance == 0:
+            weight = 1.2
+        elif distance == 1:
+            weight = 0.55
+        elif distance == 2:
+            weight = 0.25
+        else:
+            weight = 0.1
+
+    if index > 0 and CONTRAST_RE.search(clauses[index - 1]):
+        weight *= 1.15
+    if CONTRAST_RE.search(clause):
+        weight *= 1.8
+        if anchor_index is not None and abs(index - anchor_index) == 1:
+            weight = max(weight, 0.95)
+    if index >= len(clauses) - 1:
+        weight *= 1.02
+    return weight
+
+
+def has_local_negation(text: str, match_start: int) -> bool:
+    """Detect short-range negation before an evaluative phrase."""
+    prefix = text[max(0, match_start - 45):match_start]
+    return bool(NEGATION_RE.search(prefix))
+
+
+def calculate_stance_confidence(
+    polarity: float,
+    subjectivity: float,
+    evidence_count: int,
+    weighted_abs: float,
+    text: str,
+) -> float:
+    """Estimate how much the recommender should trust this stance signal."""
+    evidence_factor = min(1.0, evidence_count / 3.0)
+    strength_factor = min(1.0, weighted_abs / 2.5)
+    confidence = (
+        (abs(polarity) * 0.3)
+        + (subjectivity * 0.2)
+        + (evidence_factor * 0.2)
+        + (strength_factor * 0.3)
+    )
+    if HEDGE_RE.search(text):
+        confidence *= 0.85
+    if CONTRAST_RE.search(text) and evidence_count < 2:
+        confidence *= 0.85
+    return round(min(1.0, confidence), 4)
+
+
+def reliability_label(confidence: float, evidence_count: int) -> str:
+    if confidence >= 0.65 and evidence_count >= 2:
+        return "high"
+    if confidence >= 0.35:
+        return "medium"
+    return "low"
+
+
+def stance_result(
+    label: str,
+    polarity: float,
+    subjectivity: float,
+    confidence: float,
+    recommendation_signal: float,
+    reliability: str,
+    evidence: List[str],
+) -> Dict:
+    return {
+        "label": label,
+        "polarity": polarity,
+        "subjectivity": subjectivity,
+        "confidence": confidence,
+        "recommendation_signal": recommendation_signal,
+        "reliability": reliability,
+        "evidence": evidence,
+    }
+
+
+def normalize_text(text: str) -> str:
+    return collapse_whitespace(unescape(text).replace("\u2019", "'").replace("\u2018", "'"))
 
 
 def split_sentences(text: str) -> List[str]:

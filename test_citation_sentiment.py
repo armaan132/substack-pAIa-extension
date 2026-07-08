@@ -3,6 +3,7 @@ from pathlib import Path
 
 from src.analysis.citation_sentiment import (
     CitationSentimentAnalyzer,
+    is_substack_post_url,
     score_sentiment,
     summarize_citations,
     update_index_with_citation_sentiment,
@@ -35,6 +36,47 @@ def test_score_sentiment_labels_critical_context():
     assert result["label"] == "critical"
     assert result["polarity"] < 0
     assert result["recommendation_signal"] < 0
+    assert result["reliability"] in {"medium", "high"}
+
+
+def test_ignores_substack_utility_links():
+    assert is_substack_post_url("https://example.substack.com/p/real-post")
+    assert not is_substack_post_url("https://example.substack.com/subscribe")
+    assert not is_substack_post_url("https://example.substack.com/about")
+
+
+def test_neutral_reference_has_low_reliability():
+    html = """
+    <html><body><article>
+      <p>The post by <a href="https://target.substack.com/p/context">Target</a>
+      discusses the same topic and was published last week.</p>
+    </article></body></html>
+    """
+
+    analyzer = CitationSentimentAnalyzer(["https://target.substack.com"])
+    citation = analyzer.analyze_html(html)[0]
+
+    assert citation["sentiment"] == "neutral"
+    assert citation["confidence"] == 0.0
+    assert citation["reliability"] == "low"
+
+
+def test_negated_criticism_flips_toward_support():
+    result = score_sentiment("The argument is not weak; it is careful and useful.")
+
+    assert result["label"] == "supportive"
+    assert result["polarity"] > 0
+    assert any("negated" in item for item in result["evidence"])
+
+
+def test_contrast_weights_final_critique():
+    result = score_sentiment(
+        "The post is useful in places, but the conclusion is weak and misleading."
+    )
+
+    assert result["label"] == "critical"
+    assert result["polarity"] < 0
+    assert 0 < abs(result["recommendation_signal"]) < 1
 
 
 def test_summarize_citations_aggregates_for_recommendations():
@@ -99,4 +141,3 @@ def test_update_index_with_citation_sentiment_persists_fields(tmp_path):
     assert metadata["total_citations"] == 1
     assert post["citation_sentiment"][0]["is_known_newsletter"] is True
     assert post["citation_sentiment_summary"]["total"] == 1
-
