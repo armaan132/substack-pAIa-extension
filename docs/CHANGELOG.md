@@ -11,6 +11,7 @@
 ### Changed
 - Updated the architecture spec to distinguish the current Python/Flask system from the planned browser extension architecture.
 - Updated the root README documentation links to point to the new documentation hub and extension planning docs.
+- Reworked the root README into a concise project landing page focused on the Substack browser extension direction, current functionality, architecture, and roadmap.
 
 ## [2025-07-07] Newsletter Download and Index System Overhaul
 
