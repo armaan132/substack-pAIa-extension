@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026-07-17] Documentation Hub and Extension Direction
+
+### Added
+- Added a documentation hub that explains the current local system and planned browser extension direction.
+- Added long-term project goal documentation for the Substack reading assistant concept.
+- Added production-readiness documentation for converting the system into a standalone extension.
+- Added documentation maintenance rules for keeping docs updated with repository changes.
+
+### Changed
+- Updated the architecture spec to distinguish the current Python/Flask system from the planned browser extension architecture.
+- Updated the root README documentation links to point to the new documentation hub and extension planning docs.
+
 ## [2025-07-07] Newsletter Download and Index System Overhaul
 
 ### Added
