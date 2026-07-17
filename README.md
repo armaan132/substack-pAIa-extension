@@ -2,7 +2,7 @@
 
 # Substack pAIa Extension
 
-An in-progress Substack reading assistant that analyzes newsletter posts, author cross-references, sentiment, and personal feedback signals for smarter recommendations.
+An in-progress Substack reading assistant that provides smarter recommendations.
 
 [![Status](https://img.shields.io/badge/status-extension%20prototype%20planning-blue)](#project-status)
 [![Python](https://img.shields.io/badge/python-data%20pipeline-3776AB)](#current-system)
