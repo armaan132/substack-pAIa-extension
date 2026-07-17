@@ -1,5 +1,7 @@
 # Daily Briefing pAIa
 
+> Extension fork note: this repository was cloned from the original `alexhkurz/substack-pAIa` project as a test copy for reshaping the system into a standalone Substack browser extension.
+
 ## Mission Statement
 
 A personal AI assistant that helps you discover, collect, and curate content from newsletters, blogs, and RSS feeds - your intelligent companion for staying on top of discussions and breakthroughs across your areas of interest.
