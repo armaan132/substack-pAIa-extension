@@ -3,6 +3,21 @@
 **Objective:** ship a small, single-purpose Chrome extension that re-ranks your
 Substack feed from your own read / like / hide feedback, entirely on-device.
 
+## Approach — single-user, content-based
+
+This is a **single-user, content-based recommender that runs entirely on your
+device.** It builds a taste profile from *your own* history — the posts you read,
+liked, and hid — and ranks new posts by similarity to that profile
+(publication + author affinity + freshness, which the engine already does).
+
+- No other users, no shared model, no backend, no accounts.
+- Your history and taste profile never leave the browser (`chrome.storage.local`).
+- No cold-start problem: it only ever needs your own signals to work.
+
+Multi-user collaborative filtering ("people who read X also read Y") is a
+different, server-based product and is **explicitly out of scope** here — see
+[Not in scope](#not-in-scope-for-this-product).
+
 A 5-week plan from the current prototype (v0.1) to a submitted v1.0. Each week is
 a phase with concrete tasks and an **exit criteria** gate — testing is baked into
 every week, with a dedicated hardening week (Week 4) before submission.
@@ -180,6 +195,20 @@ Run in full before packaging (Week 4 gate).
 
 ## Explicitly post-launch (v1.1+)
 
-Real ideas kept out of the 5 weeks so the scope stays shippable: cross-device
-sync, category/tag affinity (if not reached), full E2E suite, support for Notes /
-reader / every surface, options page with tunable weights, onboarding flow.
+Enhancements that still fit the single-user, on-device model — kept out of the 5
+weeks so the scope stays shippable: category/tag affinity (if not reached),
+semantic/embedding-based similarity, cross-device sync of *your own* data via
+`chrome.storage.sync`, full E2E suite, support for Notes / reader / every
+surface, options page with tunable weights, onboarding flow.
+
+## Not in scope for this product
+
+This is deliberately **not** a multi-user recommendation platform. The following
+belong to a separate, server-based product — not a later version of this one:
+
+- **Collaborative filtering** ("people who read X also read Y") across users
+- Any **backend, accounts, or pooling of multiple users' histories**
+- Server-side storage of behavioral data (which would bring consent, privacy-law,
+  and data-handling obligations this extension avoids by design)
+
+Keeping those out is what lets this ship as a small, private, single-purpose tool.
