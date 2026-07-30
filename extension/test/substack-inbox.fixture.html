@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Substack inbox fixture — pAIa test</title>
+    <link rel="stylesheet" href="../content.css" />
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #fff; color: #1a1a18; max-width: 640px; margin: 0 auto; padding: 20px; }
+      .harness-note { background: #f4f7f5; border: 1px solid #dce6e0; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #4a5a52; margin-bottom: 18px; }
+      .reader2-inbox-post { display: block; text-decoration: none; color: inherit; padding: 14px 8px; border-bottom: 1px solid #eee; position: relative; }
+      .pub-name a { color: #444; text-decoration: none; font-weight: 600; font-size: 13px; }
+      .inbox-item-timestamp { font-size: 11px; color: #888; text-transform: uppercase; }
+      .reader2-post-title { font-size: 17px; font-weight: 700; color: #111; margin: 4px 0; }
+      .reader2-paragraph { font-size: 14px; color: #555; }
+      .reader2-item-meta { font-size: 12px; color: #888; }
+      nav a { color: #555; margin-right: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="harness-note">
+      <strong>Inbox fixture — real markup.</strong> Card = <code>a.reader2-inbox-post</code>,
+      title = <code>.reader2-post-title</code>, publication = <code>.pub-name</code>,
+      date = <code>.inbox-item-timestamp</code>. The whole feed is wrapped in
+      <code>.reader-nav-center</code> (contains "nav") to prove the fixed filter no
+      longer excludes it. A real <code>&lt;nav&gt;</code> post link is included to
+      confirm semantic nav <em>is</em> still excluded.
+    </div>
+
+    <!-- Semantic nav with a /p/ link that MUST still be excluded -->
+    <nav><a href="https://nationalparkjournal.substack.com/p/about-this-newsletter">About this newsletter</a></nav>
+
+    <!-- NOTE: real Substack nests an <a> (the pub link) inside the card <a>, which
+         is valid in React-rendered DOM but not in static HTML (the parser would
+         un-nest it). We use a <span> for the pub name here so the fixture parses
+         faithfully; the scraper derives publication from the URL host regardless. -->
+    <!-- The whole reader feed column: class contains "nav" (the old false-positive) -->
+    <div class="reader-nav-center page-ykYKGA">
+      <div class="reader2-inbox-list">
+
+        <a tabindex="0" href="https://nationalparkjournal.substack.com/p/5-national-park-books?utm_source=%2Finbox&amp;utm_medium=reader2" target="_blank" class="pencraft reader2-inbox-post isSelectable-tK5w8z">
+          <div class="reader2-post-head reader2-text-meta">
+            <div class="pub-name"><span data-state="closed"><span class="hoverLink-g45pgX pencraft">National Park Club Journal</span></span></div>
+            <div class="reader2-post-info"><div class="meta-EgzBVA inbox-item-timestamp">Jul 23</div></div>
+          </div>
+          <div class="reader2-post-body"><div class="bodyContent-BxrG9U"><div>
+            <div class="reader2-post-title reader2-clamp-lines">5 National Park Books That Will Keep You Inspired Between Trips</div>
+            <div class="reader2-paragraph reader2-secondary">Not every national park adventure happens on the trail.</div>
+            <div class="reader2-item-meta"><span class="meta-audience-badge">preview</span><span class="meta-bullet">∙</span>2 min read</div>
+          </div></div></div>
+        </a>
+
+        <a tabindex="0" href="https://nationalparkjournal.substack.com/p/july-2026-national-park-roundup?utm_source=%2Finbox" target="_blank" class="pencraft reader2-inbox-post isSelectable-tK5w8z">
+          <div class="reader2-post-head reader2-text-meta">
+            <div class="pub-name"><span data-state="closed"><span class="hoverLink-g45pgX pencraft">National Park Club Journal</span></span></div>
+            <div class="reader2-post-info"><div class="meta-EgzBVA inbox-item-timestamp">Jul 21</div></div>
+          </div>
+          <div class="reader2-post-body"><div class="bodyContent-BxrG9U"><div>
+            <div class="reader2-post-title reader2-clamp-lines">July 2026 National Park Roundup</div>
+            <div class="reader2-paragraph reader2-secondary">Where to go this month.</div>
+            <div class="reader2-item-meta">4 min read</div>
+          </div></div></div>
+        </a>
+
+        <a tabindex="0" href="https://dailyclimatehope.substack.com/p/your-weekly-climate-wins?utm_source=%2Finbox" target="_blank" class="pencraft reader2-inbox-post isSelectable-tK5w8z">
+          <div class="reader2-post-head reader2-text-meta">
+            <div class="pub-name"><span data-state="closed"><span class="hoverLink-g45pgX pencraft">Your Daily Dose of Climate Hope</span></span></div>
+            <div class="reader2-post-info"><div class="meta-EgzBVA inbox-item-timestamp">Jul 26</div></div>
+          </div>
+          <div class="reader2-post-body"><div class="bodyContent-BxrG9U"><div>
+            <div class="reader2-post-title reader2-clamp-lines">Your Weekly Climate Wins</div>
+            <div class="reader2-paragraph reader2-secondary">Good news you might have missed.</div>
+            <div class="reader2-item-meta">3 min read</div>
+          </div></div></div>
+        </a>
+
+        <a tabindex="0" href="https://dailyclimatehope.substack.com/p/your-daily-dose-jul-22?utm_source=%2Finbox" target="_blank" class="pencraft reader2-inbox-post isSelectable-tK5w8z">
+          <div class="reader2-post-head reader2-text-meta">
+            <div class="pub-name"><span data-state="closed"><span class="hoverLink-g45pgX pencraft">Your Daily Dose of Climate Hope</span></span></div>
+            <div class="reader2-post-info"><div class="meta-EgzBVA inbox-item-timestamp">Jul 22</div></div>
+          </div>
+          <div class="reader2-post-body"><div class="bodyContent-BxrG9U"><div>
+            <div class="reader2-post-title reader2-clamp-lines">Your Daily Dose — July 22</div>
+            <div class="reader2-paragraph reader2-secondary">One good thing today.</div>
+            <div class="reader2-item-meta">1 min read</div>
+          </div></div></div>
+        </a>
+
+      </div>
+    </div>
+
+    <script src="../engine.js"></script>
+    <script src="../store.js"></script>
+    <script src="../content.js"></script>
+  </body>
+</html>

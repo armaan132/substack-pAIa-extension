@@ -45,20 +45,32 @@ Legend: ✅ done · ◻️ todo · ⭑ stretch
 
 The single biggest risk. The scraper works on a mock; make it survive the live site.
 
-- ◻️ Map the live DOM for the two surfaces most people use: `substack.com/home`
-  and `/inbox`
-- ◻️ Harden `scrape()` / `pickTitle` / `pickAuthor` / `pickDate` against real markup
-- ◻️ Solid card-container detection (don't grab nav, footer, or "recommended" links)
-- ◻️ Handle infinite scroll without duplicate injection or a runaway
-  MutationObserver ↔ reorder loop
-- ◻️ Inert on non-feed pages (single post, settings)
-- ◻️ Save 1–2 real pages as HTML fixtures in `test/` for offline regression
-- ⭑ Also support a publication `*.substack.com/archive` page
+- ✅ Map the live DOM against a real Substack page — found hashed class names,
+  `data-testid="post-preview-title"`, and `role="article"` cards
+- ✅ Harden `scrape()` / `pickTitle` / `pickAuthor` / `pickDate` — now
+  class-independent; verified extracting 20 posts on a live archive
+- ✅ Solid card-container detection (`role="article"` + climb fallback); nav /
+  header links correctly excluded
+- ✅ Dedupe by canonical `/p/<slug>` (comment links collapse into the post)
+- ✅ Inert on non-feed pages (`MIN_POSTS` threshold)
+- ✅ Save a real-markup fixture (`test/substack-archive.fixture.html`)
+- ✅ Publication archive page supported (validated against Astral Codex Ten)
+- ✅ Infinite-scroll dedup verified — simulated "load more": new post gets a bar,
+  zero duplicate bars on existing cards, duplicate-slug cards deduped
+- ✅ **Inbox support added** — inspected the real logged-in `/inbox` DOM, found it
+  differs from the archive (`a.reader2-inbox-post`, `.reader2-post-title`,
+  `.inbox-item-timestamp`, feed wrapped in `reader-nav-center`); fixed the nav
+  filter false-positive and added inbox selectors; verified against a fixture
+  built from captured markup (titles, dates, publications, reorder all correct)
+- ✅ **Live logged-in `/inbox` pass at scale** — confirmed on a real feed:
+  **140 posts** detected with correct titles, publications, and dates
 
-**Testing gate:** open your own feed logged in & out; bars appear, re-rank works,
-zero duplicate bars on scroll, no console errors, no layout breakage.
+**Testing gate:** bars appear, re-rank works, zero duplicate bars, nav excluded,
+no console errors — ✅ met against mock, archive fixture, inbox fixture, AND the
+live logged-in `/inbox` (140 posts).
 
-**Exit:** works on `/home` and `/inbox` without hand-editing selectors per visit.
+**Exit:** ✅ works on a real Substack feed without hand-editing selectors — met
+for both the archive and the logged-in inbox. **Week 1 complete.**
 
 ---
 

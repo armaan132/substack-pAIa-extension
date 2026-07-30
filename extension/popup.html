@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <span class="mark"></span>
+      <div>
+        <h1>Daily Briefing pAIa</h1>
+        <p>Your signals, on your device.</p>
+      </div>
+    </header>
+
+    <section class="controls">
+      <label class="row"><span>Re-rank feed</span><input type="checkbox" id="rerank" /></label>
+      <label class="row"><span>Sort</span>
+        <select id="sort">
+          <option value="recommended">Recommended</option>
+          <option value="none">Original order</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section>
+      <h2>Publication affinity</h2>
+      <div id="affinity"></div>
+    </section>
+
+    <section>
+      <h2>Top ranked</h2>
+      <div id="ranked"></div>
+    </section>
+
+    <footer>
+      <button id="reset">Reset all signals</button>
+      <p class="note">Open a Substack feed to collect signals. Nothing leaves your browser.</p>
+    </footer>
+
+    <script src="engine.js"></script>
+    <script src="store.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
