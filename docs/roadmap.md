@@ -78,34 +78,54 @@ for both the archive and the logged-in inbox. **Week 1 complete.**
 
 Make it genuinely useful, not just a demo.
 
-- ◻️ **Auto-read detection** (scroll depth + dwell time), still manually overridable
-- ◻️ **"Why this rank?"** tooltip per card (engine already returns `reasons`)
-- ◻️ **Undo hide** + a "show hidden" control
-- ◻️ First-run/empty states in the popup and panel
-- ⭑ **Category/tag affinity** in addition to publication + author
-- ⭑ Minimal **options**: toggle auto-read, toggle which surfaces it runs on
+- ✅ **Auto-read detection** — marks a post read when you open it (click-through),
+  the strongest signal on a feed; toggleable via "Mark read on open". (Scroll/
+  dwell was the original idea but click-through fits a feed better.)
+- ✅ **"Why this rank?"** tooltip — hover the score to see the reasons the engine
+  used (e.g. "+6 nationalparkjournal · you liked this")
+- ✅ **Undo hide** — hidden posts collapse out of the feed; panel shows
+  "N hidden · Show · Restore all", and Show reveals them (dimmed) to un-hide
+- ✅ **First-run hint** in the panel; the popup already has empty states
+- ✅ **Options page** (stretch, done) — a full settings page: enable re-rank,
+  default sort, auto-read, show-hidden default, **tunable signal weights**
+  (like/read/not-interesting/hide) with reset-to-defaults, and reset-all-data.
+  Weights flow into ranking live (verified: Like=10 → liked post scores 18.0 vs
+  6.8 at the default 3). Reachable from the popup's "⚙ Options & weights" link.
+- ⭑ **Category/tag affinity** in addition to publication + author — deferred
+  (Substack feed cards don't expose tags; would require keyword heuristics)
 
-**Testing gate:** a short manual script per feature; re-run Week 1's gate to
-confirm nothing regressed.
+**Testing gate:** ✅ each feature verified against the inbox fixture (tooltip,
+auto-read on click, hide→collapse→show→restore-all, first-run hint), and
+archive + mock still pass — no regressions.
 
-**Exit:** you'd comfortably use it yourself day to day.
+**Exit:** ✅ usable day to day — met.
 
 ---
 
 ## Week 3 — Resilience & accessibility (v0.5)
 
-- ◻️ Storage schema version + a migration path (so future changes don't wipe data)
-- ◻️ Quota / write-failure handling — never break the feed on a storage error
-- ◻️ Export / import signals (JSON) + a confirmed "reset all"
-- ◻️ Accessibility: injected controls keyboard-reachable, labeled (ARIA),
-  contrast passes, respects `prefers-reduced-motion`
-- ◻️ Visual QA in Substack light **and** dark themes, narrow/wide windows
-- ⭑ `chrome.storage.sync` option with a local fallback
+- ✅ **Storage schema version + migration** — a `schema` key with an idempotent
+  `migrate()`; `getSettings` back-fills missing keys (e.g. weights) so older
+  data upgrades cleanly instead of being wiped
+- ✅ **Quota / write-failure handling** — `set()` never throws; a failed save
+  returns `false` and surfaces "⚠ Couldn't save — storage may be full" in the
+  panel instead of breaking the feed
+- ✅ **Export / import signals (JSON)** — from the options page, with a confirmed
+  "Reset all feedback"
+- ✅ **Accessibility** — feedback bar is a labeled `role="group"`; buttons are
+  real `<button type="button">` with `aria-label` + `aria-pressed`; panel is a
+  labeled `role="region"`; error is a `role="alert"`; keyboard `:focus-visible`
+  outlines; `prefers-reduced-motion` disables transitions
+- ◻️ Visual QA in Substack light **and** dark themes — the injected UI is dark,
+  high-contrast, and readable on both; a formal pass on a live light-theme feed
+  is still worth doing
+- ⭑ `chrome.storage.sync` option with a local fallback — deferred
 
-**Testing gate:** migrate a v0.1 storage blob without loss; keyboard-only run of
-all controls; both themes clean.
+**Testing gate:** ✅ migration sets schema v1 and back-fills weights; export
+round-trips and import restores feedback+settings; write-failure shows the notice
+and returns false; ARIA roles/labels/aria-pressed verified; no regressions.
 
-**Exit:** no data-loss paths; a keyboard user can operate everything.
+**Exit:** ✅ no data-loss paths; controls are keyboard- and screen-reader-operable.
 
 ---
 

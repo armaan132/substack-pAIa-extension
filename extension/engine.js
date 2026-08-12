@@ -5,25 +5,27 @@
 (function (g) {
   "use strict";
 
-  // How much each action shifts affinity for a post's publication/author.
+  // Default weights for how much each action shifts affinity. Users can override
+  // these from the options page; functions accept an optional `weights` arg.
   const WEIGHTS = { like: 3, read: 1, notint: -3, hide: -5 };
 
-  function weightOf(f) {
+  function weightOf(f, weights) {
+    const W = weights || WEIGHTS;
     if (!f) return 0;
     let w = 0;
-    if (f.like) w += WEIGHTS.like;
-    if (f.read) w += WEIGHTS.read;
-    if (f.notint) w += WEIGHTS.notint;
-    if (f.hide) w += WEIGHTS.hide;
+    if (f.like) w += W.like;
+    if (f.read) w += W.read;
+    if (f.notint) w += W.notint;
+    if (f.hide) w += W.hide;
     return w;
   }
 
   // Roll all feedback up into per-publication and per-author affinity scores.
-  function buildAffinities(posts, feedback) {
+  function buildAffinities(posts, feedback, weights) {
     const pub = {}, author = {};
     const bump = (m, k, w) => { if (k) m[k] = (m[k] || 0) + w; };
     for (const p of posts) {
-      const w = weightOf(feedback[p.id]);
+      const w = weightOf(feedback[p.id], weights);
       if (!w) continue;
       bump(pub, p.publication, w);
       bump(author, p.author, w);
@@ -61,8 +63,8 @@
     return { score, reasons };
   }
 
-  function rank(posts, feedback) {
-    const aff = buildAffinities(posts, feedback);
+  function rank(posts, feedback, weights) {
+    const aff = buildAffinities(posts, feedback, weights);
     return posts
       .map((p) => ({ post: p, ...scorePost(p, aff, feedback) }))
       .sort((a, b) => b.score - a.score);

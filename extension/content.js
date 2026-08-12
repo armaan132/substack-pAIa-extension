@@ -14,7 +14,13 @@
   "use strict";
 
   const PANEL_ID = "paia-panel";
-  let SETTINGS = { rerank: true, sort: "recommended" };
+  let SETTINGS = {
+    rerank: true,
+    sort: "recommended",
+    autoRead: true,
+    showHidden: false,
+    weights: { like: 3, read: 1, notint: -3, hide: -5 },
+  };
   let FEEDBACK = {};
   let mutating = false; // guards our own DOM writes from the MutationObserver
   let origCounter = 0; // assigns each card its original document-order index
@@ -167,17 +173,24 @@
 
   // ---------- Injection ----------
   const ICON = { like: "♥", read: "✓", notint: "⊘", hide: "✕" };
+  const LABELS = { like: "Like", read: "Mark read", notint: "Not interesting", hide: "Hide" };
 
   function annotate(el, post, ranked) {
     const f = fbFor(post.id);
+    el.dataset.paiaId = post.id;
     let bar = el.querySelector(":scope > .paia-bar");
     if (!bar) {
       bar = document.createElement("div");
       bar.className = "paia-bar";
+      bar.setAttribute("role", "group");
+      bar.setAttribute("aria-label", "Post feedback");
       bar.innerHTML =
-        `<span class="paia-score"></span>` +
+        `<span class="paia-score" aria-hidden="true"></span>` +
         Object.keys(ICON)
-          .map((act) => `<button class="paia-btn" data-act="${act}" title="${act}">${ICON[act]}</button>`)
+          .map(
+            (act) =>
+              `<button class="paia-btn" type="button" data-act="${act}" title="${LABELS[act]}" aria-label="${LABELS[act]}" aria-pressed="false">${ICON[act]}</button>`
+          )
           .join("");
       bar.querySelectorAll("button").forEach((b) =>
         b.addEventListener("click", (e) => {
@@ -190,11 +203,38 @@
       // Capture original document order once, so "Original order" can restore it
       // even after we've reshuffled the DOM.
       if (!el.dataset.paiaOrig) el.dataset.paiaOrig = String(origCounter++);
+      // Auto-read: opening a post (clicking the card, not our controls) marks it
+      // read. Bound once; writes storage without a re-render so it doesn't
+      // reshuffle the feed mid-navigation.
+      el.addEventListener("click", (e) => {
+        if (!SETTINGS.autoRead || e.target.closest(".paia-bar")) return;
+        const cur = FEEDBACK[post.id] || { read: false, like: false, hide: false, notint: false };
+        if (cur.read) return;
+        cur.read = true;
+        FEEDBACK[post.id] = cur;
+        PaiaStore.setFeedback(FEEDBACK);
+        const rb = bar.querySelector('.paia-btn[data-act="read"]');
+        if (rb) rb.classList.add("on");
+      });
       el.appendChild(bar);
     }
-    bar.querySelector(".paia-score").textContent = ranked ? ranked.score.toFixed(1) : "";
-    bar.querySelectorAll("button").forEach((b) => b.classList.toggle("on", !!f[b.dataset.act]));
+    const score = bar.querySelector(".paia-score");
+    const why = ranked && ranked.reasons && ranked.reasons.length ? "Why this rank: " + ranked.reasons.join(" · ") : "";
+    score.textContent = ranked ? ranked.score.toFixed(1) : "";
+    score.title = why;
+    bar.querySelectorAll("button").forEach((b) => {
+      const on = !!f[b.dataset.act];
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+    const hideBtn = bar.querySelector('.paia-btn[data-act="hide"]');
+    if (hideBtn) {
+      hideBtn.title = f.hide ? "Restore" : "Hide";
+      hideBtn.setAttribute("aria-label", f.hide ? "Restore" : "Hide");
+    }
     el.classList.toggle("paia-hidden", !!f.hide);
+    // Collapse hidden cards out of view unless "show hidden" is on.
+    el.classList.toggle("paia-collapsed", !!f.hide && !SETTINGS.showHidden);
   }
 
   // Reorder cards within their shared parent. By score when re-ranking is on,
@@ -222,29 +262,82 @@
     sorted.forEach((i) => best.p.appendChild(i.el)); // appendChild moves nodes in order
   }
 
+  function restoreAllHidden() {
+    let changed = false;
+    Object.keys(FEEDBACK).forEach((id) => {
+      if (FEEDBACK[id] && FEEDBACK[id].hide) {
+        FEEDBACK[id].hide = false;
+        changed = true;
+      }
+    });
+    if (changed) {
+      PaiaStore.setFeedback(FEEDBACK);
+      render();
+    }
+  }
+
+  function hiddenCount() {
+    return Object.values(FEEDBACK).filter((f) => f && f.hide).length;
+  }
+  function signalCount() {
+    return Object.values(FEEDBACK).filter((f) => f && (f.like || f.read || f.hide || f.notint)).length;
+  }
+
   // ---------- Floating panel ----------
   function injectPanel(count) {
     let panel = document.getElementById(PANEL_ID);
     if (!panel) {
       panel = document.createElement("div");
       panel.id = PANEL_ID;
+      panel.setAttribute("role", "region");
+      panel.setAttribute("aria-label", "Daily Briefing pAIa controls");
       panel.innerHTML = `
-        <div class="paia-head"><span class="paia-dot"></span> Daily Briefing pAIa</div>
-        <label class="paia-ctl"><input type="checkbox" id="paia-rerank"> Re-rank this feed</label>
-        <label class="paia-ctl">Sort
+        <div class="paia-head"><span class="paia-dot" aria-hidden="true"></span> Daily Briefing pAIa</div>
+        <div class="paia-error" id="paia-error" role="alert"></div>
+        <label class="paia-ctl"><span>Re-rank this feed</span><input type="checkbox" id="paia-rerank"></label>
+        <label class="paia-ctl"><span>Sort</span>
           <select id="paia-sort">
             <option value="recommended">Recommended</option>
             <option value="none">Original order</option>
           </select>
         </label>
-        <div class="paia-count"></div>`;
+        <label class="paia-ctl"><span>Mark read on open</span><input type="checkbox" id="paia-autoread"></label>
+        <div class="paia-hidden-row" id="paia-hidden-row"></div>
+        <div class="paia-count"></div>
+        <div class="paia-hint" id="paia-hint"></div>`;
       document.body.appendChild(panel);
       panel.querySelector("#paia-rerank").addEventListener("change", (e) => setSetting({ rerank: e.target.checked }));
       panel.querySelector("#paia-sort").addEventListener("change", (e) => setSetting({ sort: e.target.value }));
+      panel.querySelector("#paia-autoread").addEventListener("change", (e) => setSetting({ autoRead: e.target.checked }));
+      // Delegated handlers for the dynamic hidden-row links.
+      panel.addEventListener("click", (e) => {
+        const act = e.target && e.target.dataset ? e.target.dataset.paiaAction : null;
+        if (!act) return;
+        e.preventDefault();
+        if (act === "restore-all") restoreAllHidden();
+        else if (act === "toggle-hidden") setSetting({ showHidden: !SETTINGS.showHidden });
+      });
     }
     panel.querySelector("#paia-rerank").checked = !!SETTINGS.rerank;
     panel.querySelector("#paia-sort").value = SETTINGS.sort || "recommended";
+    panel.querySelector("#paia-autoread").checked = !!SETTINGS.autoRead;
     panel.querySelector(".paia-count").textContent = count + " posts ranked";
+
+    const hidden = hiddenCount();
+    const row = panel.querySelector("#paia-hidden-row");
+    if (hidden > 0) {
+      row.innerHTML =
+        `<span>${hidden} hidden</span>` +
+        `<span><a href="#" data-paia-action="toggle-hidden">${SETTINGS.showHidden ? "Hide" : "Show"}</a>` +
+        ` · <a href="#" data-paia-action="restore-all">Restore all</a></span>`;
+      row.style.display = "";
+    } else {
+      row.innerHTML = "";
+      row.style.display = "none";
+    }
+
+    panel.querySelector("#paia-hint").textContent =
+      signalCount() === 0 ? "Tip: like, hide, or mark posts to train your feed." : "";
   }
 
   // ---------- Main ----------
@@ -260,7 +353,7 @@
     try {
       PaiaStore.setSnapshot(items.map((i) => i.post)); // for the popup dashboard
 
-      const ranked = PaiaEngine.rank(items.map((i) => i.post), FEEDBACK);
+      const ranked = PaiaEngine.rank(items.map((i) => i.post), FEEDBACK, SETTINGS.weights);
       const scoreById = new Map(ranked.map((r) => [r.post.id, r]));
 
       items.forEach(({ el, post }) => annotate(el, post, scoreById.get(post.id)));
@@ -294,7 +387,14 @@
     };
   }
 
+  function showStorageError() {
+    const el = document.getElementById("paia-error");
+    if (el) el.textContent = "⚠ Couldn't save — storage may be full. Feedback won't persist.";
+  }
+
   function boot() {
+    // Surface a notice if a write ever fails (e.g. storage quota exceeded).
+    PaiaStore.onError(() => showStorageError());
     reload();
     // Re-render on infinite scroll / feed updates (uses in-memory state).
     const scheduled = debounce(() => {

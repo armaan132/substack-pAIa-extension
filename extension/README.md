@@ -14,11 +14,33 @@ On any Substack page it:
 2. **Injects** a small feedback bar on each card — like ♥, mark read ✓, not
    interesting ⊘, hide ✕ — plus a live ranking score.
 3. **Re-ranks** the cards in place using your accumulated feedback.
-4. Shows a **floating panel** to toggle re-ranking and switch sort
-   (Recommended / Original order).
+4. Shows a **floating panel** to toggle re-ranking, switch sort
+   (Recommended / Original order), and toggle auto-read.
 
 Click the toolbar icon for a **dashboard**: signal counts, publication affinity
 bars, and your top-ranked posts.
+
+### Also (v0.3)
+
+- **Auto-read on open** — opening a post (clicking through) marks it read
+  automatically; toggle it off with "Mark read on open".
+- **"Why this rank?"** — hover a post's score to see the reasons behind it
+  (e.g. "+6 nationalparkjournal · you liked this").
+- **Hide / undo** — hidden posts collapse out of the feed. The panel shows
+  "N hidden · Show · Restore all"; **Show** reveals them (dimmed) so you can
+  un-hide individually.
+- **First-run hint** in the panel until you've given any feedback.
+- **Options page** (from the popup's "⚙ Options & weights" link) — enable
+  re-rank, default sort, auto-read, show-hidden default, and **tunable signal
+  weights** (like/read/not-interesting/hide) that flow into ranking live.
+
+### Resilience & accessibility (v0.5)
+
+- **Export / import** your signals as JSON, plus reset — from the options page.
+- **Won't lose data** — a versioned storage schema with migration, and writes
+  that fail (e.g. quota) surface a notice instead of breaking the feed.
+- **Accessible** — labeled controls (`role`/`aria-label`/`aria-pressed`),
+  keyboard focus outlines, and respect for `prefers-reduced-motion`.
 
 ## How ranking works
 

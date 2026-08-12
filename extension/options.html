@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Briefing pAIa — Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="mark"></span>
+        <div>
+          <h1>Daily Briefing pAIa</h1>
+          <p>Options — everything stays on your device.</p>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>Ranking</h2>
+        <label class="row"><span>Re-rank feeds by default</span><input type="checkbox" id="rerank" /></label>
+        <label class="row"><span>Default sort</span>
+          <select id="sort">
+            <option value="recommended">Recommended</option>
+            <option value="none">Original order</option>
+          </select>
+        </label>
+        <label class="row"><span>Mark posts read when opened</span><input type="checkbox" id="autoRead" /></label>
+        <label class="row"><span>Show hidden posts by default</span><input type="checkbox" id="showHidden" /></label>
+      </section>
+
+      <section class="card">
+        <h2>Signal weights</h2>
+        <p class="sub">How much each action shifts a publication's / author's affinity. Higher magnitude = stronger effect.</p>
+        <label class="row"><span>♥ Like</span><input type="number" id="w-like" step="1" /></label>
+        <label class="row"><span>✓ Read</span><input type="number" id="w-read" step="1" /></label>
+        <label class="row"><span>⊘ Not interesting</span><input type="number" id="w-notint" step="1" /></label>
+        <label class="row"><span>✕ Hide</span><input type="number" id="w-hide" step="1" /></label>
+        <button class="ghost" id="reset-weights">Reset weights to defaults</button>
+      </section>
+
+      <section class="card">
+        <h2>Data</h2>
+        <p class="sub">Your feedback is stored locally in this browser and never sent anywhere.</p>
+        <div class="stat-line" id="data-summary"></div>
+        <div class="btn-row">
+          <button class="ghost" id="export-data">Export signals</button>
+          <button class="ghost" id="import-data">Import signals</button>
+          <button class="danger" id="reset-data">Reset all feedback</button>
+        </div>
+        <input type="file" id="import-file" accept="application/json,.json" hidden />
+        <p class="stat-line" id="io-status"></p>
+      </section>
+
+      <p class="saved" id="saved">Saved</p>
+    </div>
+
+    <script src="engine.js"></script>
+    <script src="store.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

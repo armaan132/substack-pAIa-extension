@@ -30,6 +30,7 @@
   padding: 0 4px;
   min-width: 20px;
   text-align: center;
+  cursor: help; /* hover shows "why this rank" tooltip */
 }
 .paia-btn {
   all: unset;
@@ -49,10 +50,15 @@
 .paia-btn.on[data-act="like"] { background: #e0245e; color: #fff; }
 .paia-btn.on[data-act="read"] { background: #1f9d57; color: #fff; }
 .paia-btn.on[data-act="notint"] { background: #b4531f; color: #fff; }
+.paia-btn.on[data-act="hide"] { background: #8a8780; color: #fff; }
 
 .paia-hidden {
   opacity: 0.4;
   filter: grayscale(0.8);
+}
+/* Collapse hidden cards out of the feed unless "Show hidden" is enabled. */
+.paia-collapsed {
+  display: none !important;
 }
 
 /* Floating control panel */
@@ -103,10 +109,52 @@
   padding: 3px 6px;
   font-size: 12px;
 }
+#paia-panel .paia-hidden-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  color: #8ba396;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(120, 200, 150, 0.18);
+}
+#paia-panel .paia-hidden-row a { color: #3fe081; text-decoration: none; }
+#paia-panel .paia-hidden-row a:hover { text-decoration: underline; }
 #paia-panel .paia-count {
   margin-top: 8px;
   padding-top: 10px;
   border-top: 1px solid rgba(120, 200, 150, 0.18);
   color: #8ba396;
   font-size: 12px;
+}
+#paia-panel .paia-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #8ba396;
+  line-height: 1.4;
+}
+#paia-panel .paia-hint:empty { display: none; }
+#paia-panel .paia-error {
+  color: #ffb4a2;
+  font-size: 12px;
+  margin: 4px 0 8px;
+  line-height: 1.4;
+}
+#paia-panel .paia-error:empty { display: none; }
+
+/* Keyboard focus visibility on all injected controls. */
+.paia-btn:focus-visible,
+#paia-panel a:focus-visible,
+#paia-panel input:focus-visible,
+#paia-panel select:focus-visible {
+  outline: 2px solid #3fe081;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paia-bar,
+  .paia-btn,
+  #paia-panel { transition: none !important; }
 }
