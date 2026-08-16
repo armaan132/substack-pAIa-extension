@@ -95,6 +95,26 @@ class names, `data-testid="post-preview-title"`, `role="article"` cards,
 `<time datetime>`, author links) captured from a live page, so it catches
 selector regressions.
 
+## Automated tests
+
+Uses Node's built-in test runner (Node 18+). Only dev dependency is `jsdom` for
+the DOM tests.
+
+```sh
+npm install   # installs jsdom
+npm test      # 24 tests: engine + store + DOM/integration
+npm run lint  # syntax check + "no remote code / eval" hardening check
+```
+
+- `tests/engine.test.js` — ranking engine: weights, affinity roll-up, scoring,
+  freshness, ranking order, hidden-sinks, the no-lost-update case.
+- `tests/store.test.js` — storage adapter: defaults + weight backfill, schema
+  migration, export/import round-trip, and that a failed write returns `false`
+  and fires `onError` instead of throwing.
+- `tests/content.test.js` — loads the real `engine`/`store`/`content` scripts
+  into a jsdom inbox feed: bar injection (nav excluded), scraping, liking →
+  feedback, no double-injection on re-render, and staying inert on non-feed pages.
+
 ## How scraping works (v0.2)
 
 Substack renders with **hashed/obfuscated class names**, so the scraper avoids
