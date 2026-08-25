@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>pAIa popup screenshot</title>
+    <style>
+      html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; }
+      body { display: flex; align-items: center; justify-content: center; gap: 64px;
+        background: radial-gradient(1000px 600px at 30% 20%, #0d2a1e, #06100c);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      .pitch { max-width: 440px; color: #eaf2ec; }
+      .pitch h1 { font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 16px; }
+      .pitch h1 span { color: #3fe081; }
+      .pitch p { font-size: 18px; color: #9fc7b5; line-height: 1.5; }
+      .frame { width: 360px; height: 600px; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5); border: 1px solid rgba(120,200,150,0.3); background: #0a1610; }
+      iframe { width: 360px; height: 600px; border: 0; }
+    </style>
+    <script>
+      const P = "https://nationalparkjournal.substack.com/p/", C = "https://climatehope.substack.com/p/";
+      localStorage.setItem("paia.ext.feedback", JSON.stringify({
+        [P + "a"]: { like: true, read: true }, [P + "b"]: { like: true },
+        [C + "c"]: { read: true }, [C + "d"]: { notint: true }
+      }));
+      localStorage.setItem("paia.ext.snapshot", JSON.stringify([
+        { id: P + "a", url: P + "a", title: "Wildlife in the West", publication: "nationalparkjournal", author: "National Park Journal", publishedAt: "" },
+        { id: P + "b", url: P + "b", title: "3 Alpine Lakes Worth Every Step", publication: "nationalparkjournal", author: "National Park Journal", publishedAt: "" },
+        { id: C + "c", url: C + "c", title: "Your Weekly Climate Wins", publication: "climatehope", author: "Climate Hope", publishedAt: "" },
+        { id: C + "d", url: C + "d", title: "A Longer Read", publication: "climatehope", author: "Climate Hope", publishedAt: "" }
+      ]));
+      localStorage.setItem("paia.ext.settings", JSON.stringify({ rerank: true, sort: "recommended", autoRead: true, showHidden: false, weights: { like: 3, read: 1, notint: -3, hide: -5 } }));
+    </script>
+  </head>
+  <body>
+    <div class="pitch">
+      <h1>Your feed, <span>your signals.</span></h1>
+      <p>See the publications you actually read rise to the top — with a private dashboard of the signals behind every ranking.</p>
+    </div>
+    <div class="frame"><iframe src="../../popup.html"></iframe></div>
+  </body>
+</html>

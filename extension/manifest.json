@@ -1,10 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Daily Briefing pAIa",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Re-ranks your Substack feed from your own read/like/hide feedback. All data stays on your device.",
-  "permissions": ["storage"],
-  "host_permissions": ["*://*.substack.com/*"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.substack.com/*"
+  ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
@@ -31,9 +35,17 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.substack.com/*"],
-      "js": ["engine.js", "store.js", "content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "*://*.substack.com/*"
+      ],
+      "js": [
+        "engine.js",
+        "store.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_idle"
     }
   ]

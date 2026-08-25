@@ -162,19 +162,25 @@ built-in test runner (no framework); `jsdom` is the only dev dependency.
 
 ## Week 5 — Store submission (v1.0)
 
-- ◻️ **Permissions audit** — keep it minimal (`storage` + `*.substack.com`),
-  write the justification for each
-- ◻️ **Privacy policy** (short: "stores your feedback locally, collects nothing")
-  hosted at a URL
-- ◻️ **Single-purpose** statement for the listing
-- ◻️ Listing assets: 128px icon, 1–3 screenshots (1280×800), promo tile,
-  description
-- ◻️ Register Chrome Web Store developer account ($5 one-time)
-- ◻️ Bump version, zip the folder, upload, submit for review
-- ◻️ Respond to review feedback; publish
+All submission **materials are prepared** in `store/`. The remaining items need
+your Google account / personal details (marked "you").
 
-**Exit:** submitted (and ideally approved — review can take a few days, so submit
-early in the week).
+- ✅ **Permissions audit** — minimal (`storage` + `*.substack.com`); justification
+  text written (`store/listing.md`)
+- ✅ **Privacy policy** — `store/privacy.html`, ready to host (collects nothing)
+- ✅ **Single-purpose** statement written
+- ✅ **Listing assets** — 128px icon; three 1280×800 screenshots (inbox, popup,
+  options) in `store/screenshots/`; full description + summary
+- ✅ **Package** — `scripts/build-zip.sh` → `store/daily-briefing-paia.zip`
+  (15 shipped files only); version bumped to **1.0.0**
+- ✅ **Submission guide** — `store/STORE-SUBMISSION.md` (step by step)
+- ◻️ **(you)** Register Chrome Web Store developer account ($5 one-time)
+- ◻️ **(you)** Host the privacy policy; fill contact email + policy URL
+- ◻️ **(you)** Upload the zip, paste the listing copy, submit for review
+- ◻️ **(you)** Respond to review feedback; publish
+
+**Exit:** everything automatable is done and packaged; submission awaits your
+developer account. Review can take a few days, so submit early.
 
 ---
 

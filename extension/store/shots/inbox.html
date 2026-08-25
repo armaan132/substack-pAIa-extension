@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pAIa inbox screenshot</title>
+    <link rel="stylesheet" href="../../content.css" />
+    <style>
+      html, body { margin: 0; background: #fff; }
+      .page { max-width: 720px; margin: 0 auto; padding: 28px 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a18; }
+      .masthead { font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 24px; text-align: center; margin-bottom: 4px; }
+      .subhead { text-align: center; color: #6b6960; font-size: 13px; margin-bottom: 24px; }
+      .reader2-inbox-post { display: block; text-decoration: none; color: inherit; padding: 16px 8px; border-bottom: 1px solid #eee; position: relative; }
+      .pub-name span { color: #444; font-weight: 600; font-size: 13px; }
+      .inbox-item-timestamp { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .04em; }
+      .reader2-post-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-right: 168px; }
+      /* Show the feedback bar crisp (it's hover-dimmed by default) for the shot. */
+      .paia-bar { opacity: 1 !important; }
+      .reader2-post-title { font-size: 18px; font-weight: 700; color: #111; margin: 2px 0; }
+      .reader2-paragraph { font-size: 14px; color: #555; }
+      .reader2-item-meta { font-size: 12px; color: #888; margin-top: 4px; }
+    </style>
+    <script>
+      // Seed a "trained" state so the shot shows scores + re-ranking.
+      const P = "https://nationalparkjournal.substack.com/p/", C = "https://climatehope.substack.com/p/";
+      localStorage.setItem("paia.ext.feedback", JSON.stringify({
+        [P + "wildlife-in-the-west"]: { like: true, read: true, hide: false, notint: false },
+        [P + "alpine-lakes"]: { like: true, read: false, hide: false, notint: false },
+        [C + "weekly-climate-wins"]: { read: true, like: false, hide: false, notint: false }
+      }));
+      localStorage.setItem("paia.ext.settings", JSON.stringify({ rerank: true, sort: "recommended", autoRead: true, showHidden: false, weights: { like: 3, read: 1, notint: -3, hide: -5 } }));
+    </script>
+  </head>
+  <body>
+    <div class="page">
+      <div class="masthead">Inbox</div>
+      <div class="subhead">Re-ranked for you by Daily Briefing pAIa</div>
+      <div class="reader-nav-center"><div class="reader2-inbox-list">
+        <a href="https://nationalparkjournal.substack.com/p/wildlife-in-the-west" class="reader2-inbox-post">
+          <div class="reader2-post-head"><div class="pub-name"><span>National Park Journal</span></div><div class="inbox-item-timestamp">Jul 23</div></div>
+          <div class="reader2-post-title">Wildlife in the West: A Field Guide</div>
+          <div class="reader2-paragraph">Where to spot elk, condors, and bighorn sheep this season.</div>
+          <div class="reader2-item-meta">6 min read</div>
+        </a>
+        <a href="https://nationalparkjournal.substack.com/p/alpine-lakes" class="reader2-inbox-post">
+          <div class="reader2-post-head"><div class="pub-name"><span>National Park Journal</span></div><div class="inbox-item-timestamp">Jul 16</div></div>
+          <div class="reader2-post-title">3 Alpine Lakes Worth Every Step</div>
+          <div class="reader2-paragraph">High-country hikes that reward the climb.</div>
+          <div class="reader2-item-meta">4 min read</div>
+        </a>
+        <a href="https://climatehope.substack.com/p/weekly-climate-wins" class="reader2-inbox-post">
+          <div class="reader2-post-head"><div class="pub-name"><span>Your Daily Dose of Climate Hope</span></div><div class="inbox-item-timestamp">Jul 26</div></div>
+          <div class="reader2-post-title">Your Weekly Climate Wins</div>
+          <div class="reader2-paragraph">Good news you might have missed this week.</div>
+          <div class="reader2-item-meta">3 min read</div>
+        </a>
+        <a href="https://lennysnewsletter.substack.com/p/pricing-page" class="reader2-inbox-post">
+          <div class="reader2-post-head"><div class="pub-name"><span>Lenny's Newsletter</span></div><div class="inbox-item-timestamp">Jul 4</div></div>
+          <div class="reader2-post-title">Why Your B2B Pricing Page Is Losing Deals</div>
+          <div class="reader2-paragraph">Three anti-patterns that quietly push buyers away.</div>
+          <div class="reader2-item-meta">9 min read</div>
+        </a>
+        <a href="https://platformer.substack.com/p/quiet-death" class="reader2-inbox-post">
+          <div class="reader2-post-head"><div class="pub-name"><span>Platformer</span></div><div class="inbox-item-timestamp">Jul 8</div></div>
+          <div class="reader2-post-title">The Quiet Death of the Homepage</div>
+          <div class="reader2-paragraph">How discovery moved inside a handful of apps.</div>
+          <div class="reader2-item-meta">8 min read</div>
+        </a>
+      </div></div>
+    </div>
+    <script src="../../engine.js"></script>
+    <script src="../../store.js"></script>
+    <script src="../../content.js"></script>
+  </body>
+</html>
