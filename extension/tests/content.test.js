@@ -33,11 +33,11 @@ function makeFeed(extraCards = "") {
   </body></html>`;
 }
 
-async function boot(html) {
+async function boot(html, url = "https://substack.com/inbox") {
   // A real https URL gives jsdom a non-opaque origin, so window.localStorage
   // works out of the box (chrome is undefined here, so the store uses it).
   const dom = new JSDOM(html, {
-    url: "https://substack.com/inbox",
+    url,
     pretendToBeVisual: true,
     runScripts: "outside-only", // window.eval executes in the page's global scope
   });
@@ -99,6 +99,23 @@ test("does not double-inject when the feed re-renders (dedupe)", async () => {
     (c) => c.querySelectorAll(":scope > .paia-bar").length > 1
   );
   assert.equal(cardsWithTwoBars.length, 0, "no card has two bars");
+});
+
+test("stays inert on a single post page even with recommended /p/ links", async () => {
+  // A reading view: the article plus a "more from this author" list of posts.
+  const recs = [1, 2, 3, 4]
+    .map(
+      (n) => `<a href="https://x.substack.com/p/recommended-${n}" class="reader2-inbox-post">
+        <div class="reader2-post-title">Recommended Post ${n}</div></a>`
+    )
+    .join("");
+  const html = `<!DOCTYPE html><html><body>
+    <article><h1>The Limits of Lake Victoria</h1><p>Long article body...</p></article>
+    <div class="reader-nav-center"><div class="reader2-inbox-list">${recs}</div></div>
+  </body></html>`;
+  const { window } = await boot(html, "https://x.substack.com/p/the-limits-of-lake-victoria");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars while reading a post");
+  assert.equal(window.document.getElementById("paia-panel"), null, "no panel while reading a post");
 });
 
 test("stays inert on a non-feed page (too few posts)", async () => {

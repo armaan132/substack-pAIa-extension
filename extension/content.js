@@ -175,6 +175,29 @@
   const ICON = { like: "♥", read: "✓", notint: "⊘", hide: "✕" };
   const LABELS = { like: "Like", read: "Mark read", notint: "Not interesting", hide: "Hide" };
 
+  // A single floating tooltip (appended to <body>, position:fixed) shows the
+  // "why this rank" reason instantly on hover — no native-title delay, and it
+  // can't be clipped by a card's overflow.
+  let tipEl = null;
+  function showTip(text, rect) {
+    if (!text) return;
+    if (!tipEl) {
+      tipEl = document.createElement("div");
+      tipEl.className = "paia-tip";
+      tipEl.setAttribute("role", "tooltip");
+      document.body.appendChild(tipEl);
+    }
+    tipEl.textContent = text;
+    tipEl.style.display = "block";
+    const w = tipEl.offsetWidth;
+    const maxLeft = document.documentElement.clientWidth - w - 8;
+    tipEl.style.left = Math.max(8, Math.min(rect.left, maxLeft)) + "px";
+    tipEl.style.top = rect.bottom + 6 + "px";
+  }
+  function hideTip() {
+    if (tipEl) tipEl.style.display = "none";
+  }
+
   function annotate(el, post, ranked) {
     const f = fbFor(post.id);
     el.dataset.paiaId = post.id;
@@ -217,11 +240,16 @@
         if (rb) rb.classList.add("on");
       });
       el.appendChild(bar);
+      // Instant "why this rank" tooltip on the score (reads the latest reason,
+      // stored on the element each render).
+      const s0 = bar.querySelector(".paia-score");
+      s0.addEventListener("mouseenter", () => showTip(s0.__paiaWhy, s0.getBoundingClientRect()));
+      s0.addEventListener("mouseleave", hideTip);
     }
     const score = bar.querySelector(".paia-score");
     const why = ranked && ranked.reasons && ranked.reasons.length ? "Why this rank: " + ranked.reasons.join(" · ") : "";
     score.textContent = ranked ? ranked.score.toFixed(1) : "";
-    score.title = why;
+    score.__paiaWhy = why;
     bar.querySelectorAll("button").forEach((b) => {
       const on = !!f[b.dataset.act];
       b.classList.toggle("on", on);
@@ -343,9 +371,28 @@
   // ---------- Main ----------
   // render() works from the in-memory FEEDBACK/SETTINGS (no storage read), so
   // it's safe to call synchronously right after a local mutation.
-  const MIN_POSTS = 3; // stay inert on non-feed pages (single post, about, etc.)
+  const MIN_POSTS = 3; // stay inert on non-feed pages with too few posts
+
+  // A single post / note / comments page is a *reading* view, not a feed — even
+  // though it contains "recommended" /p/ links. Never inject there. Feeds live at
+  // /inbox, /home, /archive, or a publication root, none of which have /p/ in the
+  // page's own path.
+  function isReadingView() {
+    const p = location.pathname;
+    return /\/p\//.test(p) || /\/note\//.test(p) || /\/comment(s)?\b/.test(p);
+  }
+
+  function removePanel() {
+    const panel = document.getElementById(PANEL_ID);
+    if (panel) panel.remove();
+  }
 
   function render() {
+    if (isReadingView()) {
+      // e.g. arrived via SPA navigation from a feed into a post
+      removePanel();
+      return;
+    }
     const items = scrape();
     if (items.length < MIN_POSTS) return;
 
