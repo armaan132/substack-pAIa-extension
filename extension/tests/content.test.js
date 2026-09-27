@@ -173,6 +173,16 @@ test("stays inert while reading a post even at a feed URL (article-body /p/ link
   assert.equal(window.document.getElementById("paia-panel"), null, "no panel while reading");
 });
 
+test("cleans up bars when navigating feed -> post via SPA (pushState)", async () => {
+  const { window } = await boot(makeFeed()); // starts on /inbox -> bars
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 3, "bars on feed");
+  // Simulate the reader's client-side navigation into a post.
+  window.history.pushState({}, "", "/inbox/post/999");
+  await new Promise((r) => setTimeout(r, 30));
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "bars removed after nav to post");
+  assert.equal(window.document.getElementById("paia-panel"), null, "panel removed after nav to post");
+});
+
 test("stays inert on a non-feed page (too few posts)", async () => {
   const html = `<!DOCTYPE html><html><body><div class="reader-nav-center">
     <a href="https://x.substack.com/p/only-one" class="reader2-inbox-post">

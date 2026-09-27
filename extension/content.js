@@ -231,17 +231,23 @@
       if (!el.dataset.paiaOrig) el.dataset.paiaOrig = String(origCounter++);
       // Auto-read: opening a post (clicking the card, not our controls) marks it
       // read. Bound once; writes storage without a re-render so it doesn't
-      // reshuffle the feed mid-navigation.
-      el.addEventListener("click", (e) => {
-        if (!SETTINGS.autoRead || e.target.closest(".paia-bar")) return;
-        const cur = FEEDBACK[post.id] || { read: false, like: false, hide: false, notint: false };
-        if (cur.read) return;
-        cur.read = true;
-        FEEDBACK[post.id] = cur;
-        PaiaStore.setFeedback(FEEDBACK);
-        const rb = bar.querySelector('.paia-btn[data-act="read"]');
-        if (rb) rb.classList.add("on");
-      });
+      // reshuffle the feed mid-navigation. Bound once per element (guarded), since
+      // cleanup can remove the bar while the element itself persists.
+      if (!el.dataset.paiaClickBound) {
+        el.dataset.paiaClickBound = "1";
+        el.addEventListener("click", (e) => {
+          if (!SETTINGS.autoRead || e.target.closest(".paia-bar")) return;
+          const id = el.dataset.paiaId;
+          if (!id) return; // element no longer an active card (cleaned up)
+          const cur = FEEDBACK[id] || { read: false, like: false, hide: false, notint: false };
+          if (cur.read) return;
+          cur.read = true;
+          FEEDBACK[id] = cur;
+          PaiaStore.setFeedback(FEEDBACK);
+          const rb = el.querySelector(':scope > .paia-bar .paia-btn[data-act="read"]');
+          if (rb) rb.classList.add("on");
+        });
+      }
       el.appendChild(bar);
       // Instant "why this rank" tooltip on the score (reads the latest reason,
       // stored on the element each render).
@@ -397,10 +403,21 @@
     if (panel) panel.remove();
   }
 
+  // Remove everything we injected. Called when we navigate off a feed (e.g. into
+  // a post), because the reader keeps repositioned cards — with our bars — in the
+  // post view ("more from this publication"). Bailing without cleanup left them.
+  function cleanupInjected() {
+    removePanel();
+    document.querySelectorAll(".paia-bar").forEach((b) => b.remove());
+    document.querySelectorAll("[data-paia-id]").forEach((el) => {
+      delete el.dataset.paiaId;
+    });
+  }
+
   function render() {
     if (!isFeedPage()) {
       // e.g. arrived via SPA navigation from a feed into a post
-      removePanel();
+      cleanupInjected();
       return;
     }
     const items = scrape();
@@ -449,6 +466,28 @@
     if (el) el.textContent = "⚠ Couldn't save — storage may be full. Feedback won't persist.";
   }
 
+  // Substack is a single-page app: navigating feed <-> post changes the URL
+  // without a page reload. Re-render immediately on any client-side URL change so
+  // we clean up bars when entering a post and restore them when back on a feed.
+  function watchSpaNavigation() {
+    let lastPath = location.pathname;
+    const onNav = () => {
+      if (location.pathname !== lastPath) {
+        lastPath = location.pathname;
+        render();
+      }
+    };
+    for (const m of ["pushState", "replaceState"]) {
+      const orig = history[m];
+      history[m] = function () {
+        const r = orig.apply(this, arguments);
+        onNav();
+        return r;
+      };
+    }
+    window.addEventListener("popstate", onNav);
+  }
+
   function boot() {
     // Surface a notice if a write ever fails (e.g. storage quota exceeded).
     PaiaStore.onError(() => showStorageError());
@@ -460,6 +499,7 @@
     new MutationObserver(() => {
       if (!mutating) scheduled();
     }).observe(document.body, { childList: true, subtree: true });
+    watchSpaNavigation();
     // Pick up changes made in the popup (e.g. reset, settings).
     PaiaStore.onChange(() => reload());
   }
