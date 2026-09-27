@@ -374,12 +374,17 @@
   const MIN_POSTS = 3; // stay inert on non-feed pages with too few posts
 
   // A single post / note / comments page is a *reading* view, not a feed — even
-  // though it contains "recommended" /p/ links. Never inject there. Feeds live at
-  // /inbox, /home, /archive, or a publication root, none of which have /p/ in the
-  // page's own path.
+  // though it contains "recommended" /p/ links. Never inject there. Covers both
+  // publication post pages (/p/<slug>) and the in-app reader's single-post view
+  // (e.g. /inbox/post/<id>, /home/post/<id>), plus notes and comments. As a
+  // structural backstop, article pages declare og:type=article.
   function isReadingView() {
     const p = location.pathname;
-    return /\/p\//.test(p) || /\/note\//.test(p) || /\/comment(s)?\b/.test(p);
+    if (/\/p\//.test(p) || /\/post\//.test(p) || /\/note[s]?\//.test(p) || /\/comment/.test(p)) {
+      return true;
+    }
+    const og = document.querySelector('meta[property="og:type"]');
+    return !!(og && (og.getAttribute("content") || "").toLowerCase() === "article");
   }
 
   function removePanel() {

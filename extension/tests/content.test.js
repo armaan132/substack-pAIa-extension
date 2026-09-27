@@ -118,6 +118,37 @@ test("stays inert on a single post page even with recommended /p/ links", async 
   assert.equal(window.document.getElementById("paia-panel"), null, "no panel while reading a post");
 });
 
+test("stays inert on the reader's single-post URL (/inbox/post/<id>)", async () => {
+  const recs = [1, 2, 3, 4]
+    .map(
+      (n) => `<a href="https://x.substack.com/p/rec-${n}" class="reader2-inbox-post">
+        <div class="reader2-post-title">Rec ${n}</div></a>`
+    )
+    .join("");
+  const html = `<!DOCTYPE html><html><body>
+    <article><h1>Solar Solves Everything</h1><p>Body...</p></article>
+    <div class="reader-nav-center"><div class="reader2-inbox-list">${recs}</div></div>
+  </body></html>`;
+  const { window } = await boot(html, "https://substack.com/inbox/post/171234567");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars in reader post view");
+  assert.equal(window.document.getElementById("paia-panel"), null);
+});
+
+test("stays inert on an article page detected via og:type=article", async () => {
+  const recs = [1, 2, 3, 4]
+    .map(
+      (n) => `<a href="https://x.substack.com/p/rec-${n}" class="reader2-inbox-post">
+        <div class="reader2-post-title">Rec ${n}</div></a>`
+    )
+    .join("");
+  // Feed-shaped URL, but the page declares itself an article.
+  const html = `<!DOCTYPE html><html><head><meta property="og:type" content="article"></head><body>
+    <div class="reader-nav-center"><div class="reader2-inbox-list">${recs}</div></div>
+  </body></html>`;
+  const { window } = await boot(html, "https://customdomain.example/solar-solves-everything");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars on og:type=article page");
+});
+
 test("stays inert on a non-feed page (too few posts)", async () => {
   const html = `<!DOCTYPE html><html><body><div class="reader-nav-center">
     <a href="https://x.substack.com/p/only-one" class="reader2-inbox-post">
