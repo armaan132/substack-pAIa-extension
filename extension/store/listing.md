@@ -100,9 +100,9 @@ Rationale to keep on file: the extension collects **no** user data in the Web
 Store sense — all feedback stays in local browser storage and is never sent to
 any server, including ours (there is no server).
 
-**Privacy policy URL**: (host `store/privacy.html` somewhere public and paste the URL)
+**Privacy policy URL**: (hosted on GitHub Pages)
 ```
-https://<your-github-username>.github.io/<repo>/privacy.html
+https://ashrayg09.github.io/paia-privacy/
 ```
 
 ---
