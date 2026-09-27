@@ -134,19 +134,24 @@ test("stays inert on the reader's single-post URL (/inbox/post/<id>)", async () 
   assert.equal(window.document.getElementById("paia-panel"), null);
 });
 
-test("stays inert on an article page detected via og:type=article", async () => {
+test("activates on a publication archive feed (/archive)", async () => {
+  const { window } = await boot(makeFeed(), "https://nationalparkjournal.substack.com/archive");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 3, "bars on the archive feed");
+  assert.ok(window.document.getElementById("paia-panel"), "panel on the archive feed");
+});
+
+test("stays inert on a publication post page even with an article-shaped path", async () => {
   const recs = [1, 2, 3, 4]
     .map(
       (n) => `<a href="https://x.substack.com/p/rec-${n}" class="reader2-inbox-post">
         <div class="reader2-post-title">Rec ${n}</div></a>`
     )
     .join("");
-  // Feed-shaped URL, but the page declares itself an article.
-  const html = `<!DOCTYPE html><html><head><meta property="og:type" content="article"></head><body>
+  const html = `<!DOCTYPE html><html><body>
     <div class="reader-nav-center"><div class="reader2-inbox-list">${recs}</div></div>
   </body></html>`;
-  const { window } = await boot(html, "https://customdomain.example/solar-solves-everything");
-  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars on og:type=article page");
+  const { window } = await boot(html, "https://climatehope.substack.com/p/solar-solves-everything");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars on a post page");
 });
 
 test("stays inert on a non-feed page (too few posts)", async () => {

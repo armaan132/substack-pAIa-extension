@@ -1,6 +1,6 @@
 {
   "name": "daily-briefing-paia",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "Chrome extension that re-ranks your Substack feed from your own read/like/hide feedback, on-device.",
   "scripts": {

@@ -373,18 +373,20 @@
   // it's safe to call synchronously right after a local mutation.
   const MIN_POSTS = 3; // stay inert on non-feed pages with too few posts
 
-  // A single post / note / comments page is a *reading* view, not a feed — even
-  // though it contains "recommended" /p/ links. Never inject there. Covers both
-  // publication post pages (/p/<slug>) and the in-app reader's single-post view
-  // (e.g. /inbox/post/<id>, /home/post/<id>), plus notes and comments. As a
-  // structural backstop, article pages declare og:type=article.
-  function isReadingView() {
-    const p = location.pathname;
-    if (/\/p\//.test(p) || /\/post\//.test(p) || /\/note[s]?\//.test(p) || /\/comment/.test(p)) {
-      return true;
-    }
-    const og = document.querySelector('meta[property="og:type"]');
-    return !!(og && (og.getAttribute("content") || "").toLowerCase() === "article");
+  // Run ONLY on feed pages; stay inert everywhere else (a single post, the
+  // reader's /inbox/post/<id> view, notes, comments, about, settings...). An
+  // allowlist is robust in Substack's SPA, where blocklisting reading URLs or
+  // sniffing meta tags is unreliable — meta/og tags persist across client-side
+  // navigation, which wrongly flags the feed after you back out of a post.
+  //   ""        -> publication home (path "/")
+  //   /inbox    -> reader inbox        /home  -> reader home
+  //   /archive  -> publication archive /notes -> notes feed
+  const FEED_PATHS = new Set(["", "/inbox", "/home", "/archive", "/notes"]);
+  function isFeedPage() {
+    // window.__PAIA_DEMO__ lets the local test/demo fixtures (served at /test/…)
+    // exercise the feed UI off a real feed path. No real Substack page sets it.
+    if (typeof window !== "undefined" && window.__PAIA_DEMO__ === true) return true;
+    return FEED_PATHS.has(location.pathname.replace(/\/+$/, ""));
   }
 
   function removePanel() {
@@ -393,7 +395,7 @@
   }
 
   function render() {
-    if (isReadingView()) {
+    if (!isFeedPage()) {
       // e.g. arrived via SPA navigation from a feed into a post
       removePanel();
       return;
