@@ -107,19 +107,22 @@
     return m ? Number(m[1]) : null;
   }
 
+  // A card link is a real post-PREVIEW element — NOT just any /p/ link. This is
+  // what keeps us off article prose: while reading a post the body is full of
+  // embedded /p/ links, but none of them are preview cards, so scrape finds
+  // nothing and we stay inert. The two Substack surfaces we support:
+  //   inbox   -> the card is an <a class="reader2-inbox-post">
+  //   archive -> the title link has data-testid="post-preview-title"
+  function isCardAnchor(a) {
+    return a.classList.contains("reader2-inbox-post") || a.dataset.testid === "post-preview-title";
+  }
+
   function scrape() {
-    // 1. Candidate title anchors: real post links, outside nav. Substack marks
-    //    the title link with data-testid="post-preview-title"; otherwise we
-    //    require title-length text to skip icon/thumbnail links.
+    // 1. Candidate title anchors: real post-preview cards only, outside nav.
     const titleAnchors = [];
     const seen = new Set();
     document.querySelectorAll('a[href*="/p/"]').forEach((a) => {
-      if (!isPostAnchor(a) || inChrome(a)) return;
-      const isTitle =
-        a.dataset.testid === "post-preview-title" ||
-        a.classList.contains("reader2-inbox-post") || // inbox: the card is the anchor
-        a.textContent.trim().length > 10;
-      if (!isTitle) return;
+      if (!isPostAnchor(a) || inChrome(a) || !isCardAnchor(a)) return;
       const id = postPath(a.href);
       if (!id || seen.has(id)) return;
       seen.add(id);

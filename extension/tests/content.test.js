@@ -154,6 +154,25 @@ test("stays inert on a publication post page even with an article-shaped path", 
   assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars on a post page");
 });
 
+test("stays inert while reading a post even at a feed URL (article-body /p/ links are not cards)", async () => {
+  // The reader keeps the /inbox URL while showing an opened post. The article
+  // body is full of embedded /p/ links, but none are preview cards.
+  const html = `<!DOCTYPE html><html><body>
+    <div class="reader-nav-center">
+      <article>
+        <h1>Solar Solves Everything</h1>
+        <p>Read our earlier piece <a href="https://x.substack.com/p/solar-basics">on solar basics</a> for context.</p>
+        <p>See also <a href="https://x.substack.com/p/battery-storage">battery storage</a> and <a href="https://x.substack.com/p/grid-reform">grid reform</a>.</p>
+        <figure><a href="https://x.substack.com/p/solar-photo"><img alt="panels"></a><figcaption>Solar panels</figcaption></figure>
+        <p>More: <a href="https://x.substack.com/p/heat-pumps">heat pumps</a>.</p>
+      </article>
+    </div>
+  </body></html>`;
+  const { window } = await boot(html, "https://substack.com/inbox");
+  assert.equal(window.document.querySelectorAll(".paia-bar").length, 0, "no bars on article prose");
+  assert.equal(window.document.getElementById("paia-panel"), null, "no panel while reading");
+});
+
 test("stays inert on a non-feed page (too few posts)", async () => {
   const html = `<!DOCTYPE html><html><body><div class="reader-nav-center">
     <a href="https://x.substack.com/p/only-one" class="reader2-inbox-post">
