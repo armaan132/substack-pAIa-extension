@@ -65,6 +65,7 @@
     const df = Object.create(null);
     const wf = typeof weightOf === "function" ? weightOf : () => 0;
     let N = 0;
+    let rated = 0; // posts that actually carried feedback (FedAvg sample count)
     for (const p of posts || []) {
       const tokens = tokenize(p && p.title);
       if (!tokens.length) continue;
@@ -73,9 +74,10 @@
       for (const t in tf) df[t] = (df[t] || 0) + 1; // document frequency
       const w = wf(feedback ? feedback[p.id] : undefined);
       if (!w) continue; // unrated post still counts toward df (corpus), not affinity
+      rated++;
       for (const t in tf) termAff[t] = (termAff[t] || 0) + w * tf[t];
     }
-    return { termAff, df, N };
+    return { termAff, df, N, rated };
   }
 
   // Inverse document frequency, smoothed so unseen/rare terms stay finite.
