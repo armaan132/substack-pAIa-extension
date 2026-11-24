@@ -19,6 +19,7 @@
     sort: "recommended",
     autoRead: true,
     showHidden: false,
+    topicModel: true,
     weights: { like: 3, read: 1, notint: -3, hide: -5 },
   };
   let FEEDBACK = {};
@@ -425,9 +426,19 @@
 
     mutating = true;
     try {
-      PaiaStore.setSnapshot(items.map((i) => i.post)); // for the popup dashboard
+      const posts = items.map((i) => i.post);
+      PaiaStore.setSnapshot(posts); // for the popup dashboard
 
-      const ranked = PaiaEngine.rank(items.map((i) => i.post), FEEDBACK, SETTINGS.weights);
+      // On-device topic model: learn word-level preferences from feedback and
+      // score each post. Trains and runs here in the page; nothing leaves the
+      // device. Gated by a setting so it can be turned off.
+      let topicScores = null;
+      if (SETTINGS.topicModel && typeof PaiaTopic !== "undefined") {
+        const model = PaiaTopic.buildModel(posts, FEEDBACK, (f) => PaiaEngine.weightOf(f, SETTINGS.weights));
+        topicScores = new Map(posts.map((p) => [p.id, PaiaTopic.score(p, model)]));
+      }
+
+      const ranked = PaiaEngine.rank(posts, FEEDBACK, SETTINGS.weights, topicScores);
       const scoreById = new Map(ranked.map((r) => [r.post.id, r]));
 
       items.forEach(({ el, post }) => annotate(el, post, scoreById.get(post.id)));

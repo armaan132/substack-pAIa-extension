@@ -57,6 +57,7 @@
     sort: "recommended",
     autoRead: true,
     showHidden: false,
+    topicModel: true,
     weights: { like: 3, read: 1, notint: -3, hide: -5 },
   };
 

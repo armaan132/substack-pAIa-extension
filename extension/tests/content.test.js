@@ -47,6 +47,7 @@ async function boot(html, url = "https://substack.com/inbox") {
   // attach to the window and operate on this document.
   const runIn = (code) => window.eval(code);
   runIn(read("engine.js"));
+  runIn(read("topic.js"));
   runIn(read("store.js"));
   runIn(read("content.js"));
 
@@ -84,6 +85,23 @@ test("liking a post writes feedback and marks the button pressed", async () => {
   const likedIds = Object.keys(fb).filter((k) => fb[k].like);
   assert.equal(likedIds.length, 1);
   assert.ok(likedIds[0].includes("climatehope"));
+});
+
+test("topic model generalizes a like to an unrated post sharing a title word", async () => {
+  const { window } = await boot(makeFeed());
+  const cardFor = (text) =>
+    [...window.document.querySelectorAll(".reader2-inbox-post")].find((c) =>
+      c.querySelector(".reader2-post-title").textContent.includes(text)
+    );
+  // Like "Five Great Park Books" -> model learns the word "park" (and "books").
+  cardFor("Park Books").querySelector('.paia-btn[data-act="like"]').dispatchEvent(
+    new window.Event("click", { bubbles: true })
+  );
+  await new Promise((r) => setTimeout(r, 20));
+  // "July Park Roundup" is unrated but shares "park": its score tooltip should
+  // now credit the learned topic, proving the on-device model ran in-page.
+  const why = cardFor("Park Roundup").querySelector(".paia-score").__paiaWhy || "";
+  assert.match(why, /topic:[^]*park/i, "unrated park post credits the learned topic");
 });
 
 test("does not double-inject when the feed re-renders (dedupe)", async () => {

@@ -13,6 +13,7 @@ rm -f "$OUT"
 FILES=(
   manifest.json
   engine.js
+  topic.js
   store.js
   content.js
   content.css

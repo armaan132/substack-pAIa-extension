@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Daily Briefing pAIa",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Re-ranks your Substack feed from your own read/like/hide feedback. All data stays on your device.",
   "permissions": [
     "storage"
@@ -40,6 +40,7 @@
       ],
       "js": [
         "engine.js",
+        "topic.js",
         "store.js",
         "content.js"
       ],

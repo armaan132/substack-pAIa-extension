@@ -63,6 +63,7 @@
     $("#sort").value = settings.sort || "recommended";
     $("#autoRead").checked = !!settings.autoRead;
     $("#showHidden").checked = !!settings.showHidden;
+    $("#topicModel").checked = settings.topicModel !== false;
     fillWeights(settings.weights || DEFAULT_WEIGHTS);
   }
 
@@ -75,6 +76,7 @@
     $("#sort").addEventListener("change", (e) => save({ sort: e.target.value }));
     $("#autoRead").addEventListener("change", (e) => save({ autoRead: e.target.checked }));
     $("#showHidden").addEventListener("change", (e) => save({ showHidden: e.target.checked }));
+    $("#topicModel").addEventListener("change", (e) => save({ topicModel: e.target.checked }));
 
     ["#w-like", "#w-read", "#w-notint", "#w-hide"].forEach((sel) =>
       $(sel).addEventListener("change", () => save({ weights: readWeights() }))
